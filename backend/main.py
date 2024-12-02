@@ -159,6 +159,12 @@ def change_password():
   
   return render_template("/change-password.html")
 
+@app.route("/dashboard", methods=["GET"])
+def dashboard():
+  portfolios = Portfolios.query.all()
+  json_portfolios = list(map(lambda x: x.to_json(), portfolios)) # Syntax learned from TechWithTim Youtube tutorial
+  return jsonify({"portfolios": json_portfolios})
+
 
 if __name__ == "__main__":
   # Instantiate db
@@ -166,5 +172,3 @@ if __name__ == "__main__":
     db.create_all()
 
   app.run(debug=True) # Turn to False when deploying
-
-

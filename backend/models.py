@@ -28,7 +28,7 @@ class Categories(db.Model):
 
 class Portfolios(db.Model):
   id = db.Column(db.Integer, primary_key=True)
-  user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+  user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
   category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
   amount = db.Column(db.Integer, nullable=False)
 
