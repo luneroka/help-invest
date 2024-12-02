@@ -2,7 +2,7 @@ from flask import request, jsonify, redirect, render_template, flash, session
 from config import app, db
 from models import Users, Categories, Portfolios
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import validate_password_strength, login_required
+from helpers import validate_password_strength, login_required, serialize_category
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -83,7 +83,7 @@ def signup():
       return render_template("signup.html"), 400
     
     # Hash password and create new user
-    hashed_password = generate_password_hash(password)
+    hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
     new_user = Users(username=username, hash=hashed_password, risk_profile="medium")
 
     # Try adding new user to db
@@ -146,7 +146,7 @@ def change_password():
       return render_template("change-password.html"), 400
     
     # Hash new password
-    new_hashed_password = generate_password_hash(new_password)
+    new_hashed_password = generate_password_hash(new_password,  method='pbkdf2:sha256', salt_length=16)
 
     # Try updating users table with new password
     try:
@@ -160,7 +160,7 @@ def change_password():
         flash("An error has occurred. Please try again")
         return render_template("/change-password.html"), 500
   
-  return render_template("/change-password.html")
+  return render_template("change-password.html")
 
 
 @app.route("/dashboard", methods=["GET"])
@@ -199,56 +199,50 @@ def dashboard():
 @app.route("/add-entry", methods=["GET", "POST"])
 @login_required
 def add_entry():
-  if request.method == "POST":
-    # Retrieve form data
-    user_id = session['user_id']
-    category_name = request.form.get("category-name")
-    sub_category = request.form.get("sub-category")
-    amount = request.form.get("amount")
+    if request.method == "POST":
+        # Retrieve form data
+        user_id = session['user_id']
+        category_name = request.form.get("category-name")
+        sub_category = request.form.get("sub-category")
+        amount = request.form.get("amount")
 
-    # Convert amount to float
-    try:
-      amount = float(amount)
-    except ValueError:
-      flash("Invalid amount")
-      return redirect("/add-entry")
+        # Validate input
+        try:
+            amount = float(amount)
+        except ValueError:
+            flash("Invalid amount")
+            return redirect("/add-entry")
 
-    # Validate category and sub-category input
-    if not category_name:
-      flash("Please select a category for your investment")
-      return redirect("/add-entry")
+        if not category_name or not sub_category:
+            flash("Both category and sub-category are required")
+            return redirect("/add-entry")
 
-    if not sub_category:
-      flash("Please select a sub-category for your investment")
-      return redirect("/add-entry")
+        # Query for the category
+        category_query = Categories.query.filter_by(name=category_name, sub_category=sub_category).first()
+        if not category_query:
+            flash("The selected category and sub-category combination does not exist.")
+            return redirect("/add-entry")
+        
+        # Create and save the new entry
+        category_id = category_query.id
+        new_entry = Portfolios(user_id=user_id, category_id=category_id, amount=amount)
+        try:
+            db.session.add(new_entry)
+            db.session.commit()
+            flash("Investment added successfully!")
+            return redirect("/dashboard")
+        except Exception as e:
+            db.session.rollback()
+            flash("An error occurred while adding the entry.")
+            return redirect("/dashboard")
 
-    # Query the Categories table to get category_id
-    category_query = Categories.query.filter_by(name=category_name, sub_category=sub_category).first()
+    # Get unique categories and all categories
+    distinct_categories = Categories.query.with_entities(Categories.name).distinct().all()
+    all_categories = [serialize_category(cat) for cat in Categories.query.all()]
 
-    # Handle error if category_id could not be found
-    if not category_query:
-      flash("The selected category and sub-category combination does not exist.")
-      return redirect("/add-entry")
-    
-    # Get the category_id
-    category_id = category_query.id
-
-    # Create new portfolio entry
-    new_entry = Portfolios(user_id=user_id, category_id=category_id, amount=amount)
-
-    try:
-      db.session.add(new_entry)
-      db.session.commit()
-      flash("Investment added successfully!")
-      return redirect("/dashboard")
-    except Exception as e:
-      db.session.rollback()
-      flash("An error has occurred. Entry could not be added.")
-      return redirect("/dashboard")
-
-  # Retrieve all categories and sub-categories for the form
-  categories = Categories.query.all()
-  return render_template("add-entry.html", categories=categories)
+    return render_template("add-entry.html",
+                           categories=distinct_categories,
+                           all_categories=all_categories)
 
 
 if __name__ == "__main__":

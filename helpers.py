@@ -27,3 +27,15 @@ def login_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+
+def serialize_category(category):
+    return {
+        "id": category.id,
+        "name": category.name,
+        "sub_category": category.sub_category
+    }
+
+def usd(value):
+    """Format value as USD."""
+    return f"${value:,.0f}"
