@@ -6,13 +6,35 @@
 
 {% block main %}
         <form action="/login" method="post">
-            <div class="mb-3">
-                <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="username" placeholder="Username" type="text">
-            </div>
-            <div class="mb-3">
-                <input class="form-control mx-auto w-auto" name="password" placeholder="Password" type="password">
+            <div class="d-flex flex-column justify-content-center align-items-center">
+                <div class="mb-3">
+                    <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="username" placeholder="Username" type="text" style="min-width: 300px;">
+                </div>
+                <div class="mb-3 input-group" style="max-width: 300px;">
+                    <input class="form-control" name="password" placeholder="Password" type="password">
+                    <span class="input-group-text" style="background-color: #f8f9fa; cursor: pointer;">
+                    <i class="bi bi-eye"></i>
+                    </span>
+                </div>
             </div>
             <button class="btn btn-primary" type="submit">Log In</button>
         </form>
     </div>
+    <script>
+        document.querySelector('.input-group').addEventListener('click', function (e) {
+            e.preventDefault();
+            const passwordInput = document.querySelector('[name="password"]');
+            const eyeIcon = document.querySelector('.bi');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('bi-eye');
+                eyeIcon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('bi-eye-slash');
+                eyeIcon.classList.add('bi-eye');
+            }
+        });
+    </script>
 {% endblock %}

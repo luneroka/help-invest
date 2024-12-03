@@ -1,42 +1,68 @@
 {% extends "layout.html" %} {% block title %} Change Password {% endblock %} {%
 block main %}
-<form action="/change-password" method="post">
-  <div class="mb-3">
-    <label for="current-password">Current Password</label>
-    <input
-      type="password"
-      id="current-password"
-      name="current-password"
-      class="form-control mx-auto w-auto"
-      placeholder="Current Password"
-      autocomplete="current-password"
-      required
-    />
+<form action="/signup" method="post">
+  <div class="d-flex flex-column justify-content-center align-items-center">
+    <div class="mb-3">
+      <input
+        autocomplete="off"
+        autofocus
+        class="form-control mx-auto w-auto"
+        name="username"
+        placeholder="Username"
+        type="text"
+        style="min-width: 300px"
+      />
+    </div>
+    <div class="mb-3 input-group" style="max-width: 300px">
+      <input
+        class="form-control"
+        name="password"
+        placeholder="Password"
+        type="password"
+      />
+      <span
+        class="input-group-text"
+        style="background-color: #f8f9fa; cursor: pointer"
+      >
+        <i class="bi bi-eye"></i>
+      </span>
+    </div>
+    <div class="mb-3 input-group" style="max-width: 300px">
+      <input
+        class="form-control"
+        name="confirmation"
+        placeholder="Confirm Password"
+        type="password"
+      />
+      <span
+        class="input-group-text"
+        style="background-color: #f8f9fa; cursor: pointer"
+      >
+        <i class="bi bi-eye"></i>
+      </span>
+    </div>
   </div>
-  <div class="mb-3">
-    <label for="new-password">New Password</label>
-    <input
-      type="password"
-      id="new-password"
-      name="new-password"
-      class="form-control mx-auto w-auto"
-      placeholder="New Password"
-      autocomplete="new-password"
-      required
-    />
-  </div>
-  <div class="mb-3">
-    <label for="confirm-new-password">Confirm New Password</label>
-    <input
-      type="password"
-      id="confirmation"
-      name="confirmation"
-      class="form-control mx-auto w-auto"
-      placeholder="Confirm New Password"
-      autocomplete="new-password"
-      required
-    />
-  </div>
-  <button class="btn btn-primary" type="submit">Update Password</button>
+  <button class="btn btn-primary" type="submit">Sign Up</button>
 </form>
+<script>
+  // Attach click event to all toggle icons
+  document.querySelectorAll('.input-group-text').forEach((toggleButton) => {
+    toggleButton.addEventListener('click', function () {
+      // Find the input associated with this toggle
+      const input = this.previousElementSibling; // Assuming the icon is immediately after the input
+      const eyeIcon = this.querySelector('.bi'); // Icon inside the toggle button
+
+      // Toggle password visibility
+      if (input.type === 'password') {
+        input.type = 'text';
+        eyeIcon.classList.remove('bi-eye');
+        eyeIcon.classList.add('bi-eye-slash');
+      } else {
+        input.type = 'password';
+        eyeIcon.classList.remove('bi-eye-slash');
+        eyeIcon.classList.add('bi-eye');
+      }
+    });
+  });
+</script>
 {% endblock %}
