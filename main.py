@@ -254,8 +254,33 @@ def add_entry():
 
 
 @app.route("/history")
+@login_required
 def view_history():
-   return render_template("history.html")
+  # Retrieve data for table
+  user_id = session['user_id']
+
+  portfolio_entries = db.session.query(Portfolios, Categories).join(Categories, Portfolios.category_id == Categories.id).filter(Portfolios.user_id == user_id).all()
+
+
+  if not portfolio_entries:
+     flash("No history entries found", "info")
+     return redirect("/dashboard")
+  
+  # Create a dictionary to hold table data
+  portfolio_history = [
+    {
+    "category_name": entry.Categories.name,
+    "sub_category_name": entry.Categories.sub_category,
+    "amount": entry.Portfolios.amount,
+    "entry_time": entry.Portfolios.entry_time.strftime('%Y-%m-%d %H:%M:%S')
+    }
+    for entry in portfolio_entries
+  ]
+
+  # Delete button on each row
+
+
+  return render_template("history.html", portfolio_history=portfolio_history)
 
 
 if __name__ == "__main__":

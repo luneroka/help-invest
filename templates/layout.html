@@ -43,9 +43,12 @@
         >
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse align-items-center" id="navbar">
+        <div
+          class="collapse navbar-collapse d-flex align-items-center"
+          id="navbar"
+        >
           {% if session["user_id"] %}
-          <ul class="navbar-nav me-auto mt-2">
+          <ul class="navbar-nav me-auto">
             <li class="nav-item">
               <a class="nav-link" href="/dashboard">Dashboard</a>
             </li>
@@ -56,16 +59,32 @@
               <a class="nav-link" href="/history">View History</a>
             </li>
           </ul>
-          <ul class="navbar-nav ms-auto mt-2">
-            <li class="nav-item">
-              <a class="nav-link" href="/change-password">Change Password</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/logout">Log Out</a>
+          <ul class="navbar-nav ms-auto me-5">
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                data-bs-toggle="dropdown"
+                href="#"
+                role="button"
+                aria-expanded="false"
+                >My Account</a
+              >
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item" href="/risk-profile">Risk-Profile</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/change-password"
+                    >Change Password</a
+                  >
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li><a class="dropdown-item" href="/logout">Log Out</a></li>
+              </ul>
             </li>
           </ul>
           {% else %}
-          <ul class="navbar-nav ms-auto mt-2">
+          <ul class="navbar-nav ms-auto me-5">
             <li class="nav-item">
               <a class="nav-link" href="/signup">Sign Up</a>
             </li>

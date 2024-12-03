@@ -1,30 +1,59 @@
 {% extends "layout.html" %} {% block title %} Update Portfolio {% endblock %} {%
 block main %}
-<h1>Add a New Investment</h1>
+<h1>Add New Investments</h1>
 <form method="POST">
-  <label for="category-name">Category</label>
-  <select name="category-name" id="category-name" required>
-    <option value="" disabled selected>Select a category</option>
-    {% for category in categories %}
-    <option value="{{ category[0] }}">{{ category[0] }}</option>
-    {% endfor %}
-  </select>
+  <div class="d-flex flex-column justify-content-center align-items-center">
+    <div class="mb-5 input-group-lg text-start">
+      <label for="category-name" class="entry-label form-label">CATEGORY</label>
+      <select
+        class="form-select"
+        name="category-name"
+        id="category-name"
+        required
+        style="min-width: 300px"
+      >
+        <option value="" disabled selected>Select a category</option>
+        {% for category in categories %}
+        <option value="{{ category[0] }}">{{ category[0] }}</option>
+        {% endfor %}
+      </select>
+    </div>
 
-  <label for="sub-category">Sub-Category</label>
-  <select name="sub-category" id="sub-category" required>
-    <option value="" disabled selected>Select a sub-category</option>
-  </select>
+    <div class="mb-5 input-group-lg text-start">
+      <label for="sub-category" class="entry-label form-label">ACCOUNT</label>
+      <select
+        class="form-select"
+        name="sub-category"
+        id="sub-category"
+        required
+        style="min-width: 300px"
+      >
+        <option value="" disabled selected>Select an account</option>
+      </select>
+    </div>
 
-  <label for="amount">Amount</label>
-  <input
-    type="text"
-    name="amount"
-    id="amount"
-    required
-    placeholder="Enter amount"
-  />
+    <div class="mb-5 input-group-lg text-start">
+      <label for="amount" class="entry-label form-label">AMOUNT</label>
+      <input
+        type="number"
+        name="amount"
+        id="amount"
+        required
+        placeholder="Enter amount"
+        class="form-control"
+        style="min-width: 300px"
+      />
+    </div>
+  </div>
 
-  <button type="submit">Add Investment</button>
+  <button
+    id="add-invest"
+    type="submit"
+    class="btn btn-primary btn-lg"
+    style="width: 300px"
+  >
+    Add Investment
+  </button>
 </form>
 
 <script>
@@ -36,7 +65,7 @@ block main %}
   categorySelect.addEventListener('change', () => {
     const selectedCategory = categorySelect.value;
     subCategorySelect.innerHTML =
-      '<option value="" disabled selected>Select a sub-category</option>';
+      '<option value="" disabled selected>Select an account</option>';
     allCategories
       .filter((category) => category.name === selectedCategory)
       .forEach((category) => {
