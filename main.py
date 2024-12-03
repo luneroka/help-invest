@@ -251,6 +251,11 @@ def add_entry():
                            all_categories=all_categories)
 
 
+@app.route("/history")
+def view_history():
+   return render_template("history.html")
+
+
 if __name__ == "__main__":
   # Instantiate db
   with app.app_context():

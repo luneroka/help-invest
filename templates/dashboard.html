@@ -1,6 +1,6 @@
 {% extends "layout.html" %} {% block title %} Dashboard {% endblock %} {% block
 main %}
-<h1 id="portfolio-summary">Your Portfolio Summary</h1>
+<h1 id="portfolio-summary">Portfolio Summary</h1>
 
 <div class="container-fluid">
   <div class="row">
@@ -9,8 +9,8 @@ main %}
         <thead class="table-dark">
           <tr>
             <th>Category</th>
-            <th>Sub-category</th>
-            <th>Total Amount</th>
+            <th>Account</th>
+            <th>Total</th>
           </tr>
         </thead>
         <tbody>
@@ -30,7 +30,7 @@ main %}
           {% endfor %}
           <tr>
             <td colspan="2" class="text-end">
-              <strong>Total for {{ category }}</strong>
+              <strong>Total {{ category }}</strong>
             </td>
             <td><strong>{{ details.total_amount | usd }}</strong></td>
           </tr>
