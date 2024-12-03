@@ -1,0 +1,45 @@
+/* Index */
+#signup a,
+#login a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+.d-grid {
+  margin-top: 2rem;
+}
+
+#disclaimer-text {
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
+h2 {
+  font-size: 1.5em;
+  margin-bottom: 0;
+}
+
+#index-container {
+  margin-top: 1em;
+}
+
+.index-categories {
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+/* Portfolio */
+h1 {
+  margin-bottom: 1em;
+}
+
+#portfolio-table {
+  padding: 1em;
+  padding-right: 4em;
+}
+
+#recommendation {
+  padding: 1em;
+  padding-left: 4em;
+}

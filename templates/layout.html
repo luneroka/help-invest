@@ -43,7 +43,7 @@
         >
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbar">
+        <div class="collapse navbar-collapse align-items-center" id="navbar">
           {% if session["user_id"] %}
           <ul class="navbar-nav me-auto mt-2">
             <li class="nav-item">
@@ -51,6 +51,9 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/add-entry">Add Entry</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/history">View History</a>
             </li>
           </ul>
           <ul class="navbar-nav ms-auto mt-2">
@@ -89,8 +92,6 @@
     </header>
     {% endif %} {% endwith %}
 
-    <main class="container py-5 text-center">
-      {% block main %}{% endblock %}
-    </main>
+    <main class="py-3 px-5 text-center">{% block main %}{% endblock %}</main>
   </body>
 </html>

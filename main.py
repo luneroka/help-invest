@@ -164,6 +164,11 @@ def change_password():
   return render_template("change-password.html")
 
 
+@app.route("/")
+def index():
+   return render_template("index.html")
+
+
 @app.route("/dashboard", methods=["GET"])
 def dashboard():
   # Display portfolio data

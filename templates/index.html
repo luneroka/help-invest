@@ -1,12 +1,12 @@
 {% extends "layout.html" %} {% block title %} Home Page {% endblock %} {% block
 main %}
-<div class="container">
+<div class="container-fluid" id="index-container">
   <div class="row">
-    <div class="col-md-6"></div>
+    <div class="col-md-6 d-flex flex-column justify-content-between text-start">
       <h1>Welcome to the Investment Advisor Tool!</h1>
-      <div id="disclaimer">
+      <div id="disclaimer" class="alert alert-secondary">
         <p>
-          <span>Disclaimer:</span> This tool is a guide, not the sole source for making financial decisions. Financial markets are dynamic, and past asset performance doesn’t guarantee future results. It assumes you already have your income, insurance, and a debt-free financial foundation, so you're only investing "extra" money.
+          <span id="disclaimer-text">Disclaimer</span> This tool is a guide, not the sole source for making financial decisions. Financial markets are dynamic, and past asset performance doesn’t guarantee future results. It assumes you already have your income, insurance, and a debt-free financial foundation, so you're only investing "extra" money.
         </p>
       </div>
       <h2>What makes this app special?</h2>
@@ -16,7 +16,7 @@ main %}
       <h2>How it works:</h2>
       <p>
         <ol>
-          <li>Sign up or log in.</li>
+          <li><a href="/signup">Sign up</a> or <a href="/login">Log in</a></li>
           <li>Define your risk profile (default is 'medium').</li>
           <li>Enter your investments by category and sub-category (e.g., Stocks > AMZN > $12,000).</li>
           <li>View your portfolio on the dashboard as a table or graph, with personalized recommendations.</li>
@@ -25,18 +25,19 @@ main %}
       </p>
       <h2>How are the categories defined?</h2>
       <p>
-        The app follows a Maslow-inspired pyramid for financial investments:
+        The app follows a very basic version of Maslow-inspired pyramid for financial investments:
       </p>
       <ul>
-        <li><span>Savings:</span> The base layer, focusing on securing liquidity for unexpected events.</li>
-        <li><span>Real Estate:</span> Once savings are secured, invest in property to build wealth.</li>
-        <li><span>Stock Market:</span> With security in place, invest in higher-risk, higher-reward assets like stocks or cryptocurrencies.</li>
-        <li><span>Exotic Investments (optional):</span> For high-risk, pleasure-related investments (e.g., wine, cars, watches). This tool currently focuses on the first three categories.</li>
+        <li><span class="index-categories">Savings:</span> The base layer, focusing on securing liquidity for unexpected events.</li>
+        <li><span class="index-categories">Real Estate:</span> Once savings are secured, invest in property to build wealth.</li>
+        <li><span class="index-categories">Stock Market:</span> With security in place, invest in higher-risk, higher-reward assets like stocks or cryptocurrencies.</li>
+        <li><span class="index-categories">Exotic Investments (optional):</span> For high-risk, pleasure-related investments (e.g., wine, cars, watches). This tool currently focuses on the first three categories.</li>
       </ul>
       <h3>Sign up now and start visualizing your financial future!</h3>
-      <button id="signup">Sign Up</button>
-      <button id="signin">Sign In</button>
-    <div class="col-md-6"></div>
+    </div>
+    <div class="col-md-6 d-flex flex-column justify-content-between">
+      <img src="/static/pyramid.png" alt="Image of Maslow's pyramid applied to Finance" class="img-fluid">
+    </div>
   </div>
 </div>
 {% endblock %}
