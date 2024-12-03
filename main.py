@@ -13,11 +13,11 @@ def login():
 
     # Validate input
     if not username:
-      flash("Username is required")
+      flash("Username is required", "error")
       return render_template("login.html"), 403
   
     if not password:
-      flash("Password is required")
+      flash("Password is required", "error")
       return render_template("login.html"), 403
     
     # Query database for username
@@ -25,7 +25,7 @@ def login():
 
     # Validate username and password
     if not user or not check_password_hash(user.hash, password):
-      flash("Invalid username or password")
+      flash("Invalid username or password", "error")
       return render_template("login.html"), 403
     
     # Log the use in
@@ -52,34 +52,35 @@ def signup():
     password = request.form.get("password")
     confirmation = request.form.get("confirmation")
 
+    # Validate username input
+    if not username:
+      flash("Username is required", "error")
+      return render_template("signup.html"), 400
+  
     # Validate password input
     if not password:
-      flash("Password is required")
+      flash("Password is required", "error")
       return render_template("signup.html"), 400
     
     # Validate password strength (100% ChatGPT)
     password_error = validate_password_strength(password)
     if password_error:
-      flash(password_error)
+      flash(password_error, "error")
       return render_template("signup.html"), 400
     
     # Validate other input
     if not confirmation:
-      flash("Must confirm password")
+      flash("Must confirm password", "error")
       return render_template("signup.html"), 400
     
     if confirmation != password:
-      flash("Passwords do not match")
+      flash("Passwords do not match", "error")
       return render_template("signup.html"), 400
     
-    if not username:
-      flash("Username is required")
-      return render_template("signup.html"), 400
-  
     # Check if username already exists
     existing_user = Users.query.filter_by(username=username).first()
     if existing_user:
-      flash("Username already exists")
+      flash("Username already exists", "error")
       return render_template("signup.html"), 400
     
     # Hash password and create new user
@@ -90,11 +91,11 @@ def signup():
     try:
       db.session.add(new_user)
       db.session.commit()
-      flash("You account has been successfuly created")
+      flash("You account has been successfuly created", "success")
       return redirect("/login")
     except Exception as e:
       db.session.rollback()
-      flash("An error has occurred. Please try again")
+      flash("An error has occurred. Please try again", "error")
       return render_template("/signup.html"), 500
   
   return render_template("signup.html")
@@ -111,25 +112,25 @@ def change_password():
 
     # Validate input
     if not current_password:
-        flash("Current password is required")
+        flash("Current password is required", "error")
         return render_template("change-password.html"), 400
     
     if not new_password:
-        flash("New password is required")
+        flash("New password is required", "error")
         return render_template("change-password.html"), 400
       
     if not confirmation:
-      flash("Must confirm new password")
+      flash("Must confirm new password", "error")
       return render_template("change-password.html"), 400
     
     if confirmation != new_password:
-      flash("Passwords do not match")
+      flash("Passwords do not match", "error")
       return render_template("change-password.html"), 400
     
     # Validate password strength (100% ChatGPT)
     password_error = validate_password_strength(new_password)
     if password_error:
-      flash(password_error)
+      flash(password_error, "error")
       return render_template("change-password.html"), 400
     
     # Retrieve user
@@ -137,12 +138,12 @@ def change_password():
 
     # Validate current password
     if not user or not check_password_hash(user.hash, current_password):
-        flash("Current password is invalid")
+        flash("Current password is invalid", "error")
         return render_template("change-password.html"), 400
     
     # Check if new password is different from current password
     if check_password_hash(user.hash, new_password):
-      flash("New password must be different from current password")
+      flash("New password must be different from current password", "error")
       return render_template("change-password.html"), 400
     
     # Hash new password
@@ -152,12 +153,12 @@ def change_password():
     try:
       user.hash = new_hashed_password
       db.session.commit()
-      flash("Your password was successfuly updated. Please log back in.")
       session.clear()
+      flash("Your password was successfuly updated! Please log back in.", "success")
       return redirect("/login")
     except Exception as e:
         db.session.rollback()
-        flash("An error has occurred. Please try again")
+        flash("An error has occurred. Please try again", "error")
         return render_template("/change-password.html"), 500
   
   return render_template("change-password.html")
@@ -214,13 +215,13 @@ def add_entry():
             return redirect("/add-entry")
 
         if not category_name or not sub_category:
-            flash("Both category and sub-category are required")
+            flash("Both category and sub-category are required", "error")
             return redirect("/add-entry")
 
         # Query for the category
         category_query = Categories.query.filter_by(name=category_name, sub_category=sub_category).first()
         if not category_query:
-            flash("The selected category and sub-category combination does not exist.")
+            flash("The selected category and sub-category combination does not exist.", "error")
             return redirect("/add-entry")
         
         # Create and save the new entry
@@ -229,11 +230,11 @@ def add_entry():
         try:
             db.session.add(new_entry)
             db.session.commit()
-            flash("Investment added successfully!")
+            flash("Investment added successfully!", "success")
             return redirect("/dashboard")
         except Exception as e:
             db.session.rollback()
-            flash("An error occurred while adding the entry.")
+            flash("An error occurred while adding the entry.", "error")
             return redirect("/dashboard")
 
     # Get unique categories and all categories

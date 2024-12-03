@@ -1,5 +1,5 @@
 import re
-from flask import redirect, render_template, session
+from flask import redirect, render_template, session, flash
 from functools import wraps
 
 # Password strength validator
