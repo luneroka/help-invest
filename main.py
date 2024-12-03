@@ -3,6 +3,7 @@ from config import app, db
 from models import Users, Categories, Portfolios
 from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import validate_password_strength, login_required, serialize_category
+from datetime import datetime
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -211,6 +212,7 @@ def add_entry():
         category_name = request.form.get("category-name")
         sub_category = request.form.get("sub-category")
         amount = request.form.get("amount")
+        entry_time = datetime.utcnow()
 
         # Validate input
         try:
@@ -231,7 +233,7 @@ def add_entry():
         
         # Create and save the new entry
         category_id = category_query.id
-        new_entry = Portfolios(user_id=user_id, category_id=category_id, amount=amount)
+        new_entry = Portfolios(user_id=user_id, category_id=category_id, amount=amount, entry_time=entry_time)
         try:
             db.session.add(new_entry)
             db.session.commit()

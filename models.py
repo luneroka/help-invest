@@ -1,4 +1,5 @@
 from config import db
+from datetime import datetime
 
 class Users(db.Model):
   id = db.Column(db.Integer, primary_key=True)
@@ -31,6 +32,7 @@ class Portfolios(db.Model):
   user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
   category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
   amount = db.Column(db.Integer, nullable=False)
+  entry_time = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
 
   # Define relationships for easier querying
   user = db.relationship('Users', backref='portfolios')
@@ -42,4 +44,5 @@ class Portfolios(db.Model):
       "userId": self.user_id,
       "categoryId": self.category_id,
       "amount": self.amount,
+      "entryTime": self.entry_time,
     }
