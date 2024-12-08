@@ -2,8 +2,11 @@ from flask import request, jsonify, redirect, render_template, flash, session
 from config import app, db
 from models import Users, Categories, Portfolios
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import validate_password_strength, login_required, serialize_category
+from helpers import validate_password_strength, login_required, serialize_category, register_error_handlers
 from datetime import datetime
+
+# CSRF Error handler (by ChatGPT)
+register_error_handlers(app)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -253,14 +256,19 @@ def add_entry():
                            all_categories=all_categories)
 
 
+
 @app.route("/history")
 @login_required
 def view_history():
   # Retrieve data for table
   user_id = session['user_id']
 
-  portfolio_entries = db.session.query(Portfolios, Categories).join(Categories, Portfolios.category_id == Categories.id).filter(Portfolios.user_id == user_id).all()
+  page = request.args.get('page', 1, type=int) # ChatGPT
+  per_page = 10
+  portfolio_entries = db.session.query(Portfolios, Categories).join(Categories, Portfolios.category_id == Categories.id).filter(Portfolios.user_id == user_id).order_by(Portfolios.entry_time.desc())
 
+  # Apply pagination
+  pagination = portfolio_entries.paginate(page=page, per_page=per_page, error_out=False)
 
   if not portfolio_entries:
      flash("No history entries found", "info")
@@ -269,18 +277,47 @@ def view_history():
   # Create a dictionary to hold table data
   portfolio_history = [
     {
+    "id": entry.Portfolios.id,
     "category_name": entry.Categories.name,
     "sub_category_name": entry.Categories.sub_category,
     "amount": entry.Portfolios.amount,
     "entry_time": entry.Portfolios.entry_time.strftime('%Y-%m-%d %H:%M:%S')
     }
-    for entry in portfolio_entries
+    for entry in pagination.items
   ]
 
-  # Delete button on each row
+  return render_template("history.html", portfolio_history=portfolio_history, pagination=pagination)
 
 
-  return render_template("history.html", portfolio_history=portfolio_history)
+@app.route("/delete-entry", methods=["POST"])
+@login_required
+def delete_entry():
+  # Retrieve entry id from the form
+  entry_id = request.form.get("entry_id")
+
+  if not entry_id:
+      flash("Invalid entry ID", "error")
+      return redirect("/history")
+  
+  # Retrieve portfolio entry by id
+  entry = Portfolios.query.filter_by(id=entry_id, user_id=session['user_id']).first()
+
+  if not entry:
+      flash("Entry not found or user does not have permission to delete", "error")
+      return redirect("/history")
+  
+  # Update db
+  try:
+      # Delete entry from db
+      db.session.delete(entry)
+      db.session.commit()
+      flash("Entry successfully deleted", "success")
+  except Exception as e:
+     db.session.rollback()
+     flash("An error has occurred while deleting the entry. Please try again", "error")
+  
+  # Redirect to history page
+  return redirect("/history")
 
 
 if __name__ == "__main__":

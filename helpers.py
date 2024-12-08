@@ -1,6 +1,7 @@
 import re
-from flask import redirect, render_template, session, flash
+from flask import request, redirect, render_template, session, flash
 from functools import wraps
+from flask_wtf.csrf import CSRFError
 
 # Password strength validator
 def validate_password_strength(password):
@@ -39,3 +40,10 @@ def serialize_category(category):
 def usd(value):
     """Format value as USD."""
     return f"${value:,.0f}"
+
+# ChatGPT code
+def register_error_handlers(app):
+    @app.errorhandler(CSRFError)
+    def handle_csrf_error(e):
+        flash("CSRF token missing or invalid. Please try again.", "error")
+        return redirect(request.referrer or "/"), 400
