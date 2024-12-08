@@ -47,9 +47,13 @@
         </button>
         <div class="collapse navbar-collapse" id="navbar">
           {% if session["user_id"] %}
-          <ul class="navbar-nav me-auto nav-underline">
+          <ul
+            class="navbar-nav me-auto nav-underline"
+            id="myTab"
+            role="tablist"
+          >
             <li class="nav-item">
-              <a class="nav-link active" href="/dashboard">Dashboard</a>
+              <a class="nav-link" href="/dashboard">Dashboard</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/add-entry">Add Entry</a>

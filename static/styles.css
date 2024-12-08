@@ -1,5 +1,17 @@
+/* General */
+button.main-btn {
+  background-color: #b3cfc3 !important;
+  font-weight: bold !important;
+  color: white !important;
+}
+
+button.main-btn:hover {
+  background-color: #ddcbb9 !important;
+  color: #404040 !important;
+}
+
 /* Header */
-nav {
+nav.navbar {
   background-color: #fff6fb;
 }
 
