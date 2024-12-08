@@ -47,11 +47,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbar">
           {% if session["user_id"] %}
-          <ul
-            class="navbar-nav me-auto nav-underline"
-            id="myTab"
-            role="tablist"
-          >
+          <ul class="navbar-nav me-auto nav-underline">
             <li class="nav-item">
               <a class="nav-link" href="/dashboard">Dashboard</a>
             </li>
@@ -87,7 +83,7 @@
             </li>
           </ul>
           {% else %}
-          <ul class="navbar-nav ms-auto me-5">
+          <ul class="navbar-nav ms-auto me-5 nav-underline">
             <li class="nav-item">
               <a class="nav-link" href="/signup">Sign Up</a>
             </li>
