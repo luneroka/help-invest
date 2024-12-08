@@ -1,3 +1,13 @@
+/* Header */
+nav {
+  background-color: #fff6fb;
+}
+
+.nav-link {
+  color: #404040;
+  font-weight: 500;
+}
+
 /* Index */
 #signup a,
 #login a {

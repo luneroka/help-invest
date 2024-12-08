@@ -1,4 +1,4 @@
-from flask import request, jsonify, redirect, render_template, flash, session
+from flask import request, redirect, render_template, flash, session
 from config import app, db
 from models import Users, Categories, Portfolios
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -35,7 +35,7 @@ def login():
     # Log the use in
     session.clear()
     session["user_id"] = user.id
-      
+    
     # Redirect user to dashboard
     return redirect("/dashboard")
   
@@ -188,14 +188,14 @@ def dashboard():
     sub_category_name = entry.Categories.sub_category
     amount = entry.Portfolios.amount
 
-    # If category doesn't exist in dictionary, initialize it
+    # If category doesn't exist in dictionary, initialize it (with help of ChatGPT)
     if category_name not in portfolio_summary:
       portfolio_summary[category_name] = {'total_amount': 0, 'sub_categories': {}}
     
     # Add amount to category total
     portfolio_summary[category_name]['total_amount'] += amount
 
-    # If sub-category doesn't exist, initialize it
+    # If sub-category doesn't exist, initialize it (with help of ChatGPT)
     if sub_category_name not in portfolio_summary[category_name]['sub_categories']:
       portfolio_summary[category_name]['sub_categories'][sub_category_name] = 0
     
@@ -247,14 +247,13 @@ def add_entry():
             flash("An error occurred while adding the entry.", "error")
             return redirect("/dashboard")
 
-    # Get unique categories and all categories
+    # Get unique categories and all categories (with help of ChatGPT)
     distinct_categories = Categories.query.with_entities(Categories.name).distinct().all()
     all_categories = [serialize_category(cat) for cat in Categories.query.all()]
 
     return render_template("add-entry.html",
                            categories=distinct_categories,
                            all_categories=all_categories)
-
 
 
 @app.route("/history")
@@ -295,7 +294,7 @@ def delete_entry():
   # Retrieve entry id from the form
   entry_id = request.form.get("entry_id")
 
-  if not entry_id:
+  if not entry_id: 
       flash("Invalid entry ID", "error")
       return redirect("/history")
   
@@ -313,8 +312,8 @@ def delete_entry():
       db.session.commit()
       flash("Entry successfully deleted", "success")
   except Exception as e:
-     db.session.rollback()
-     flash("An error has occurred while deleting the entry. Please try again", "error")
+      db.session.rollback()
+      flash("An error has occurred while deleting the entry. Please try again", "error")
   
   # Redirect to history page
   return redirect("/history")

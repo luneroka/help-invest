@@ -25,13 +25,15 @@
 
     <link href="/static/styles.css" rel="stylesheet" />
 
-    <title>Investment Advisor {% block title %}{% endblock %}</title>
+    <title>HelpInvest {% block title %}{% endblock %}</title>
   </head>
 
   <body>
-    <nav class="bg-light border navbar navbar-expand-md navbar-light">
+    <nav class="border navbar navbar-expand-md navbar-light">
       <div class="container-fluid">
-        <a class="navbar-brand" href="/">Investment Advisor</a>
+        <a class="navbar-brand" href="/"
+          ><img src="/static/logo.png" alt="Logo" width="196px" height="auto"
+        /></a>
         <button
           aria-controls="navbar"
           aria-expanded="false"
@@ -45,9 +47,9 @@
         </button>
         <div class="collapse navbar-collapse" id="navbar">
           {% if session["user_id"] %}
-          <ul class="navbar-nav me-auto">
+          <ul class="navbar-nav me-auto nav-underline">
             <li class="nav-item">
-              <a class="nav-link" href="/dashboard">Dashboard</a>
+              <a class="nav-link active" href="/dashboard">Dashboard</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/add-entry">Add Entry</a>
@@ -68,7 +70,7 @@
               >
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="/risk-profile">Risk-Profile</a>
+                  <a class="dropdown-item" href="/risk-profile">Risk Profile</a>
                 </li>
                 <li>
                   <a class="dropdown-item" href="/change-password"

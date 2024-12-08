@@ -1,9 +1,9 @@
 import re
-from flask import request, redirect, render_template, session, flash
+from flask import request, redirect, session, flash
 from functools import wraps
 from flask_wtf.csrf import CSRFError
 
-# Password strength validator
+# Password strength validator (ChatGPT code)
 def validate_password_strength(password):
     # Password should be at least 8 characters long, contain at least one uppercase letter and one special character
     if len(password) < 8:
@@ -14,9 +14,10 @@ def validate_password_strength(password):
         return "Password must contain at least one special character (@, $, !, %, *, ?, &)."
     return None
 
+
 def login_required(f):
     """
-    Decorate routes to require login.
+    Decorate routes to require login. (CS50 code)
 
     https://flask.palletsprojects.com/en/latest/patterns/viewdecorators/
     """
@@ -30,6 +31,7 @@ def login_required(f):
     return decorated_function
 
 
+# helper to get unique categories (with help of ChatGPT)
 def serialize_category(category):
     return {
         "id": category.id,
@@ -37,9 +39,11 @@ def serialize_category(category):
         "sub_category": category.sub_category
     }
 
+
 def usd(value):
-    """Format value as USD."""
+    """Format value as USD (CS50 code)"""
     return f"${value:,.0f}"
+
 
 # ChatGPT code
 def register_error_handlers(app):
