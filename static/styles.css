@@ -56,6 +56,38 @@ h3 {
   font-weight: bold;
 }
 
+/* Risk Profile */
+#risk-profile-explain {
+  margin: 2rem 0;
+  text-align: left;
+}
+
+h2#what-risk {
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+#quote {
+  font-weight: bold;
+  font-style: italic;
+}
+
+#risk-quote {
+  margin-top: 3rem;
+}
+
+blockquote {
+  font-style: italic;
+}
+
+cite {
+  font-weight: bold;
+}
+
+#current-profile {
+  font-size: 2rem;
+}
+
 /* Portfolio */
 h1 {
   margin-bottom: 1em;

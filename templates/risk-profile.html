@@ -37,44 +37,78 @@ main %}
       </table>
       <div id="risk-profile-explain">
         <p>
-          "Knowing your risk tolerance level is a critical component in building
-          your investment strategy. Your investment time horizon and your
-          emotional response to market fluctuations are two of the key factors
-          to consider when assessing your risk profile."
+          Understanding your level of risk tolerance is an essential part of
+          developing your investment strategy. Two important aspects to evaluate
+          when determining your risk profile are your investment time horizon
+          and how you emotionally react to changes in the market.
         </p>
 
-        <h2>What is a risk profile?</h2>
+        <h2 id="what-risk">What is a risk profile?</h2>
 
         <p>
-          Your risk profile refers to how willing and able you are to take on
-          risk while investing—and it should be a major consideration when
-          you’re forming your investment strategy. Determining your risk profile
-          can help you make investment decisions you both feel comfortable with
-          and that help you make progress toward your financial goals."
+          Your risk profile reflects both your willingness and capacity to take
+          on risk in your investments, making it a key factor to consider when
+          shaping your investment strategy. Understanding your risk profile
+          allows you to make investment choices that align with your comfort
+          level and support your progress toward achieving your financial goals.
         </p>
 
-        From US Bank. Read more about how to determine your risk profile by
-        reading this article.
+        <span id="quote">
+          Learn more on how to determine your risk profile by reading
+          <a
+            href="https://www.usbank.com/investing/financial-perspectives/investing-insights/how-to-determine-risk-tolerance.html"
+            >this article</a
+          >.
+        </span>
+
+        <div id="risk-quote" class="alert alert-secondary">
+          <blockquote>
+            “I don’t think the objective of investment should ever be to take a
+            risk in order to get a return. I think the objective of shrewd
+            investment should be to find opportunities which offer a larger
+            return than the average, combined with adequate safety.”
+            <br /><br /><cite>- Benjamin Graham</cite>
+          </blockquote>
+        </div>
       </div>
     </div>
 
     <div class="col-md-6" id="selection">
-      <div id="current-profile">
-        <p>
-          Your current risk profile is <strong>{{ current_profile }}</strong>
-        </p>
+      <div class="d-flex flex-column justify-content-center align-items-center">
+        <div id="current-profile" class="mb-5">
+          <p>
+            Your current risk profile is <strong>{{ current_profile }}</strong>
+          </p>
+        </div>
+        <form action="/risk-profile" method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <div class="mb-5 input-group-lg text-start">
+            <label for="risk" class="entry-label form-label"
+              >Select your profile below:</label
+            >
+            <select
+              name="risk"
+              id="risk"
+              class="form-select"
+              style="max-width: 300px"
+              required
+            >
+              <option value="" selected disabled>Select an option</option>
+              <option value="conservative">Conservative</option>
+              <option value="moderate">Moderate</option>
+              <option value="aggressive">Aggressive</option>
+            </select>
+          </div>
+          <button
+            id="confirm-profile"
+            type="submit"
+            class="btn btn-lg main-btn"
+            style="width: 300px"
+          >
+            Confirm Profile
+          </button>
+        </form>
       </div>
-      <h2>Select your profile below</h2>
-      <form action="/risk-profile" method="post">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <select name="risk" id="risk">
-          <option value="" selected disabled>Select an option</option>
-          <option value="conservative">Conservative</option>
-          <option value="moderate">Moderate</option>
-          <option value="aggressive">Aggressive</option>
-        </select>
-        <button type="submit">Confirm Profile</button>
-      </form>
     </div>
   </div>
 </div>
