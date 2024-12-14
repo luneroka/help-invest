@@ -238,6 +238,19 @@ def dashboard():
     # Add amount to sub-category total
     portfolio_summary[category_name]['sub_categories'][sub_category_name] += amount
 
+  # Display recommendation
+  # Calculate current totals per category
+
+  # Calculate percentage repartition of categories
+
+  # Fetch user's risk profile
+
+  # Define expected repartition based off current risk profile (in value and %)
+  
+  # Calculate difference between current and expected (in value and %)
+
+  # Display to user as rebalancing recommendation
+
 # Prepare the data to be passed into the template
   return render_template("dashboard.html", portfolio_summary=portfolio_summary)
 
@@ -290,6 +303,39 @@ def add_entry():
     return render_template("add-entry.html",
                            categories=distinct_categories,
                            all_categories=all_categories)
+
+
+@app.route("/withdraw", methods=["GET", "POST"])
+@login_required
+def withdraw():
+  user_id = session['user_id']
+
+  # Handle POST method
+
+
+  # Get categories and accounts with existing balance
+  distinct_categories = (
+     db.session.query(Categories.name)
+     .join(Portfolios, Categories.id == Portfolios.category_id)
+     .filter(Portfolios.user_id == user_id, Portfolios.amount > 0)
+     .distinct()
+     .all()
+  )
+
+  existing_categories = (
+     db.session.query(Categories, Portfolios)
+     .join(Portfolios, Categories.id == Portfolios.category_id)
+     .filter(Portfolios.user_id == user_id, Portfolios.amount > 0)
+     .all()
+  )
+
+  # Create a dictionary to hold categories and sub-categories with total amounts
+  withdraw_categories = [
+    {"category": entry.Categories.name, "sub_category": entry.Categories.sub_category}
+    for entry in existing_categories
+]
+    
+  return render_template("withdraw.html", distinct_categories=[cat.name for cat in distinct_categories], withdraw_categories=withdraw_categories)
 
 
 @app.route("/history")
