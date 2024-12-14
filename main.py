@@ -173,6 +173,39 @@ def index():
    return render_template("index.html")
 
 
+@app.route("/risk-profile", methods=["GET", "POST"])
+@login_required
+def risk_profile():
+   user_id = session['user_id']
+
+   # Handle POST method
+   if request.method == "POST":
+      new_profile = request.form.get("risk").lower()
+      if not new_profile:
+         flash("Please select a risk profile from the dropdown list.", "error")
+         return redirect("/risk-profile")
+      
+      # Retrieve user
+      user = db.session.query(Users).filter(Users.id == user_id).first()
+
+      # Update db
+      try:
+         user.risk_profile = new_profile
+         db.session.commit()
+         flash("Your risk profile was updated successfully", "success")
+         return redirect("/risk-profile")
+      except Exception as e:
+         db.session.rollback()
+         flash("An error has occurred. Your risk profile could not be updated", "error")
+         return redirect("/risk-profile")
+         
+  
+   # Fetch current risk profile
+   user = db.session.query(Users).filter(Users.id == user_id).first()
+   current_profile = user.risk_profile.upper()
+   return render_template("risk-profile.html", current_profile=current_profile)
+
+
 @app.route("/dashboard", methods=["GET"])
 def dashboard():
   # Display portfolio data
