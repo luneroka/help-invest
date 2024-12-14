@@ -68,7 +68,7 @@ main %}
       <form action="/risk-profile" method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <select name="risk" id="risk">
-          <option value="#" selected disabled>Select an option</option>
+          <option value="" selected disabled>Select an option</option>
           <option value="conservative">Conservative</option>
           <option value="moderate">Moderate</option>
           <option value="aggressive">Aggressive</option>

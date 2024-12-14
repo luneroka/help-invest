@@ -180,10 +180,13 @@ def risk_profile():
 
    # Handle POST method
    if request.method == "POST":
-      new_profile = request.form.get("risk").lower()
-      if not new_profile:
+      user_risk_profile = request.form.get("risk")
+      if not user_risk_profile:
          flash("Please select a risk profile from the dropdown list.", "error")
          return redirect("/risk-profile")
+
+      # Change valid input to lower case
+      new_profile = user_risk_profile.lower()
       
       # Retrieve user
       user = db.session.query(Users).filter(Users.id == user_id).first()
