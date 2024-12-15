@@ -1,4 +1,5 @@
 from flask import request, redirect, render_template, flash, session
+from sqlalchemy import func
 from config import app, db
 from models import Users, Categories, Portfolios
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -213,45 +214,28 @@ def risk_profile():
 def dashboard():
   # Display portfolio data
   user_id = session['user_id']
-  portfolio_entries = db.session.query(Portfolios, Categories).join(Categories).filter(Portfolios.user_id == user_id).all()
-
-  # Create a dictionary to hold categories and sub-categories with total amounts
-  portfolio_summary = {}
-
-  # Loop through portfolio entries
-  for entry in portfolio_entries:
-    category_name = entry.Categories.name
-    sub_category_name = entry.Categories.sub_category
-    amount = entry.Portfolios.amount
-
-    # If category doesn't exist in dictionary, initialize it (with help of ChatGPT)
-    if category_name not in portfolio_summary:
-      portfolio_summary[category_name] = {'total_amount': 0, 'sub_categories': {}}
-    
-    # Add amount to category total
-    portfolio_summary[category_name]['total_amount'] += amount
-
-    # If sub-category doesn't exist, initialize it (with help of ChatGPT)
-    if sub_category_name not in portfolio_summary[category_name]['sub_categories']:
-      portfolio_summary[category_name]['sub_categories'][sub_category_name] = 0
-    
-    # Add amount to sub-category total
-    portfolio_summary[category_name]['sub_categories'][sub_category_name] += amount
-
-  # Display recommendation
-  # Calculate current totals per category
-
-  # Calculate percentage repartition of categories
-
-  # Fetch user's risk profile
-
-  # Define expected repartition based off current risk profile (in value and %)
   
-  # Calculate difference between current and expected (in value and %)
+  # Query category totals
+  category_totals = db.session.query(
+     Categories.name.label("category_name"),
+     Categories.sub_category.label("sub_category_name"),
+     func.sum(Portfolios.amount).label("total_balance")
+  ).join(Categories, Portfolios.category_id == Categories.id).filter(Portfolios.user_id == user_id).group_by(Categories.name, Categories.sub_category).all()
 
-  # Display to user as rebalancing recommendation
+  # Create a dictionary for data rendering
+  portfolio_summary = {}
+  for row in category_totals:
+     category_name = row.category_name
+     sub_category_name = row.sub_category_name
+     total_balance = row.total_balance
 
-# Prepare the data to be passed into the template
+     if category_name not in portfolio_summary:
+        portfolio_summary[category_name] = {'total_balance': 0, 'sub_categories': {}}
+
+     portfolio_summary[category_name]['total_balance'] += total_balance
+     portfolio_summary[category_name]['sub_categories'][sub_category_name] = total_balance
+
+  # Render template
   return render_template("dashboard.html", portfolio_summary=portfolio_summary)
 
 
