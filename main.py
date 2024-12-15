@@ -264,7 +264,7 @@ def add_entry():
         category_name = request.form.get("category-name")
         sub_category = request.form.get("sub-category")
         amount = request.form.get("amount")
-        entry_time = datetime.utcnow()
+        timestamp = datetime.utcnow()
 
         # Validate input
         try:
@@ -285,7 +285,7 @@ def add_entry():
         
         # Create and save the new entry
         category_id = category_query.id
-        new_entry = Portfolios(user_id=user_id, category_id=category_id, amount=amount, entry_time=entry_time)
+        new_entry = Portfolios(user_id=user_id, category_id=category_id, amount=amount, timestamp=timestamp)
         try:
             db.session.add(new_entry)
             db.session.commit()
@@ -308,34 +308,103 @@ def add_entry():
 @app.route("/withdraw", methods=["GET", "POST"])
 @login_required
 def withdraw():
-  user_id = session['user_id']
+    user_id = session["user_id"]
 
-  # Handle POST method
+    if request.method == "POST":
+        category_name = request.form.get("category-name")
+        sub_category_name = request.form.get("sub-category")
+        withdraw_amount = float(request.form.get("amount"))
+
+        if not category_name or not sub_category_name or withdraw_amount <= 0:
+            flash("Invalid input. Please try again.", "error")
+            return redirect("/withdraw")
+
+        # Aggregate the total balance for the selected sub-category
+        portfolio_entry = (
+            db.session.query(
+                Categories.name,
+                Categories.sub_category,
+                Categories.id.label("category_id"),
+                db.func.sum(Portfolios.amount).label("total_balance"),
+            )
+            .join(Portfolios, Categories.id == Portfolios.category_id)
+            .filter(
+                Portfolios.user_id == user_id,
+                Categories.name == category_name,
+                Categories.sub_category == sub_category_name,
+            )
+            .group_by(Categories.name, Categories.sub_category, Categories.id)
+            .first()
+        )
+
+        if not portfolio_entry or portfolio_entry.total_balance < withdraw_amount:
+            flash("Insufficient balance.", "error")
+            return redirect("/withdraw")
+
+        # Deduct the withdrawal amount from the existing balance (without creating new entries yet)
+        portfolio_entries = (
+            db.session.query(Portfolios)
+            .join(Categories, Portfolios.category_id == Categories.id)
+            .filter(
+                Portfolios.user_id == user_id,
+                Categories.name == category_name,
+                Categories.sub_category == sub_category_name,
+                Portfolios.amount > 0,
+            )
+            .order_by(Portfolios.id)  # Ensure deterministic updates
+            .all()
+        )
+
+        remaining_amount = withdraw_amount
+        for entry in portfolio_entries:
+            if remaining_amount <= 0:
+                break
+            if entry.amount >= remaining_amount:
+                entry.amount -= remaining_amount
+                remaining_amount = 0
+            else:
+                remaining_amount -= entry.amount
+                entry.amount = 0
+
+        # Log the withdrawal as a new negative transaction in the Portfolios table
+        # Create a new transaction with a negative amount for the withdrawal (this doesn't double the amount)
+        withdrawal_entry = Portfolios(
+            category_id=portfolio_entry.category_id,
+            user_id=user_id,
+            amount=-withdraw_amount,  # Negative withdrawal
+            timestamp=datetime.utcnow(),
+        )
+        db.session.add(withdrawal_entry)
+
+        db.session.commit()
+        flash("Withdrawal successful and recorded!", "success")
+        return redirect("/withdraw")
+
+    # Aggregate categories and sub-categories with their total balances
+    withdraw_categories = (
+        db.session.query(
+            Categories.name, Categories.sub_category, db.func.sum(Portfolios.amount).label("total_balance")
+        )
+        .join(Portfolios, Categories.id == Portfolios.category_id)
+        .filter(Portfolios.user_id == user_id, Portfolios.amount > 0)
+        .group_by(Categories.name, Categories.sub_category)
+        .all()
+    )
+
+    # Transform data for the frontend
+    distinct_categories = sorted(set([cat.name for cat in withdraw_categories]))
+    withdraw_categories_data = [
+        {"category": entry.name, "sub_category": entry.sub_category, "balance": entry.total_balance}
+        for entry in withdraw_categories
+    ]
+
+    return render_template(
+        "withdraw.html",
+        distinct_categories=distinct_categories,
+        withdraw_categories=withdraw_categories_data,
+    )
 
 
-  # Get categories and accounts with existing balance
-  distinct_categories = (
-     db.session.query(Categories.name)
-     .join(Portfolios, Categories.id == Portfolios.category_id)
-     .filter(Portfolios.user_id == user_id, Portfolios.amount > 0)
-     .distinct()
-     .all()
-  )
-
-  existing_categories = (
-     db.session.query(Categories, Portfolios)
-     .join(Portfolios, Categories.id == Portfolios.category_id)
-     .filter(Portfolios.user_id == user_id, Portfolios.amount > 0)
-     .all()
-  )
-
-  # Create a dictionary to hold categories and sub-categories with total amounts
-  withdraw_categories = [
-    {"category": entry.Categories.name, "sub_category": entry.Categories.sub_category}
-    for entry in existing_categories
-]
-    
-  return render_template("withdraw.html", distinct_categories=[cat.name for cat in distinct_categories], withdraw_categories=withdraw_categories)
 
 
 @app.route("/history")
@@ -346,7 +415,7 @@ def view_history():
 
   page = request.args.get('page', 1, type=int) # ChatGPT
   per_page = 10
-  portfolio_entries = db.session.query(Portfolios, Categories).join(Categories, Portfolios.category_id == Categories.id).filter(Portfolios.user_id == user_id).order_by(Portfolios.entry_time.desc())
+  portfolio_entries = db.session.query(Portfolios, Categories).join(Categories, Portfolios.category_id == Categories.id).filter(Portfolios.user_id == user_id).order_by(Portfolios.timestamp.desc())
 
   # Apply pagination
   pagination = portfolio_entries.paginate(page=page, per_page=per_page, error_out=False)
@@ -362,7 +431,7 @@ def view_history():
     "category_name": entry.Categories.name,
     "sub_category_name": entry.Categories.sub_category,
     "amount": entry.Portfolios.amount,
-    "entry_time": entry.Portfolios.entry_time.strftime('%Y-%m-%d %H:%M:%S')
+    "timestamp": entry.Portfolios.timestamp.strftime('%Y-%m-%d %H:%M:%S')
     }
     for entry in pagination.items
   ]

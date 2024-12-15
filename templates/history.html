@@ -9,8 +9,8 @@ block main %}
         <tr>
           <th>Category</th>
           <th>Account</th>
-          <th>Amount Added</th>
-          <th>Entry Time</th>
+          <th>Amount</th>
+          <th>Timestamp</th>
           <th>Delete Entry</th>
         </tr>
       </thead>
@@ -20,7 +20,7 @@ block main %}
           <td class="align-middle">{{ entry.category_name }}</td>
           <td class="align-middle">{{ entry.sub_category_name }}</td>
           <td class="align-middle">{{ entry.amount | usd }}</td>
-          <td class="align-middle">{{ entry.entry_time }}</td>
+          <td class="align-middle">{{ entry.timestamp }}</td>
           <td class="align-middle">
             <form action="/delete-entry" method="post" style="display: inline">
               <input
