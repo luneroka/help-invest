@@ -14,8 +14,8 @@ block main %}
         style="min-width: 300px"
       >
         <option value="" disabled selected>Select a category</option>
-        {% for category in withdraw_categories %} {% if entry.balance > 0 %}
-        <option value="{{ entry.category }}">{{ entry.category }}</option>
+        {% for entry in withdraw_categories %} {% if entry.balance > 0 %}
+        <option value="{{ entry.category }}">{{ entry.name }}</option>
         {% endif %} {% endfor %}
       </select>
     </div>
