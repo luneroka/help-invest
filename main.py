@@ -223,9 +223,9 @@ def dashboard():
   # Create a dictionary for data rendering
   portfolio_summary = {}
   for balance, category_name, sub_category_name in portfolio_data:
-     # Validate data (ChatGPT suggestion and code)
-      if not category_name or not sub_category_name:
-       continue  # Skip invalid entries
+      # Skipcategories with 0 balance
+      if balance == 0:
+         continue
         
      # Initialize category structure
       if category_name not in portfolio_summary:
@@ -238,6 +238,9 @@ def dashboard():
       if sub_category_name not in portfolio_summary[category_name]['sub_categories']:
         portfolio_summary[category_name]['sub_categories'][sub_category_name] = 0
       portfolio_summary[category_name]['sub_categories'][sub_category_name] += balance
+  
+  # Filter out any categories with a total balance of zero (chatGPT code for better rendering)
+  portfolio_summary = {category: details for category, details in portfolio_summary.items() if details['total_balance'] > 0}
 
   # Render template
   return render_template("dashboard.html", portfolio_summary=portfolio_summary)
