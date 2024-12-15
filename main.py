@@ -1,7 +1,7 @@
 from flask import request, redirect, render_template, flash, session
 from sqlalchemy import func
 from config import app, db
-from models import Users, Categories, Portfolios
+from models import Users, Categories, Portfolios, Transactions
 from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import validate_password_strength, login_required, serialize_category, register_error_handlers
 from datetime import datetime
@@ -253,6 +253,9 @@ def add_entry():
         # Validate input
         try:
             amount = float(amount)
+            if amount == 0:
+                flash("Amount cannot be zero.", "error")
+                return redirect("/add-entry")
         except ValueError:
             flash("Invalid amount")
             return redirect("/add-entry")
@@ -269,12 +272,23 @@ def add_entry():
         
         # Create and save the new entry
         category_id = category_query.id
-        new_entry = Portfolios(user_id=user_id, category_id=category_id, amount=amount, timestamp=timestamp)
+        new_entry = Transactions(user_id=user_id, category_id=category_id, amount=amount, timestamp=timestamp)
         try:
             db.session.add(new_entry)
+
+            # Update balance in Portfolios table
+            portfolio = Portfolios.query.filter_by(user_id=user_id, category_id=category_id).first()
+            if portfolio:
+               portfolio.balance += amount
+            else:
+               portfolio = Portfolios(user_id=user_id, category_id=category_id, balance=amount)
+               db.session.add(portfolio)
+            
+            # Commit changes
             db.session.commit()
             flash("Investment added successfully!", "success")
             return redirect("/dashboard")
+        
         except Exception as e:
             db.session.rollback()
             flash("An error occurred while adding the entry.", "error")
