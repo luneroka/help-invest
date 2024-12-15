@@ -14,18 +14,19 @@ main %}
           </tr>
         </thead>
         <tbody>
-          {% for category, details in portfolio_summary.items() %}
+          {% if portfolio-summary %} {% for category, details in
+          portfolio_summary.items() %}
           <tr>
             <td colspan="3" class="text-start">
               <strong>{{ category }}</strong>
             </td>
           </tr>
-          {% for sub_category, sub_total in details.sub_categories.items() %}
+          {% for sub_category, balance in details.sub_categories.items() %}
           <tr>
             <td></td>
             <!-- Empty cell to indent sub-category -->
             <td>{{ sub_category }}</td>
-            <td>{{ sub_total | usd }}</td>
+            <td>{{ balance | usd }}</td>
           </tr>
           {% endfor %}
           <tr>
@@ -34,7 +35,13 @@ main %}
             </td>
             <td><strong>{{ details.total_balance | usd }}</strong></td>
           </tr>
-          {% endfor %}
+          {% endfor %} {% else %}
+          <tr>
+            <td colspan="3" class="text-center">
+              No portfolio data available.
+            </td>
+          </tr>
+          {% endif %}
         </tbody>
       </table>
     </div>

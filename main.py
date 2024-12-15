@@ -215,25 +215,29 @@ def dashboard():
   # Display portfolio data
   user_id = session['user_id']
   
-  # Query category totals
-  category_totals = db.session.query(
-     Categories.name.label("category_name"),
-     Categories.sub_category.label("sub_category_name"),
-     func.sum(Portfolios.amount).label("total_balance")
-  ).join(Categories, Portfolios.category_id == Categories.id).filter(Portfolios.user_id == user_id).group_by(Categories.name, Categories.sub_category).all()
+  # Query user balances
+  portfolio_data = db.session.query(
+     Portfolios.balance, Categories.name, Categories.sub_category
+  ).join(Categories, Portfolios.category_id == Categories.id).filter(Portfolios.user_id == user_id).all()
 
   # Create a dictionary for data rendering
   portfolio_summary = {}
-  for row in category_totals:
-     category_name = row.category_name
-     sub_category_name = row.sub_category_name
-     total_balance = row.total_balance
+  for balance, category_name, sub_category_name in portfolio_data:
+     # Validate data (ChatGPT suggestion and code)
+      if not category_name or not sub_category_name:
+       continue  # Skip invalid entries
+        
+     # Initialize category structure
+      if category_name not in portfolio_summary:
+       portfolio_summary[category_name] = {'total_balance': 0, 'sub_categories': {}}
 
-     if category_name not in portfolio_summary:
-        portfolio_summary[category_name] = {'total_balance': 0, 'sub_categories': {}}
+     # Update total balance for the category
+      portfolio_summary[category_name]['total_balance'] += balance
 
-     portfolio_summary[category_name]['total_balance'] += total_balance
-     portfolio_summary[category_name]['sub_categories'][sub_category_name] = total_balance
+     # Update balance of sub-category
+      if sub_category_name not in portfolio_summary[category_name]['sub_categories']:
+        portfolio_summary[category_name]['sub_categories'][sub_category_name] = 0
+      portfolio_summary[category_name]['sub_categories'][sub_category_name] += balance
 
   # Render template
   return render_template("dashboard.html", portfolio_summary=portfolio_summary)
