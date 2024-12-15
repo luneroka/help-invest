@@ -220,12 +220,18 @@ def dashboard():
      Portfolios.balance, Categories.name, Categories.sub_category
   ).join(Categories, Portfolios.category_id == Categories.id).filter(Portfolios.user_id == user_id).all()
 
+  # Initialize total estate
+  total_estate = 0
+
   # Create a dictionary for data rendering
   portfolio_summary = {}
   for balance, category_name, sub_category_name in portfolio_data:
       # Skipcategories with 0 balance
       if balance == 0:
          continue
+      
+      # Add balance to total estate
+      total_estate += balance
         
      # Initialize category structure
       if category_name not in portfolio_summary:
@@ -239,11 +245,11 @@ def dashboard():
         portfolio_summary[category_name]['sub_categories'][sub_category_name] = 0
       portfolio_summary[category_name]['sub_categories'][sub_category_name] += balance
   
-  # Filter out any categories with a total balance of zero (chatGPT code for better rendering)
+  # Filter out any categories with a total balance of zero (chatGPT code to help with better rendering)
   portfolio_summary = {category: details for category, details in portfolio_summary.items() if details['total_balance'] > 0}
 
   # Render template
-  return render_template("dashboard.html", portfolio_summary=portfolio_summary)
+  return render_template("dashboard.html", portfolio_summary=portfolio_summary, total_estate=total_estate)
 
 
 @app.route("/add-entry", methods=["GET", "POST"])

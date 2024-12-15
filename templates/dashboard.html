@@ -1,7 +1,9 @@
 {% extends "layout.html" %} {% block title %} Dashboard {% endblock %} {% block
 main %}
 <h1 id="portfolio-summary">Portfolio Summary</h1>
-
+<h2 id="total-estate">
+  Total Estate: <strong>{{ total_estate | usd }}</strong>
+</h2>
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-6" id="portfolio-table">

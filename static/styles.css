@@ -88,7 +88,7 @@ cite {
   font-size: 2rem;
 }
 
-/* Portfolio */
+/* Dashboard */
 h1 {
   margin-bottom: 1em;
 }
@@ -101,6 +101,10 @@ h1 {
 #recommendation {
   padding: 1em;
   padding-left: 4em;
+}
+
+h2#total-estate {
+  margin-bottom: 2rem;
 }
 
 /* Add Entry */
