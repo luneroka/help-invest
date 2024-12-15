@@ -243,6 +243,19 @@ def dashboard():
       if sub_category_name not in portfolio_summary[category_name]['sub_categories']:
         portfolio_summary[category_name]['sub_categories'][sub_category_name] = 0
       portfolio_summary[category_name]['sub_categories'][sub_category_name] += balance
+
+  # Display recommendation
+  # Calculate current totals per category
+
+  # Calculate percentage repartition of categories
+
+  # Fetch user's risk profile
+
+  # Define expected repartition based off current risk profile (in value and %)
+  
+  # Calculate difference between current and expected (in value and %)
+
+  # Display to user as rebalancing recommendation
   
   # Filter out any categories with a total balance of zero (chatGPT code to help with better rendering)
   portfolio_summary = {category: details for category, details in portfolio_summary.items() if details['total_balance'] > 0}
