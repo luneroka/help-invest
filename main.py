@@ -219,13 +219,12 @@ def dashboard():
      Portfolios.balance, Categories.name, Categories.sub_category
   ).join(Categories, Portfolios.category_id == Categories.id).filter(Portfolios.user_id == user_id).all()
 
-  # Initialize total estate
+  # Initialize total estate and portfolio summary
   total_estate = 0
-
-  # Create a dictionary for data rendering
   portfolio_summary = {}
+
   for balance, category_name, sub_category_name in portfolio_data:
-      # Skipcategories with 0 balance
+      # Skip categories with 0 balance
       if balance == 0:
          continue
       
@@ -244,24 +243,136 @@ def dashboard():
         portfolio_summary[category_name]['sub_categories'][sub_category_name] = 0
       portfolio_summary[category_name]['sub_categories'][sub_category_name] += balance
 
-  # Display recommendation
-  # Calculate current totals per category
-
-  # Calculate percentage repartition of categories
-
-  # Fetch user's risk profile
-
-  # Define expected repartition based off current risk profile (in value and %)
-  
-  # Calculate difference between current and expected (in value and %)
-
-  # Display to user as rebalancing recommendation
-  
   # Filter out any categories with a total balance of zero (chatGPT code to help with better rendering)
   portfolio_summary = {category: details for category, details in portfolio_summary.items() if details['total_balance'] > 0}
+  
+  ##################################
 
+  # Display recommendation (with help of ChatGPT for optimization)
+
+  # Handle empty portfolio
+  if total_estate == 0:
+      flash("Your portfolio is empty. Start building your wealth!", "info")
+      return render_template("dashboard.html", portfolio_summary={}, total_estate=0, portfolio_analysis=[])
+  
+  # Fetch user's risk profile
+  user = db.session.query(Users).filter(Users.id == user_id).first()
+  risk_profile = user.risk_profile
+
+  # Define default repartition based on risk profiles
+  risk_profiles = {
+     'conservative': {'Savings': 0.5, 'Real Estate': 0.3, 'Stocks': 0.2},
+     'aggressive': {'Savings': 0.05, 'Real Estate': 0.15, 'Stocks': 0.8},
+     'moderate': {'Savings': 0.25, 'Real Estate': 0.25, 'Stocks': 0.5},
+  }
+
+  # Set default profile
+  reco_percentages = risk_profiles.get(risk_profile, risk_profiles['moderate'])
+
+  # Calculate current and recommended totals dymanically
+  current_totals = {category: details['total_balance'] for category, details in portfolio_summary.items()}
+  reco_totals = {category: total_estate * reco_percentages.get(category, 0) for category in portfolio_summary.keys()}
+
+  # Merge all portfolio data in a single list of dictionaries for easier rendering
+  portfolio_analysis = [
+    {
+        'category': category,
+        'current_balance': current_totals.get(category, 0),
+        'current_percentage': current_totals.get(category, 0) / total_estate if total_estate > 0 else 0,
+        'recommended_balance': reco_totals.get(category, 0),
+        'recommended_percentage': reco_percentages.get(category, 0),
+        'gap': reco_totals.get(category, 0) - current_totals.get(category, 0),
+    }
+    for category in portfolio_summary.keys()
+  ]
+  
   # Render template
-  return render_template("dashboard.html", portfolio_summary=portfolio_summary, total_estate=total_estate)
+  return render_template("dashboard.html", portfolio_summary=portfolio_summary, total_estate=total_estate, portfolio_analysis=portfolio_analysis)
+
+  # Display recommendation (my initial code)
+""" 
+  # Initialize current totals per category
+  current_savings = portfolio_summary['Savings']['total_balance']
+  current_real_estate = portfolio_summary['Real Estate']['total_balance']
+  current_stocks = portfolio_summary['Stocks']['total_balance']
+
+  # Calculate percentage repartition of categories
+  current_savings_percentage = current_savings / total_estate
+  current_real_estate_percentage = current_real_estate / total_estate
+  current_stocks_percentage = current_stocks / total_estate
+
+  # Fetch user's risk profile
+  user = db.session.query(Users).filter(Users.id == user_id).first()
+  risk_profile = user.risk_profile
+
+  # Define expected repartition based off current risk profile
+  if risk_profile == 'conservative':
+     reco_savings = total_estate * 0.5
+     reco_real_estate = total_estate * 0.3
+     reco_stocks = total_estate * 0.2
+  elif risk_profile == 'aggressive':
+     reco_savings = total_estate * 0.05
+     reco_real_estate = total_estate * 0.15
+     reco_stocks = total_estate * 0.8
+  else:
+     reco_savings = total_estate * 0.25
+     reco_real_estate = total_estate * 0.25
+     reco_stocks = total_estate * 0.5
+
+  # Initialize recommended repartition based on risk profiles
+  reco_savings_percentage = reco_savings / total_estate
+  reco_real_estate_percentage = reco_real_estate / total_estate
+  reco_stocks_percentage = reco_stocks / total_estate
+
+  # Calculate difference between current and expected (in value and %)
+  savings_gap = reco_savings - current_savings
+  real_estate_gap = reco_real_estate - current_real_estate
+  stocks_gap = reco_stocks - current_stocks
+
+  # Create dictionary to render current portfolio data
+  current_portfolio = [
+     {
+     'current_savings': current_savings,
+     'current_savings_percentage': current_savings_percentage   
+     },
+     {
+     'current_real_estate': current_real_estate,
+     'current_real_estate_percentage': current_real_estate_percentage        
+     },
+     {
+     'current_stocks': current_stocks,
+     'current_stocks_percentage': current_stocks_percentage             
+     }
+  ]
+
+  # Create dictionary to render portfolio recommendation data
+  reco_portfolio = [
+     {
+        'reco_savings': reco_savings,
+        'reco_savings_percentage': reco_savings_percentage
+     },
+     {
+        'reco_real_estate': reco_real_estate,
+        'reco_real_estate_percentage': reco_real_estate_percentage
+     },
+     {
+        'reco_stocks': reco_stocks,
+        'reco_stocks_percentage': reco_stocks_percentage
+     }
+  ]
+
+  # Create dictionary to render gaps between current and recommended portfolio
+  portfolio_gaps = [
+     {
+        'savings_gap' : savings_gap,
+        'real_estate_gap': real_estate_gap,
+        'stocks_gap': stocks_gap
+     }
+  ]
+ 
+  # Render template
+  return render_template("dashboard.html", portfolio_summary=portfolio_summary, total_estate=total_estate, current_portfolio=current_portfolio, reco_portfolio=reco_portfolio, portfolio_gap=portfolio_gaps)
+  """
 
 
 @app.route("/add-entry", methods=["GET", "POST"])

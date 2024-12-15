@@ -5,8 +5,8 @@ main %}
   Total Estate: <strong>{{ total_estate | usd }}</strong>
 </h2>
 <div class="container-fluid">
-  <div class="row">
-    <div class="col-md-6" id="portfolio-table">
+  <div class="row align-items-center">
+    <div class="col-md-5" id="portfolio-table">
       <table class="table table-striped table-bordered">
         <thead class="table-dark">
           <tr>
@@ -48,16 +48,37 @@ main %}
       </table>
     </div>
 
-    <div class="col-md-6" id="recommendation">
+    <div class="col-md-7" id="recommendation">
       <div class="card">
-        <img src="/static/baby-fist.jpeg" class="card-img-top" alt="" />
         <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">
-            Some quick example text to build on the card title and make up the
-            bulk of the card's content.
-          </p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
+          <h4 class="card-title mb-5">Your recommendations</h4>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Current Balance</th>
+                <th>Current %</th>
+                <th>Recommended Balance</th>
+                <th>Recommended %</th>
+                <th>Gap</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for analysis in portfolio_analysis %}
+              <tr>
+                <td>{{ analysis.category }}</td>
+                <td>{{ analysis.current_balance | usd }}</td>
+                <td>{{ analysis.current_percentage | percentage }}</td>
+                <td>{{ analysis.recommended_balance | usd }}</td>
+                <td>{{ analysis.recommended_percentage | percentage }}</td>
+                <td>{{ analysis.gap | usd }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <button class="btn btn-lg main-btn mt-5">
+            <a id="go-invest" href="/add-entry">Go Invest</a>
+          </button>
         </div>
       </div>
     </div>

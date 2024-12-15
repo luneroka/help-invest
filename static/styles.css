@@ -115,3 +115,12 @@ h2#total-estate {
 button#add-invest {
   font-weight: bold;
 }
+
+a#go-invest {
+  text-decoration: none;
+  color: white;
+}
+
+a#go-invest:hover {
+  color: #404040;
+}

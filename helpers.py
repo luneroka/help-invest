@@ -44,6 +44,10 @@ def usd(value):
     """Format value as USD (CS50 code)"""
     return f"${value:,.0f}"
 
+def percentage(value):
+    """Format value as percentage (my own code derived from CS50's usd function)"""
+    return f"{value * 100:,.0f}%"
+
 
 # ChatGPT code
 def register_error_handlers(app):
