@@ -313,90 +313,80 @@ def withdraw():
     user_id = session["user_id"]
 
     if request.method == "POST":
+        # Retrieve and validate user input
         category_name = request.form.get("category-name")
         sub_category_name = request.form.get("sub-category")
-        withdraw_amount = float(request.form.get("amount"))
+        try:
+            withdraw_amount = float(request.form.get("amount"))
+        except ValueError:
+            flash("Invalid amount. Please enter a numeric value.", "error")
+            return redirect("/withdraw")
 
         if not category_name or not sub_category_name or withdraw_amount <= 0:
             flash("Invalid input. Please try again.", "error")
             return redirect("/withdraw")
+        
+        # Retrieve category ID and current balance
+        category_query = (
+           db.session.query(Categories)
+           .filter_by(name=category_name, sub_category=sub_category_name)
+           .first()
+        )     
+        if not category_query:
+            flash("The selected category and sub-category combination does not exist.", "error")
+            return redirect("/withdraw")
 
-        # Aggregate the total balance for the selected sub-category
+        category_id = category_query.id
+
+        # Fetch the current balance for the category
         portfolio_entry = (
-            db.session.query(
-                Categories.name,
-                Categories.sub_category,
-                Categories.id.label("category_id"),
-                db.func.sum(Portfolios.amount).label("total_balance"),
-            )
-            .join(Portfolios, Categories.id == Portfolios.category_id)
-            .filter(
-                Portfolios.user_id == user_id,
-                Categories.name == category_name,
-                Categories.sub_category == sub_category_name,
-            )
-            .group_by(Categories.name, Categories.sub_category, Categories.id)
+            db.session.query(Portfolios)
+            .filter_by(user_id=user_id, category_id=category_id)
             .first()
         )
 
-        if not portfolio_entry or portfolio_entry.total_balance < withdraw_amount:
+        if not portfolio_entry or portfolio_entry.balance < withdraw_amount:
             flash("Insufficient balance.", "error")
             return redirect("/withdraw")
 
-        # Deduct the withdrawal amount from the existing balance (without creating new entries yet)
-        portfolio_entries = (
-            db.session.query(Portfolios)
-            .join(Categories, Portfolios.category_id == Categories.id)
-            .filter(
-                Portfolios.user_id == user_id,
-                Categories.name == category_name,
-                Categories.sub_category == sub_category_name,
-                Portfolios.amount > 0,
-            )
-            .order_by(Portfolios.id)  # Ensure deterministic updates
-            .all()
-        )
+        # Deduct the withdrawal amount from the portfolio balance
+        portfolio_entry.balance -= withdraw_amount
 
-        remaining_amount = withdraw_amount
-        for entry in portfolio_entries:
-            if remaining_amount <= 0:
-                break
-            if entry.amount >= remaining_amount:
-                entry.amount -= remaining_amount
-                remaining_amount = 0
-            else:
-                remaining_amount -= entry.amount
-                entry.amount = 0
-
-        # Log the withdrawal as a new negative transaction in the Portfolios table
-        # Create a new transaction with a negative amount for the withdrawal (this doesn't double the amount)
-        withdrawal_entry = Portfolios(
-            category_id=portfolio_entry.category_id,
+        # Log the withdrawal as a negative transaction
+        withdrawal_transaction = Transactions(
             user_id=user_id,
-            amount=-withdraw_amount,  # Negative withdrawal
+            category_id=category_id,
+            amount=-withdraw_amount,  # Negative amount indicates withdrawal
             timestamp=datetime.utcnow(),
         )
-        db.session.add(withdrawal_entry)
-
-        db.session.commit()
-        flash("Withdrawal successful and recorded!", "success")
-        return redirect("/withdraw")
+        try:
+            db.session.add(withdrawal_transaction)
+            db.session.commit()
+            flash("Withdrawal successful!", "success")
+            return redirect("/dashboard")
+        except Exception as e:
+            db.session.rollback()
+            flash("An error occurred while processing your withdrawal. Please try again.", "error")
+            return redirect("/withdraw")
 
     # Aggregate categories and sub-categories with their total balances
     withdraw_categories = (
         db.session.query(
-            Categories.name, Categories.sub_category, db.func.sum(Portfolios.amount).label("total_balance")
+            Categories.name, Categories.sub_category, Portfolios.balance
         )
         .join(Portfolios, Categories.id == Portfolios.category_id)
-        .filter(Portfolios.user_id == user_id, Portfolios.amount > 0)
-        .group_by(Categories.name, Categories.sub_category)
+        .filter(Portfolios.user_id == user_id, Portfolios.balance > 0)
         .all()
     )
 
-    # Transform data for the frontend
+    # Transform data for the frontend (chatGPT code)
     distinct_categories = sorted(set([cat.name for cat in withdraw_categories]))
     withdraw_categories_data = [
-        {"category": entry.name, "sub_category": entry.sub_category, "balance": entry.total_balance}
+        {
+            "category": entry.name,
+            "sub_category": entry.sub_category,
+            "balance": entry.balance,
+        }
         for entry in withdraw_categories
     ]
 
@@ -417,28 +407,32 @@ def view_history():
 
   page = request.args.get('page', 1, type=int) # ChatGPT
   per_page = 10
-  portfolio_entries = db.session.query(Portfolios, Categories).join(Categories, Portfolios.category_id == Categories.id).filter(Portfolios.user_id == user_id).order_by(Portfolios.timestamp.desc())
+
+  # Query user's transactions
+  transaction_entries = db.session.query(
+     Transactions, Categories.name.label("category_name"), Categories.sub_category.label("sub_category_name")
+     ).join(Categories, Transactions.category_id == Categories.id).filter(Transactions.user_id == user_id).order_by(Transactions.timestamp.desc())
 
   # Apply pagination
-  pagination = portfolio_entries.paginate(page=page, per_page=per_page, error_out=False)
+  pagination = transaction_entries.paginate(page=page, per_page=per_page, error_out=False)
 
-  if not portfolio_entries:
-     flash("No history entries found", "info")
+  if not transaction_entries:
+     flash("No transaction history found", "info")
      return redirect("/dashboard")
   
   # Create a dictionary to hold table data
-  portfolio_history = [
+  transaction_history = [
     {
-    "id": entry.Portfolios.id,
-    "category_name": entry.Categories.name,
-    "sub_category_name": entry.Categories.sub_category,
-    "amount": entry.Portfolios.amount,
-    "timestamp": entry.Portfolios.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+    "id": entry.Transactions.id,
+    "category_name": entry.category_name,
+    "sub_category_name": entry.sub_category_name,
+    "amount": entry.Transactions.amount,
+    "timestamp": entry.Transactions.timestamp.strftime('%Y-%m-%d %H:%M:%S')
     }
     for entry in pagination.items
   ]
 
-  return render_template("history.html", portfolio_history=portfolio_history, pagination=pagination)
+  return render_template("history.html", portfolio_history=transaction_history, pagination=pagination)
 
 
 @app.route("/delete-entry", methods=["POST"])
@@ -451,22 +445,35 @@ def delete_entry():
       flash("Invalid entry ID", "error")
       return redirect("/history")
   
-  # Retrieve portfolio entry by id
-  entry = Portfolios.query.filter_by(id=entry_id, user_id=session['user_id']).first()
+  # Retrieve portfolio transaction by id
+  transaction = Transactions.query.filter_by(id=entry_id, user_id=session['user_id']).first()
 
-  if not entry:
-      flash("Entry not found or user does not have permission to delete", "error")
+  if not transaction:
+      flash("Transaction not found or user does not have permission to delete", "error")
       return redirect("/history")
   
-  # Update db
+  # Calculate corresponding portfolio entry
+  portfolio_entry = Portfolios.query.filter_by(user_id=session['user_id'], category_id=transaction.category_id).first()
+
+  if not portfolio_entry:
+      flash("Portfolio entry not found", "error")
+      return redirect("/history")
+  
+  # Adjust portfolio balance based on transaction type (positive or negative)
   try:
-      # Delete entry from db
-      db.session.delete(entry)
+      # Update portfolio balance
+      portfolio_entry.balance -= transaction.amount
+
+      # Delete the transaction entry
+      db.session.delete(transaction)
+
+      # Commit changes to both tables
       db.session.commit()
-      flash("Entry successfully deleted", "success")
+
+      flash("Transaction successfully deleted", "success")
   except Exception as e:
       db.session.rollback()
-      flash("An error has occurred while deleting the entry. Please try again", "error")
+      flash("An error has occurred while deleting the transaction. Please try again.", "error")
   
   # Redirect to history page
   return redirect("/history")
