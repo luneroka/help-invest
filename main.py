@@ -400,8 +400,6 @@ def withdraw():
     )
 
 
-
-
 @app.route("/history")
 @login_required
 def view_history():
