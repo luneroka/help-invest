@@ -63,6 +63,7 @@ block main %}
   const subCategorySelect = document.getElementById('sub-category');
   const form = document.getElementById('add-entry-form');
 
+  // With great help of AI from this point downwards
   const allCategories = JSON.parse('{{ all_categories | tojson | safe }}');
 
   categorySelect.addEventListener('change', () => {

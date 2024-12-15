@@ -1,5 +1,4 @@
 from flask import request, redirect, render_template, flash, session
-from sqlalchemy import func
 from config import app, db
 from models import Users, Categories, Portfolios, Transactions
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -420,7 +419,7 @@ def view_history():
      Transactions, Categories.name.label("category_name"), Categories.sub_category.label("sub_category_name")
      ).join(Categories, Transactions.category_id == Categories.id).filter(Transactions.user_id == user_id).order_by(Transactions.timestamp.desc())
 
-  # Apply pagination
+  # Apply pagination (ChatGPT)
   pagination = transaction_entries.paginate(page=page, per_page=per_page, error_out=False)
 
   if not transaction_entries:
