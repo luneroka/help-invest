@@ -1,6 +1,6 @@
 from flask import request, redirect, render_template, flash, session
 from config import app, db
-from models import Users, Categories, Portfolios, Transactions
+from models import *
 from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import validate_password_strength, login_required, serialize_category, register_error_handlers
 from datetime import datetime
