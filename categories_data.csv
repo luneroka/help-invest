@@ -1,0 +1,15 @@
+id,name,sub_category
+1,Savings,Cash
+2,Savings,HYSA
+3,Savings,CD
+4,Savings,HSA
+5,Real Estate,Residential
+6,Real Estate,Commercial
+7,Real Estate,REITs
+8,Real Estate,Crowdfunding
+9,Stocks,Stocks
+10,Stocks,Bonds
+11,Stocks,ETFs
+12,Stocks,Crypto
+13,Stocks,401k
+14,Stocks,IRA

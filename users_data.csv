@@ -1,0 +1,2 @@
+id,username,hash,risk_profile
+1,borislaloutre,pbkdf2:sha256:1000000$bnXXXLF0qvg4EtSM$18ad646d904ff02dd0d69c7c9d20111bcf787c64c0f669e4f5c2bb9aa762e34e,aggressive
