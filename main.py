@@ -210,6 +210,7 @@ def risk_profile():
 
 
 @app.route("/dashboard", methods=["GET"])
+@login_required
 def dashboard():
   # Display portfolio data
   user_id = session['user_id']
