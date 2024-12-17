@@ -1,5 +1,4 @@
 *.db
 *.sqlite
 *.sqlite3
-config.py
 populate_categories.py
