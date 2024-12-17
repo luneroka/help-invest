@@ -6,7 +6,7 @@ main %}
 </h2>
 <div class="container-fluid">
   <div class="row align-items-center">
-    <div class="col-md-5" id="portfolio-table">
+    <div class="col-md-4" id="portfolio-table">
       <table class="table table-striped table-bordered">
         <thead class="table-dark">
           <tr>
@@ -48,30 +48,52 @@ main %}
       </table>
     </div>
 
-    <div class="col-md-7" id="recommendation">
+    <div class="col-md-8 row" id="recommendation">
       <div class="card">
         <div class="card-body">
           <h4 class="card-title mb-5">YOUR RECOMMENDATIONS</h4>
-          <table class="table table-striped">
+          <table id="table-current" class="table table-striped">
             <thead>
               <tr>
-                <th>Category</th>
-                <th>Current Balance</th>
-                <th>Current %</th>
-                <th>Recommended Balance</th>
-                <th>Recommended %</th>
-                <th>Gap</th>
+                <th class="text-start">Category</th>
+                <th class="text-start">Current Balance</th>
+                <th class="text-start">Current %</th>
+                <th class="text-start"></th>
               </tr>
             </thead>
             <tbody>
               {% for analysis in portfolio_analysis %}
               <tr>
-                <td>{{ analysis.category }}</td>
-                <td>{{ analysis.current_balance | usd }}</td>
-                <td>{{ analysis.current_percentage | percentage }}</td>
-                <td>{{ analysis.recommended_balance | usd }}</td>
-                <td>{{ analysis.recommended_percentage | percentage }}</td>
-                <td>{{ analysis.gap | usd }}</td>
+                <td class="text-start">{{ analysis.category }}</td>
+                <td class="text-start">{{ analysis.current_balance | usd }}</td>
+                <td class="text-start">
+                  {{ analysis.current_percentage | percentage }}
+                </td>
+                <td class="text-start"></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <table id="table-reco" class="table table-striped">
+            <thead>
+              <tr>
+                <th class="text-start">Category</th>
+                <th class="text-start">Recommended Balance</th>
+                <th class="text-start">Recommended %</th>
+                <th class="text-start">Gap</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for analysis in portfolio_analysis %}
+              <tr>
+                <td class="text-start">{{ analysis.category }}</td>
+                <td class="text-start">
+                  {{ analysis.recommended_balance | usd }}
+                </td>
+                <td class="text-start">
+                  {{ analysis.recommended_percentage | percentage }}
+                </td>
+                <td class="text-start">{{ analysis.gap | usd }}</td>
               </tr>
               {% endfor %}
             </tbody>

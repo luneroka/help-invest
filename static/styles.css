@@ -95,17 +95,28 @@ h1 {
 }
 
 #portfolio-table {
-  padding: 1em;
-  padding-right: 4em;
+  padding-right: 2rem;
 }
 
 #recommendation {
-  padding: 1em;
-  padding-left: 4em;
+  padding-left: 2rem;
 }
 
 h2#total-estate {
   margin-bottom: 2rem;
+  text-align: start;
+  padding-left: 1em;
+}
+
+#table-current th,
+#table-current td,
+#table-reco th,
+#table-reco td {
+  width: 25% !important;
+}
+
+#table-reco {
+  margin-top: 2rem;
 }
 
 /* Add Entry */
