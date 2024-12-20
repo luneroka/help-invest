@@ -3,7 +3,7 @@ from flask import request, redirect, session, flash
 from functools import wraps
 from flask_wtf.csrf import CSRFError
 
-# Password strength validator (ChatGPT code)
+# Password strength validator
 def validate_password_strength(password):
     # Password should be at least 8 characters long, contain at least one uppercase letter and one special character
     if len(password) < 8:
@@ -16,12 +16,7 @@ def validate_password_strength(password):
 
 
 def login_required(f):
-    """
-    Decorate routes to require login. (CS50 code)
-
-    https://flask.palletsprojects.com/en/latest/patterns/viewdecorators/
-    """
-
+    """Decorate routes to require login"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("user_id") is None:
@@ -31,7 +26,7 @@ def login_required(f):
     return decorated_function
 
 
-# helper to get unique categories (with help of ChatGPT)
+# helper to get unique categories
 def serialize_category(category):
     return {
         "id": category.id,
@@ -41,11 +36,11 @@ def serialize_category(category):
 
 
 def usd(value):
-    """Format value as USD (CS50 code)"""
+    """Format value as USD"""
     return f"${value:,.0f}"
 
 def percentage(value):
-    """Format value as percentage (my own code derived from CS50's usd function)"""
+    """Format value as percentage"""
     return f"{value * 100:,.0f}%"
 
 
