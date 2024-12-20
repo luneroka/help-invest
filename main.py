@@ -5,7 +5,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import validate_password_strength, login_required, serialize_category, register_error_handlers
 from datetime import datetime
 
-# CSRF Error handler (by ChatGPT)
+# CSRF Error handler
 register_error_handlers(app)
 
 @app.route("/login", methods=["GET", "POST"])
@@ -66,7 +66,7 @@ def signup():
       flash("Password is required", "error")
       return render_template("signup.html"), 400
     
-    # Validate password strength (100% ChatGPT)
+    # Validate password strength
     password_error = validate_password_strength(password)
     if password_error:
       flash(password_error, "error")
@@ -131,7 +131,7 @@ def change_password():
       flash("Passwords do not match", "error")
       return render_template("change-password.html"), 400
     
-    # Validate password strength (100% ChatGPT)
+    # Validate password strength
     password_error = validate_password_strength(new_password)
     if password_error:
       flash(password_error, "error")
@@ -244,12 +244,10 @@ def dashboard():
         portfolio_summary[category_name]['sub_categories'][sub_category_name] = 0
       portfolio_summary[category_name]['sub_categories'][sub_category_name] += balance
 
-  # Filter out any categories with a total balance of zero (chatGPT code to help with better rendering)
+  # Filter out any categories with a total balance of zero
   portfolio_summary = {category: details for category, details in portfolio_summary.items() if details['total_balance'] > 0}
-  
-  ##################################
 
-  # Display recommendation (with help of ChatGPT for optimization)
+  # Display recommendation
 
   # Handle empty portfolio
   if total_estate == 0:
@@ -290,90 +288,6 @@ def dashboard():
   # Render template
   return render_template("dashboard.html", portfolio_summary=portfolio_summary, total_estate=total_estate, portfolio_analysis=portfolio_analysis)
 
-  # Display recommendation (my initial code)
-""" 
-  # Initialize current totals per category
-  current_savings = portfolio_summary['Savings']['total_balance']
-  current_real_estate = portfolio_summary['Real Estate']['total_balance']
-  current_stocks = portfolio_summary['Stocks']['total_balance']
-
-  # Calculate percentage repartition of categories
-  current_savings_percentage = current_savings / total_estate
-  current_real_estate_percentage = current_real_estate / total_estate
-  current_stocks_percentage = current_stocks / total_estate
-
-  # Fetch user's risk profile
-  user = db.session.query(Users).filter(Users.id == user_id).first()
-  risk_profile = user.risk_profile
-
-  # Define expected repartition based off current risk profile
-  if risk_profile == 'conservative':
-     reco_savings = total_estate * 0.5
-     reco_real_estate = total_estate * 0.3
-     reco_stocks = total_estate * 0.2
-  elif risk_profile == 'aggressive':
-     reco_savings = total_estate * 0.05
-     reco_real_estate = total_estate * 0.15
-     reco_stocks = total_estate * 0.8
-  else:
-     reco_savings = total_estate * 0.25
-     reco_real_estate = total_estate * 0.25
-     reco_stocks = total_estate * 0.5
-
-  # Initialize recommended repartition based on risk profiles
-  reco_savings_percentage = reco_savings / total_estate
-  reco_real_estate_percentage = reco_real_estate / total_estate
-  reco_stocks_percentage = reco_stocks / total_estate
-
-  # Calculate difference between current and expected (in value and %)
-  savings_gap = reco_savings - current_savings
-  real_estate_gap = reco_real_estate - current_real_estate
-  stocks_gap = reco_stocks - current_stocks
-
-  # Create dictionary to render current portfolio data
-  current_portfolio = [
-     {
-     'current_savings': current_savings,
-     'current_savings_percentage': current_savings_percentage   
-     },
-     {
-     'current_real_estate': current_real_estate,
-     'current_real_estate_percentage': current_real_estate_percentage        
-     },
-     {
-     'current_stocks': current_stocks,
-     'current_stocks_percentage': current_stocks_percentage             
-     }
-  ]
-
-  # Create dictionary to render portfolio recommendation data
-  reco_portfolio = [
-     {
-        'reco_savings': reco_savings,
-        'reco_savings_percentage': reco_savings_percentage
-     },
-     {
-        'reco_real_estate': reco_real_estate,
-        'reco_real_estate_percentage': reco_real_estate_percentage
-     },
-     {
-        'reco_stocks': reco_stocks,
-        'reco_stocks_percentage': reco_stocks_percentage
-     }
-  ]
-
-  # Create dictionary to render gaps between current and recommended portfolio
-  portfolio_gaps = [
-     {
-        'savings_gap' : savings_gap,
-        'real_estate_gap': real_estate_gap,
-        'stocks_gap': stocks_gap
-     }
-  ]
- 
-  # Render template
-  return render_template("dashboard.html", portfolio_summary=portfolio_summary, total_estate=total_estate, current_portfolio=current_portfolio, reco_portfolio=reco_portfolio, portfolio_gap=portfolio_gaps)
-  """
 
 
 @app.route("/add-entry", methods=["GET", "POST"])
@@ -431,7 +345,7 @@ def add_entry():
             flash("An error occurred while adding the entry.", "error")
             return redirect("/dashboard")
 
-    # Get unique categories and all categories (with help of ChatGPT)
+    # Get unique categories and all categories
     distinct_categories = Categories.query.with_entities(Categories.name).distinct().all()
     all_categories = [serialize_category(cat) for cat in Categories.query.all()]
 
@@ -512,7 +426,7 @@ def withdraw():
         .all()
     )
 
-    # Transform data for the frontend (chatGPT code)
+    # Transform data for the frontend
     distinct_categories = sorted(set([cat.name for cat in withdraw_categories]))
     withdraw_categories_data = [
         {
@@ -536,7 +450,7 @@ def view_history():
   # Retrieve data for table
   user_id = session['user_id']
 
-  page = request.args.get('page', 1, type=int) # ChatGPT
+  page = request.args.get('page', 1, type=int)
   per_page = 10
 
   # Query user's transactions
@@ -544,7 +458,7 @@ def view_history():
      Transactions, Categories.name.label("category_name"), Categories.sub_category.label("sub_category_name")
      ).join(Categories, Transactions.category_id == Categories.id).filter(Transactions.user_id == user_id).order_by(Transactions.timestamp.desc())
 
-  # Apply pagination (ChatGPT)
+  # Apply pagination
   pagination = transaction_entries.paginate(page=page, per_page=per_page, error_out=False)
 
   if not transaction_entries:

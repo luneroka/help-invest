@@ -3,7 +3,7 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from flask_wtf.csrf import CSRFProtect # ChatGPT recommendation
+from flask_wtf.csrf import CSRFProtect
 from helpers import usd, percentage
 # from flask_migrate import Migrate
 
@@ -17,7 +17,7 @@ app.jinja_env.filters["percentage"] = percentage
 # Wrap app in CORS to disable error and enable cross origin requests
 CORS(app)
 
-# Initialize Flask-WTF's CSRF (cross-site request forgery) protection (ChatGPT recommendation)
+# Initialize Flask-WTF's CSRF protection
 csrf = CSRFProtect(app)
 
 # Get the DATABASE_URL environment variable

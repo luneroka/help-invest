@@ -65,8 +65,6 @@ main %}
     '{{ withdraw_categories | tojson | safe }}'
   );
 
-  // With great help of AI from this point downwards
-
   // Populate sub-category dropdown based on selected category
   categorySelect.addEventListener('change', () => {
     const selectedCategory = categorySelect.value;
