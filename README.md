@@ -117,7 +117,7 @@ Here is the workflow of building the app:
 
 5. Debugging
 
-   Choice was made not to dive into full-proof testing methods such as Vitest, due to the low complexity of the project and the time consuming engagement towards learning these tools.
+   Choice was made not to dive into automated testing methods, due to the low complexity of the project and the time consuming engagement towards learning these testing frameworks.
    Instead, the routes were tested with basic usage and as much edge cases as possible at each step.
 
 6. Deployment
