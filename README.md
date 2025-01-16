@@ -15,33 +15,45 @@ HELP-INVEST is a portfolio management tool that helps users track their investme
 ## How It Works
 
 **Sign Up / Log In:** Create an account or log into an existing one.
+
 **Set Risk Profile:** Choose a risk profile (default: 'moderate').
+
 **Enter Investments:** Add investments by category and sub-category.
+
 **View Portfolio:** Access a dashboard with portfolio details and recommendations.
+
 **Update Regularly:** Keep your portfolio up to date for better insights.
 
 ## Categories Defined
 
 **Savings:** Liquidity for emergencies.
+
 **Real Estate:** Property investments.
+
 **Stock Market:** Higher-risk, higher-reward assets.
 
 ## Tools & Technologies
 
 **Backend:** Flask
+
 **Database:** SQLite (local), PostgreSQL (production)
+
 **Frontend:** Jinja, JavaScript, Bootstrap
+
 **Version Control:** Git, GitHub
 
 ## Key Features
 
 **User Authentication:** Login, sign-up, change password.
+
 **Portfolio Management:** Add, view, delete investments; track transactions.
+
 **Risk Profile:** Adjust portfolio recommendations based on risk profile.
 
 ## Deployment
 
 **Host:** Deployed on Heroku with PostgreSQL.
+
 **Database Migration:** Managed via Alembic for migration from SQLite to PostgreSQL.
 
 ## Credits
