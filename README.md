@@ -62,4 +62,4 @@ This project was completed as part of the Harvard CS50 final project.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
