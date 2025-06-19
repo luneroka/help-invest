@@ -1,6 +1,7 @@
 # HELP-INVEST
 
 **Site Link:** [helpinvest.net](https://www.helpinvest.net)
+
 **Video Demo:** [Watch here](https://youtu.be/tMvmXQEJahI)
 
 HELP-INVEST is a portfolio management tool that helps users track their investments across categories, compare their portfolio with personalized recommendations based on their risk profile, and make informed decisions.
@@ -12,23 +13,23 @@ HELP-INVEST is a portfolio management tool that helps users track their investme
 
 ## 📚 Features
 
-**User Authentication:** Login, sign-up, change password.
-**Set Risk Profile:** Choose a risk profile between low, moderate or high.
-**Portfolio Management:** Add, view, delete investments; track transactions.
-**Dashboard:** Table view of your investments in each category (Savings, Real Estate and Stock Market)
-**Recommendations:** Get recommendation on your current vs expected portfolio balance, based on your risk profile.
+- **User Authentication:** Login, sign-up, change password.
+- **Set Risk Profile:** Choose a risk profile between low, moderate or high.
+- **Portfolio Management:** Add, view, delete investments; track transactions.
+- **Dashboard:** Table view of your investments in each category (Savings, Real Estate and Stock Market)
+- **Recommendations:** Get recommendation on your current vs expected portfolio balance, based on your risk profile.
 
 ## 🛠️ Tech Stack
 
-**Database:** SQLite (local), PostgreSQL (production)
-**Backend:** Flask
-**Frontend:** Jinja, JavaScript, Bootstrap
-**Version Control:** Git, GitHub
+- **Database:** SQLite (local), PostgreSQL (production)
+- **Backend:** Flask
+- **Frontend:** Jinja, JavaScript, Bootstrap
+- **Version Control:** Git, GitHub
 
 ## 🚀 Deployment
 
-**Host:** Deployed on Heroku with PostgreSQL.
-**Database Migration:** Managed via Alembic for migration from SQLite to PostgreSQL.
+- **Host:** Deployed on Heroku with PostgreSQL.
+- **Database Migration:** Managed via Alembic for migration from SQLite to PostgreSQL.
 
 ## 🙏 Credits
 
