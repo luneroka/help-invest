@@ -1,10 +1,11 @@
-
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_wtf.csrf import CSRFProtect
 from helpers import usd, percentage
+from dotenv import load_dotenv
+load_dotenv()
 # from flask_migrate import Migrate
 
 # Initialize Flask app
@@ -14,30 +15,28 @@ app = Flask(__name__)
 app.jinja_env.filters["usd"] = usd
 app.jinja_env.filters["percentage"] = percentage
 
-# Wrap app in CORS to disable error and enable cross origin requests
+# Enable CORS
 CORS(app)
 
-# Initialize Flask-WTF's CSRF protection
+# Enable CSRF protection
 csrf = CSRFProtect(app)
 
-# Get the DATABASE_URL environment variable
+# Get environment variables
 database_url = os.environ.get('DATABASE_URL')
+secret_key = os.environ.get('SECRET_KEY')
 
-# Handle the deprecated 'postgres://' scheme
-if database_url.startswith("postgres://"):
-    database_url = database_url.replace("postgres://", "postgresql://", 1)
+# Raise errors if critical environment variables are missing
+if not database_url:
+    raise RuntimeError("DATABASE_URL environment variable not set.")
+if not secret_key:
+    raise RuntimeError("SECRET_KEY environment variable not set.")
 
-# Configure the SQLAlchemy database URI
+# Configure SQLAlchemy
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+app.config['SECRET_KEY'] = secret_key
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Recommended setting
 
-# Set-up secret key, necessary for flash messages and CSRF protection
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
-
-# Only for development phase. Enable when deploying
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
-
-
-# Create instance of the database
+# Initialize database
 db = SQLAlchemy(app)
 
 # migrate = Migrate(app, db)
