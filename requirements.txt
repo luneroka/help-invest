@@ -5,3 +5,4 @@ Flask-Cors
 Flask-WTF
 python-dotenv
 Werkzeug
+Flask-Migrate

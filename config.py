@@ -6,7 +6,7 @@ from flask_wtf.csrf import CSRFProtect
 from helpers import usd, percentage
 from dotenv import load_dotenv
 load_dotenv()
-# from flask_migrate import Migrate
+from flask_migrate import Migrate
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -39,4 +39,4 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Recommended setting
 # Initialize database
 db = SQLAlchemy(app)
 
-# migrate = Migrate(app, db)
+migrate = Migrate(app, db)

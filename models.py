@@ -10,7 +10,7 @@ class Users(db.Model):
   
 class Categories(db.Model):
   id = db.Column(db.Integer, primary_key=True)
-  name = db.Column(db.String(80), nullable=False)
+  category_name = db.Column(db.String(80), nullable=False)
   sub_category = db.Column(db.String(80), nullable=False)
 
 
