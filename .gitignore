@@ -5,3 +5,5 @@ populate_categories.py
 instance/
 Procfile
 .DS_Store
+.env
+__pycache__/
