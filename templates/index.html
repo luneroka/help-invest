@@ -3,7 +3,7 @@ main %}
 <div class="container-fluid" id="index-container">
   <div class="row">
     <div class="col-md-6 d-flex flex-column justify-content-between text-start">
-      <h1>Welcome to the helpInvest tool!</h1>
+      <h1>Welcome to the help-invest tool!</h1>
       <div id="disclaimer" class="alert alert-dark">
         <p>
           <span id="disclaimer-text">Disclaimer</span> This tool is a guide, not the sole source for making financial decisions. Financial markets are dynamic, and past asset performance doesn’t guarantee future results. It assumes you already have your income, insurance, and a debt-free financial foundation, so you're only investing "extra" money.
@@ -16,7 +16,7 @@ main %}
       <h2>How it works:</h2>
       <p>
         <ol>
-          <li><a href="/signup">Sign up</a> or <a href="/login">Log in</a></li>
+          <li><a href="{{ url_for('signup') }}">Sign up</a> or <a href="{{ url_for('login') }}">Log in</a></li>
           <li>Define your risk profile (default is 'moderate').</li>
           <li>Enter your investments by category and sub-category (e.g., Stocks > AMZN > $12,000).</li>
           <li>View your portfolio on the dashboard as a table or graph, with personalized recommendations.</li>

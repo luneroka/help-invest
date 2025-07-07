@@ -8,6 +8,7 @@ from datetime import datetime
 # CSRF Error handler
 register_error_handlers(app)
 
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
   if request.method == "POST":
