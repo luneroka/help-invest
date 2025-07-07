@@ -22,9 +22,7 @@ csrf = CSRFProtect(app)
 
 # Get the DATABASE_URL environment variable
 database_url = os.environ.get('DATABASE_URL')
-
-# Handle the deprecated 'postgres://' scheme
-if database_url.startswith("postgres://"):
+if database_url and database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
 
 # Configure the SQLAlchemy database URI
