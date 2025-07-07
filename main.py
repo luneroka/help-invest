@@ -241,7 +241,9 @@ def dashboard():
     # Query user balances
     portfolio_data = (
         db.session.query(
-            Portfolios.balance, Categories.name, Categories.sub_category
+            Portfolios.balance,
+            Categories.category_name,
+            Categories.sub_category
         )
         .join(Categories, Portfolios.category_id == Categories.id)
         .filter(Portfolios.user_id == user_id)
@@ -425,7 +427,9 @@ def add_entry():
 
     # Get unique categories and all categories
     distinct_categories = (
-        Categories.query.with_entities(Categories.name).distinct().all()
+        Categories.query.with_entities(
+            Categories.category_name
+            ).distinct().all()
     )
     all_categories = [
         serialize_category(cat) for cat in Categories.query.all()
@@ -509,7 +513,9 @@ def withdraw():
     # Aggregate categories and sub-categories with their total balances
     withdraw_categories = (
         db.session.query(
-            Categories.name, Categories.sub_category, Portfolios.balance
+            Categories.category_name,
+            Categories.sub_category,
+            Portfolios.balance
         )
         .join(Portfolios, Categories.id == Portfolios.category_id)
         .filter(Portfolios.user_id == user_id, Portfolios.balance > 0)
@@ -549,7 +555,7 @@ def view_history():
     transaction_entries = (
         db.session.query(
             Transactions,
-            Categories.name.label("category_name"),
+            Categories.category_name.label("category_name"),
             Categories.sub_category.label("sub_category_name"),
         )
         .join(Categories, Transactions.category_id == Categories.id)
