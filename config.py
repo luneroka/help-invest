@@ -37,5 +37,3 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 
 # Create instance of the database
 db = SQLAlchemy(app)
-
-# migrate = Migrate(app, db)

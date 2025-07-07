@@ -647,9 +647,10 @@ def delete_entry():
     return redirect("/history")
 
 
-if __name__ == "__main__":
-    # Instantiate db
-    with app.app_context():
-        db.create_all()
+# Instantiate db
+with app.app_context():
+    db.create_all()
 
-    app.run
+
+if __name__ == "__main__":
+    app.run()
