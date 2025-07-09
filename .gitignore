@@ -8,3 +8,4 @@ Procfile
 .env
 __pycache__/
 .devcontainer/
+node_modules/
