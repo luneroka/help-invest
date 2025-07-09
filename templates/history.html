@@ -19,7 +19,7 @@ block main %}
         <tr>
           <td class="align-middle">{{ entry.category_name }}</td>
           <td class="align-middle">{{ entry.sub_category_name }}</td>
-          <td class="align-middle">{{ entry.amount | usd }}</td>
+          <td class="align-middle">{{ entry.amount | eur }}</td>
           <td class="align-middle">{{ entry.timestamp }}</td>
           <td class="align-middle">
             <form action="/delete-entry" method="post" style="display: inline">

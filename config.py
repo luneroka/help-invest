@@ -4,14 +4,14 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_wtf.csrf import CSRFProtect
-from helpers import usd, percentage
+from helpers import eur, percentage
 # from flask_migrate import Migrate
 
 # Initialize Flask app
 app = Flask(__name__)
 
 # Custom filters
-app.jinja_env.filters["usd"] = usd
+app.jinja_env.filters["eur"] = eur
 app.jinja_env.filters["percentage"] = percentage
 
 # Wrap app in CORS to disable error and enable cross origin requests

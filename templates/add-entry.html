@@ -79,31 +79,32 @@ block main %}
       });
   });
 
-  // Apply USD formatting to amount input while typing
+  // Apply EUR formatting to amount input while typing
   const amountInput = document.getElementById('amount');
 
   amountInput.addEventListener('input', (e) => {
     // Remove all non-numeric characters
     let value = e.target.value.replace(/[^0-9]/g, '');
 
-    // Format the number as a dollar amount without decimals
+    // Format the number as an euro amount without decimals
     if (value) {
-      e.target.value = `$${new Intl.NumberFormat('en-US').format(value)}`;
+      e.target.value = `${new Intl.NumberFormat('fr-FR').format(value)} €`;
     } else {
       e.target.value = ''; // Clear if no value
     }
   });
 
-  amountInput.addEventListener('blur', (e) => {
-    // Ensure the field includes a dollar sign on blur
-    if (!e.target.value.startsWith('$') && e.target.value !== '') {
-      e.target.value = `$${e.target.value}`;
-    }
-  });
+amountInput.addEventListener('blur', (e) => {
+  // Ensure only one euro symbol, clean and re-add
+  e.target.value = e.target.value.replace(/€/g, '').trim();
+  if (e.target.value !== '') {
+    e.target.value += ' €';
+  }
+});
 
   // Clean amount input when submitting form
   form.addEventListener('submit', (e) => {
-    // Remove dollar sign and commas from the amount input field
+    // Remove euro sign and commas from the amount input field
     const rawValue = amountInput.value.replace(/[^0-9]/g, '');
     amountInput.value = rawValue;
   });
