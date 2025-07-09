@@ -1,11 +1,11 @@
 {% extends "layout.html" %} {% block title %} Add Investment {% endblock %} {%
 block main %}
-<h1>Add New Investments</h1>
+<h1>Ajouter un investissement</h1>
 <form method="POST" id="add-entry-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
   <div class="d-flex flex-column justify-content-center align-items-center">
     <div class="mb-5 input-group-lg text-start">
-      <label for="category-name" class="entry-label form-label">CATEGORY</label>
+      <label for="category-name" class="entry-label form-label">CATEGORIE</label>
       <select
         class="form-select"
         name="category-name"
@@ -13,7 +13,7 @@ block main %}
         required
         style="min-width: 300px"
       >
-        <option value="" disabled selected>Select a category</option>
+        <option value="" disabled selected>Selectionner categorie</option>
         {% for category in categories %}
         <option value="{{ category[0] }}">{{ category[0] }}</option>
         {% endfor %}
@@ -21,7 +21,7 @@ block main %}
     </div>
 
     <div class="mb-5 input-group-lg text-start">
-      <label for="sub-category" class="entry-label form-label">ACCOUNT</label>
+      <label for="sub-category" class="entry-label form-label">COMPTE</label>
       <select
         class="form-select"
         name="sub-category"
@@ -29,18 +29,18 @@ block main %}
         required
         style="min-width: 300px"
       >
-        <option value="" disabled selected>Select an account</option>
+        <option value="" disabled selected>Selectionner compte</option>
       </select>
     </div>
 
     <div class="mb-5 input-group-lg text-start">
-      <label for="amount" class="entry-label form-label">AMOUNT</label>
+      <label for="amount" class="entry-label form-label">MONTANT</label>
       <input
         type="text"
         name="amount"
         id="amount"
         required
-        placeholder="Enter amount"
+        placeholder="Entrer montant"
         class="form-control"
         style="min-width: 300px"
       />
@@ -53,7 +53,7 @@ block main %}
     class="btn btn-lg main-btn"
     style="width: 300px"
   >
-    Add Investment
+    Ajouter
   </button>
 </form>
 

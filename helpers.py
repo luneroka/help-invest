@@ -7,11 +7,11 @@ from flask_wtf.csrf import CSRFError
 def validate_password_strength(password):
     # Password should be at least 8 characters long, contain at least one uppercase letter and one special character
     if len(password) < 8:
-        return "Password must be at least 8 characters long."
+        return "Le mot de passe doit contenir au moins 8 caractères."
     if not re.search(r"[A-Z]", password):
-        return "Password must contain at least one uppercase letter."
+        return "Le mot de passe doit contenir au moins une lettre majuscule."
     if not re.search(r"[@$!%*?&]", password):
-        return "Password must contain at least one special character (@, $, !, %, *, ?, &)."
+        return "Le mot de passe doit contenir au moins un caractère spécial (@, $, !, %, *, ?, &)."
     return None
 
 
