@@ -23,11 +23,11 @@ def login():
 
         # Validate input
         if not username:
-            flash("Username is required", "error")
+            flash("Nom d'utilisateur requis", "error")
             return render_template("login.html"), 403
 
         if not password:
-            flash("Password is required", "error")
+            flash("Mot de passe requis", "error")
             return render_template("login.html"), 403
 
         # Query database for username
@@ -35,7 +35,7 @@ def login():
 
         # Validate username and password
         if not user or not check_password_hash(user.hash, password):
-            flash("Invalid username or password", "error")
+            flash("Nom d'utilisateur ou mot de passe incorrect", "error")
             return render_template("login.html"), 403
 
         # Log the use in
@@ -64,12 +64,12 @@ def signup():
 
         # Validate username input
         if not username:
-            flash("Username is required", "error")
+            flash("Nom d'utilisateur requis", "error")
             return render_template("signup.html"), 400
 
         # Validate password input
         if not password:
-            flash("Password is required", "error")
+            flash("Mot de passe requis", "error")
             return render_template("signup.html"), 400
 
         # Validate password strength
@@ -80,17 +80,17 @@ def signup():
 
         # Validate other input
         if not confirmation:
-            flash("Must confirm password", "error")
+            flash("Veuillez confirmer votre mot de passe", "error")
             return render_template("signup.html"), 400
 
         if confirmation != password:
-            flash("Passwords do not match", "error")
+            flash("Les mots de passe ne correspondent pas", "error")
             return render_template("signup.html"), 400
 
         # Check if username already exists
         existing_user = Users.query.filter_by(username=username).first()
         if existing_user:
-            flash("Username already exists", "error")
+            flash("Ce nom d'utilisateur existe déjà", "error")
             return render_template("signup.html"), 400
 
         # Hash password and create new user
@@ -98,18 +98,18 @@ def signup():
             password, method="pbkdf2:sha256", salt_length=16
         )
         new_user = Users(
-            username=username, hash=hashed_password, risk_profile="moderate"
+            username=username, hash=hashed_password, risk_profile="Équilibré"
         )
 
         # Try adding new user to db
         try:
             db.session.add(new_user)
             db.session.commit()
-            flash("You account has been successfuly created", "success")
+            flash("Votre compte a été créé avec succès", "success")
             return redirect("/login")
         except Exception as e:
             db.session.rollback()
-            flash("An error has occurred. Please try again", e)
+            flash("Une erreur s'est produite. Veuillez réessayer", e)
             return render_template("/signup.html"), 500
 
     return render_template("signup.html")
@@ -126,19 +126,19 @@ def change_password():
 
         # Validate input
         if not current_password:
-            flash("Current password is required", "error")
+            flash("Mot de passe actuel requis", "error")
             return render_template("change-password.html"), 400
 
         if not new_password:
-            flash("New password is required", "error")
+            flash("Nouveau mot de passe requis", "error")
             return render_template("change-password.html"), 400
 
         if not confirmation:
-            flash("Must confirm new password", "error")
+            flash("Veuillez confirmer le nouveau mot de passe", "error")
             return render_template("change-password.html"), 400
 
         if confirmation != new_password:
-            flash("Passwords do not match", "error")
+            flash("Les mots de passe ne correspondent pas", "error")
             return render_template("change-password.html"), 400
 
         # Validate password strength
@@ -152,13 +152,13 @@ def change_password():
 
         # Validate current password
         if not user or not check_password_hash(user.hash, current_password):
-            flash("Current password is invalid", "error")
+            flash("Le mot de passe actuel est invalide", "error")
             return render_template("change-password.html"), 400
 
         # Check if new password is different from current password
         if check_password_hash(user.hash, new_password):
             flash(
-                "New password must be different from current password", "error"
+                "Le nouveau mot de passe doit être différent de l'ancien", "error"
             )
             return render_template("change-password.html"), 400
 
@@ -173,13 +173,13 @@ def change_password():
             db.session.commit()
             session.clear()
             flash(
-                "Your password was successfuly updated! Please log back in.",
+                "Votre mot de passe a été mis à jour avec succès ! Veuillez vous reconnecter",
                 "success",
             )
             return redirect("/login")
         except Exception as e:
             db.session.rollback()
-            flash("An error has occurred. Please try again", e)
+            flash("Une erreur s'est produite. Veuillez réessayer", e)
             return render_template("/change-password.html"), 500
 
     return render_template("change-password.html")
@@ -200,7 +200,7 @@ def risk_profile():
         user_risk_profile = request.form.get("risk")
         if not user_risk_profile:
             flash(
-                "Please select a risk profile from the dropdown list.", "error"
+                "Veuillez sélectionner un profil de risque dans la liste déroulante", "error"
             )
             return redirect("/risk-profile")
 
@@ -214,12 +214,12 @@ def risk_profile():
         try:
             user.risk_profile = new_profile
             db.session.commit()
-            flash("Your risk profile was updated successfully", "success")
+            flash("Votre profil de risque a été mis à jour avec succès", "success")
             return redirect("/risk-profile")
         except Exception as e:
             db.session.rollback()
             flash(
-                "An error occurred. Your risk profile could not be updated.",
+                "Une erreur s'est produite. Votre profil de risque n'a pas pu être mis à jour",
                 e,
             )
             return redirect("/risk-profile")
@@ -295,7 +295,7 @@ def dashboard():
 
     # Handle empty portfolio
     if total_estate == 0:
-        flash("Your portfolio is empty. Start building your wealth!", "info")
+        flash("Votre portefeuille est vide. Commencez à construire votre patrimoine !", "info")
         return render_template(
             "dashboard.html",
             portfolio_summary={},
@@ -309,14 +309,14 @@ def dashboard():
 
     # Define default repartition based on risk profiles
     risk_profiles = {
-        "conservative": {"Savings": 0.5, "Real Estate": 0.3, "Stocks": 0.2},
-        "aggressive": {"Savings": 0.05, "Real Estate": 0.15, "Stocks": 0.8},
-        "moderate": {"Savings": 0.25, "Real Estate": 0.25, "Stocks": 0.5},
+        "Prudent": {"Épargne": 0.5, "Immobilier": 0.3, "Actions": 0.2},
+        "Dynamique": {"Épargne": 0.05, "Immobilier": 0.15, "Actions": 0.8},
+        "Équilibré": {"Épargne": 0.25, "Immobilier": 0.25, "Actions": 0.5},
     }
 
     # Set default profile
     reco_percentages = risk_profiles.get(
-        risk_profile, risk_profiles["moderate"]
+        risk_profile, risk_profiles["Équilibré"]
     )
 
     # Calculate current and recommended totals dymanically
@@ -371,14 +371,14 @@ def add_entry():
         try:
             amount = float(amount)
             if amount == 0:
-                flash("Amount cannot be zero.", "error")
+                flash("Le montant ne peut pas être nul", "error")
                 return redirect("/add-entry")
         except ValueError:
-            flash("Invalid amount")
+            flash("Montant invalide")
             return redirect("/add-entry")
 
         if not category_name or not sub_category:
-            flash("Both category and sub-category are required", "error")
+            flash("La catégorie et la sous-catégorie sont requises", "error")
             return redirect("/add-entry")
 
         # Query for the category
@@ -387,7 +387,7 @@ def add_entry():
         ).first()
         if not category_query:
             flash(
-                "This category and sub-category combination does not exist.",
+                "Cette combinaison de catégorie et de sous-catégorie n'existe pas",
                 "error",
             )
             return redirect("/add-entry")
@@ -417,12 +417,12 @@ def add_entry():
 
             # Commit changes
             db.session.commit()
-            flash("Investment added successfully!", "success")
+            flash("Investissement ajouté avec succès !", "success")
             return redirect("/dashboard")
 
         except Exception as e:
             db.session.rollback()
-            flash("An error occurred while adding the entry.", e)
+            flash("Une erreur s'est produite lors de l'ajout de l'entrée", e)
             return redirect("/dashboard")
 
     # Get unique categories and all categories
@@ -454,11 +454,11 @@ def withdraw():
         try:
             withdraw_amount = float(request.form.get("amount"))
         except ValueError:
-            flash("Invalid amount. Please enter a numeric value.", "error")
+            flash("Montant invalide. Veuillez saisir une valeur numérique.", "error")
             return redirect("/withdraw")
 
         if not category_name or not sub_category_name or withdraw_amount <= 0:
-            flash("Invalid input. Please try again.", "error")
+            flash("Entrée invalide. Veuillez réessayer", "error")
             return redirect("/withdraw")
 
         # Retrieve category ID and current balance
@@ -469,7 +469,7 @@ def withdraw():
         )
         if not category_query:
             flash(
-                "This category and sub-category combination does not exist.",
+                "Cette combinaison de catégorie et de sous-catégorie n'existe pas",
                 "error",
             )
             return redirect("/withdraw")
@@ -484,7 +484,7 @@ def withdraw():
         )
 
         if not portfolio_entry or portfolio_entry.balance < withdraw_amount:
-            flash("Insufficient balance.", "error")
+            flash("Solde insuffisant", "error")
             return redirect("/withdraw")
 
         # Deduct the withdrawal amount from the portfolio balance
@@ -500,12 +500,12 @@ def withdraw():
         try:
             db.session.add(withdrawal_transaction)
             db.session.commit()
-            flash("Withdrawal successful!", "success")
+            flash("Retrait effectué avec succès !", "success")
             return redirect("/dashboard")
         except Exception as e:
             db.session.rollback()
             flash(
-                "An error occurred while processing your withdrawal.",
+                "Une erreur s'est produite lors du traitement de votre retrait",
                 e,
             )
             return redirect("/withdraw")
@@ -569,7 +569,7 @@ def view_history():
     )
 
     if not transaction_entries:
-        flash("No transaction history found", "info")
+        flash("Aucun historique de transactions trouvé", "info")
         return redirect("/dashboard")
 
     # Create a dictionary to hold table data
@@ -600,7 +600,7 @@ def delete_entry():
     entry_id = request.form.get("entry_id")
 
     if not entry_id:
-        flash("Invalid entry ID", "error")
+        flash("Identifiant d'entrée invalide", "error")
         return redirect("/history")
 
     # Retrieve portfolio transaction by id
@@ -610,7 +610,7 @@ def delete_entry():
 
     if not transaction:
         flash(
-            "Transaction not found or user does not have permission to delete",
+            "Transaction introuvable ou vous n'avez pas l'autorisation de la supprimer",
             "error",
         )
         return redirect("/history")
@@ -621,7 +621,7 @@ def delete_entry():
     ).first()
 
     if not portfolio_entry:
-        flash("Portfolio entry not found", "error")
+        flash("Entrée de portefeuille introuvable", "error")
         return redirect("/history")
 
     # Adjust portfolio balance based on transaction type (positive or negative)
@@ -635,11 +635,11 @@ def delete_entry():
         # Commit changes to both tables
         db.session.commit()
 
-        flash("Transaction successfully deleted", "success")
+        flash("Transaction supprimée avec succès", "success")
     except Exception as e:
         db.session.rollback()
         flash(
-            "An error has occurred while deleting the transaction.",
+            "Une erreur s'est produite lors de la suppression de la transaction",
             e,
         )
 
@@ -667,9 +667,9 @@ with app.app_context():
             Categories(category_name="Immobilier", sub_category="Immobilier Locatif"),
             Categories(category_name="Immobilier", sub_category="SCPI"),
             Categories(category_name="Immobilier", sub_category="Crowdfunding Immobilier"),
-            Categories(category_name="Actions/Crypto", sub_category="Obligations"),
-            Categories(category_name="Actions/Crypto", sub_category="Actions"),
-            Categories(category_name="Actions/Crypto", sub_category="Cryptomonnaies"),
+            Categories(category_name="Actions", sub_category="Obligations"),
+            Categories(category_name="Actions", sub_category="Actions"),
+            Categories(category_name="Actions", sub_category="Cryptomonnaies"),
             Categories(category_name="Autres", sub_category="Private Equity"),
             Categories(category_name="Autres", sub_category="Métaux/Métaux Précieux"),
             Categories(category_name="Autres", sub_category="Placements Exotiques"),

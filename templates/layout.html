@@ -52,13 +52,13 @@
               <a class="nav-link" href="/dashboard">Dashboard</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/add-entry">Add Entry</a>
+              <a class="nav-link" href="/add-entry">Investir</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/withdraw">Withdraw</a>
+              <a class="nav-link" href="/withdraw">Retirer</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/history">View History</a>
+              <a class="nav-link" href="/history">Historique</a>
             </li>
           </ul>
           <ul class="navbar-nav ms-auto me-5">
@@ -69,29 +69,29 @@
                 href="#"
                 role="button"
                 aria-expanded="false"
-                >My Account</a
+                >Mon compte</a
               >
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="/risk-profile">Risk Profile</a>
+                  <a class="dropdown-item" href="/risk-profile">Profil de Risque</a>
                 </li>
                 <li>
                   <a class="dropdown-item" href="/change-password"
-                    >Change Password</a
+                    >Mot de passe</a
                   >
                 </li>
                 <li><hr class="dropdown-divider" /></li>
-                <li><a class="dropdown-item" href="/logout">Log Out</a></li>
+                <li><a class="dropdown-item" href="/logout">Se déconnecter</a></li>
               </ul>
             </li>
           </ul>
           {% else %}
           <ul class="navbar-nav ms-auto me-5 nav-underline">
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('signup') }}">Sign Up</a>
+              <a class="nav-link" href="{{ url_for('signup') }}">S'inscrire</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('login') }}">Log In</a>
+              <a class="nav-link" href="{{ url_for('login') }}">Se connecter</a>
             </li>
           </ul>
           {% endif %}
