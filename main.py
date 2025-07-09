@@ -464,7 +464,7 @@ def withdraw():
         # Retrieve category ID and current balance
         category_query = (
             db.session.query(Categories)
-            .filter_by(name=category_name, sub_category=sub_category_name)
+            .filter_by(category_name=category_name, sub_category=sub_category_name)
             .first()
         )
         if not category_query:

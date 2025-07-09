@@ -35,9 +35,9 @@ def serialize_category(category):
     }
 
 
-def usd(value):
-    """Format value as USD"""
-    return f"${value:,.0f}"
+def eur(value):
+    """Format value as EUR"""
+    return f"{value:,.0f} €".replace(",", " ").replace(".", ",")
 
 def percentage(value):
     """Format value as percentage"""
