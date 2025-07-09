@@ -383,7 +383,7 @@ def add_entry():
 
         # Query for the category
         category_query = Categories.query.filter_by(
-            name=category_name, sub_category=sub_category
+            category_name=category_name, sub_category=sub_category
         ).first()
         if not category_query:
             flash(
@@ -524,11 +524,11 @@ def withdraw():
 
     # Transform data for the frontend
     distinct_categories = sorted(
-        set([cat.name for cat in withdraw_categories])
+        set([cat.category_name for cat in withdraw_categories])
     )
     withdraw_categories_data = [
         {
-            "category": entry.name,
+            "category": entry.category_name,
             "sub_category": entry.sub_category,
             "balance": entry.balance,
         }
