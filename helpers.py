@@ -30,7 +30,7 @@ def login_required(f):
 def serialize_category(category):
     return {
         "id": category.id,
-        "name": category.name,
+        "name": category.category_name,
         "sub_category": category.sub_category
     }
 
