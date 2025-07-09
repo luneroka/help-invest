@@ -651,6 +651,32 @@ def delete_entry():
 with app.app_context():
     db.create_all()
 
+    # Insert default categories if Categories table is empty
+    if Categories.query.count() == 0:
+        default_categories = [
+            Categories(category_name="Espèces", sub_category="Espèces"),
+            Categories(category_name="Enveloppes d'Investissement", sub_category="Livret A/LDDS"),
+            Categories(category_name="Enveloppes d'Investissement", sub_category="LEP"),
+            Categories(category_name="Enveloppes d'Investissement", sub_category="Livret Jeune"),
+            Categories(category_name="Enveloppes d'Investissement", sub_category="PEL/CEL"),
+            Categories(category_name="Enveloppes d'Investissement", sub_category="Assurance-Vie"),
+            Categories(category_name="Enveloppes d'Investissement", sub_category="PER"),
+            Categories(category_name="Enveloppes d'Investissement", sub_category="PEE/PERCO"),
+            Categories(category_name="Enveloppes d'Investissement", sub_category="PEA"),
+            Categories(category_name="Immobilier", sub_category="Immobilier de Jouissance"),
+            Categories(category_name="Immobilier", sub_category="Immobilier Locatif"),
+            Categories(category_name="Immobilier", sub_category="SCPI"),
+            Categories(category_name="Immobilier", sub_category="Crowdfunding Immobilier"),
+            Categories(category_name="Actions/Crypto", sub_category="Obligations"),
+            Categories(category_name="Actions/Crypto", sub_category="Actions"),
+            Categories(category_name="Actions/Crypto", sub_category="Cryptomonnaies"),
+            Categories(category_name="Autres", sub_category="Private Equity"),
+            Categories(category_name="Autres", sub_category="Métaux/Métaux Précieux"),
+            Categories(category_name="Autres", sub_category="Placements Exotiques"),
+        ]
+        db.session.bulk_save_objects(default_categories)
+        db.session.commit()
+
 
 if __name__ == "__main__":
     app.run()
