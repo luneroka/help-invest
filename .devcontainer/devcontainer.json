@@ -1,0 +1,39 @@
+{
+  "name": "Flask Dev Container",
+  "dockerComposeFile": [
+    "./docker-compose.yml"
+  ],
+  "service": "flask",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.linting.enabled": true,
+        "python.linting.flake8Enabled": true,
+        "python.formatting.provider": "black"
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.flake8",
+        "ms-python.black-formatter",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  },
+  "forwardPorts": [5001],
+  "portsAttributes": {
+    "5001": {
+      "label": "Flask App",
+      "onAutoForward": "openPreview"
+    }
+  },
+  "remoteEnv": {
+    "FLASK_ENV": "development",
+    "SSH_AUTH_SOCK": "/ssh-agent"
+  },
+  "mounts": [
+    "source=${localWorkspaceFolder}/.env,target=/workspace/.env,type=bind,consistency=cached",
+    "source=${env:HOME}/.ssh,target=/home/vscode/.ssh,type=bind",
+    "source=/run/host-services/ssh-auth.sock,target=/ssh-agent,type=bind"
+  ]
+}

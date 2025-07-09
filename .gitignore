@@ -7,5 +7,4 @@ Procfile
 .DS_Store
 .env
 __pycache__/
-.devcontainer/
 node_modules/

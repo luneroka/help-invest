@@ -1,7 +1,5 @@
 # HELP-INVEST
 
-**Site Link:** [helpinvest.net](https://www.helpinvest.net)
-
 **Video Demo:** [Watch here](https://youtu.be/tMvmXQEJahI)
 
 HELP-INVEST is a portfolio management tool that helps users track their investments across categories, compare their portfolio with personalized recommendations based on their risk profile, and make informed decisions.
@@ -21,15 +19,44 @@ HELP-INVEST is a portfolio management tool that helps users track their investme
 
 ## 🛠️ Tech Stack
 
-- **Database:** SQLite (local), PostgreSQL (production)
+- **Database:** PostgreSQL
 - **Backend:** Flask
 - **Frontend:** Jinja, JavaScript, Bootstrap
 - **Version Control:** Git, GitHub
+- **Containerization:** Docker (including Docker Compose for multi-container setup)
 
-## 🚀 Deployment
+## 🐳 Docker Setup
 
-- **Host:** Deployed on Heroku with PostgreSQL.
-- **Database Migration:** Managed via Alembic for migration from SQLite to PostgreSQL.
+This project is fully containerized for development and deployment using Docker.
+
+### 📦 Requirements
+
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+
+### ⚙️ Getting Started
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/luneroka/help-invest.git
+   cd help-invest
+   ```
+
+2. **Create a `.env` file**:
+   Copy the `.env.example` or create one manually with at least the following:
+   ```
+   FLASK_ENV=development
+   SECRET_KEY=your-secret-key
+   DATABASE_URL=postgresql://postgres:yourpassword@db:5432/helpinvest
+   ```
+
+3. **Run the containers**:
+   ```bash
+   docker-compose up --build
+   ```
+
+4. **Access the app**:
+   Open your browser at [http://localhost:5000](http://localhost:5000)
 
 ## 🙏 Credits
 
