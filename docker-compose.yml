@@ -3,7 +3,7 @@ services:
     image: postgres:15
     restart: always
     env_file:
-      - ../.env
+      - ./backend/.env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -20,18 +20,18 @@ services:
       
   flask:
     build:
-      context: ..
-      dockerfile: .devcontainer/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     volumes:
-      - ..:/workspace
+      - .:/workspace
     ports:
       - "5001:5000"
     env_file:
-      - ../.env
+      - ./backend/.env
     depends_on:
       postgres:
         condition: service_healthy
-    command: python -m flask run --host=0.0.0.0 --port=5000
+    command: python -m flask --app backend.app.main run --host=0.0.0.0 --port=5000
 
 
 volumes:

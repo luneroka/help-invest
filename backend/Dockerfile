@@ -1,4 +1,3 @@
-# .devcontainer/Dockerfile
 FROM mcr.microsoft.com/devcontainers/python:3.11
 
 WORKDIR /workspace
@@ -11,4 +10,4 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-COPY . .
+COPY app/ ./app/

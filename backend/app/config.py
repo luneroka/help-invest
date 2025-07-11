@@ -4,7 +4,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_wtf.csrf import CSRFProtect
-from helpers import eur, percentage
+from .helpers import eur, percentage
 # from flask_migrate import Migrate
 
 # Initialize Flask app
