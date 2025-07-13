@@ -8,13 +8,13 @@ function MainHeader() {
         <img src="../../public/help!nvest_logo.png" alt="" className="h-8" />
         <div className="flex gap-[8px] text-theme-accent">
           <p>Dashboard</p>
-          <p>|</p>
+          <p className="text-xs text-theme-accent">|</p>
           <p>Épargne</p>
-          <p>|</p>
+          <p className="text-xs text-theme-accent">|</p>
           <p>Immobilier</p>
-          <p>|</p>
+          <p className="text-xs text-theme-accent">|</p>
           <p>Actions</p>
-          <p>|</p>
+          <p className="text-xs text-theme-accent">|</p>
           <p>Autres</p>
         </div>
       </div>
