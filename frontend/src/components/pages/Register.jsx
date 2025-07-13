@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { FaGoogle, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Layout from '../layout/Layout'
 import AuthHeader from '../headers/AuthHeader'
 
@@ -50,7 +50,7 @@ function Register() {
                             />
                         </div>
 
-                        {/* Password Input */}
+                        {/* Passwords */}
                         <div className='flex flex-col gap-2'>
                             <label
                                 htmlFor='password'
@@ -58,6 +58,8 @@ function Register() {
                             >
                                 Mot de passe
                             </label>
+
+                            {/* Password input */}
                             <div className='relative w-full'>
                                 <input
                                     type={passwordVisibility ? 'text' : 'password'}
@@ -99,7 +101,7 @@ function Register() {
                             </div>
                         </div>
 
-                        {/* Connect Button */}
+                        {/* Register Button */}
                         <button
                             type='submit'
                             className='btn-primary w-full'
@@ -110,7 +112,7 @@ function Register() {
 
                     <hr className='border-gray-300' />
 
-                    {/* Redirect To Register */}
+                    {/* Redirect To Login */}
                     <p className='text-small'>
                         Déjà inscrit ?{' '}
                         <span className='link-default underline link-default:hover'>

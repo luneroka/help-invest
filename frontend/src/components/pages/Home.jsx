@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import Layout from '../layout/Layout'
 import IndexHeader from '../../components/headers/IndexHeader'
 
@@ -32,7 +33,7 @@ function Home() {
           <div className="flex flex-col gap-2">
             <h3>Comment ça fonctionne ?</h3>
             <ol className="list-decimal list-inside pl-4">
-              <li>Créez un compte ou connectez-vous.</li>
+              <li><Link to="/inscription" className='link-default link-default:hover'>Créez un compte</Link> ou <Link to='/connexion' className='link-default link-default:hover'>connectez-vous</Link>.</li>
               <li>Choisissez votre profil de risque (par défaut : Équilibré).</li>
               <li>Ajoutez vos investissements par catégorie et sous-catégorie (ex. : Actions {'>'} AMZN {'>'} 12 000 €).</li>
               <li>Suivez l’évolution de votre portefeuille via un tableau de bord clair et visuel.</li>

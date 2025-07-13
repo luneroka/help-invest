@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { FaGoogle, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Layout from '../layout/Layout'
 import AuthHeader from '../headers/AuthHeader'
 
