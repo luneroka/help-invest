@@ -20,7 +20,7 @@
   --line-height-h1: 2.4375rem;   /* 39px */
   --line-height-h2: 1.8125rem;   /* 29px */
   --line-height-h3: 1.375rem;    /* 22px */
-  --line-height-body: 1.25rem;   /* 20px */
+  --line-height-body: 1.5rem;    /* 24px */
   --line-height-small: 1.125rem; /* 18px */
   --line-height-data: 1.5rem;    /* 24px - Data Text */
   --line-height-button: 1.5rem;  /* 24px - Button Text */
@@ -182,6 +182,14 @@
     line-height: var(--line-height-small);
     font-weight: var(--font-weight-regular);
     color: var(--color-text-main);
+  }
+
+  .text-caption {
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-small);
+    line-height: var(--line-height-small);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-text-captions);
   }
   
   .text-button {

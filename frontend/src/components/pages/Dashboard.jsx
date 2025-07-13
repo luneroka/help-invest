@@ -7,7 +7,7 @@ import { FiExternalLink } from "react-icons/fi";
 function Dashboard() {
   return (
     <Layout header={<MainHeader />}>
-      <div className="p-16">
+      <div>
         <h2>Patrimoine total : <span>insert value €</span></h2>
         <div className="flex gap-8 justify-between">
           <div className="border w-full h-[450px]">
