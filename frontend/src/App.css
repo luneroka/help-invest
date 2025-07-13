@@ -102,7 +102,7 @@
     line-height: var(--line-height-h2);
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-headings);
-    margin-bottom: 64px;
+    margin-bottom: 32px;
   }
   
   h3 {
@@ -125,38 +125,12 @@
   }
   
   /* Typography Utility Classes */
-  .text-h1 {
-    font-family: var(--font-family-primary);
-    font-size: var(--font-size-h1);
-    line-height: var(--line-height-h1);
-    font-weight: var(--font-weight-bold);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-text-headings);
-  }
-  
-  .text-h2 {
-    font-family: var(--font-family-primary);
-    font-size: var(--font-size-h2);
-    line-height: var(--line-height-h2);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-headings);
-  }
-  
   .text-h2-light {
     font-family: var(--font-family-primary);
     font-size: var(--font-size-h2);
     line-height: var(--line-height-h2);
     font-weight: var(--font-weight-light);
     color: var(--color-text-headings);
-  }
-  
-  .text-h3 {
-    font-family: var(--font-family-primary);
-    font-size: var(--font-size-h3);
-    line-height: var(--line-height-h3);
-    font-weight: var(--font-weight-medium);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-text-small-headings);
   }
   
   .text-h3-light {
@@ -208,15 +182,6 @@
     color: var(--color-text-data);
   }
   
-  /* Legacy alias for backward compatibility */
-  .text-financial {
-    font-family: var(--font-family-primary);
-    font-size: var(--font-size-data);
-    line-height: var(--line-height-data);
-    font-weight: var(--font-weight-regular);
-    color: var(--color-text-data);
-  }
-  
   .btn-primary {
     background-color: var(--color-theme-primary);
     color: var(--color-text-btn);
@@ -257,14 +222,6 @@
     cursor: pointer;
   }
   
-  .text-financial {
-    font-family: var(--font-family-primary);
-    font-size: var(--font-size-financial);
-    line-height: var(--line-height-financial);
-    font-weight: 500;
-    color: var(--color-text-data);
-  }
-  
   .text-currency {
     font-family: var(--font-family-primary);
     font-weight: 500;
@@ -272,7 +229,7 @@
   }
   
   .nav-link {
-    color: var(--color-text-btn);
+    color: var(--color-theme-accent);
     font-family: var(--font-family-primary);
     font-weight: 500;
     transition: color 0.15s ease;
@@ -283,11 +240,14 @@
   }
   
   .card {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
     background-color: var(--color-theme-bg-main);
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    border: 1px solid var(--color-gray-200);
-    padding: 1.5rem;
+    padding: 3rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    width: 100%;
+    max-width: 32rem;
   }
   
   .input-field {
@@ -328,4 +288,51 @@
   .link-default:hover {
     color: var(--color-links-hover);
   }
+}
+
+/* PASSWORD CHECKLIST */
+.password-checklist-container ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  font-size: 0.75rem;
+}
+
+.password-checklist-container ul li {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.password-checklist-container ul li span {
+  color: var(--color-black-100);
+  padding: 0 !important;
+}
+
+/* Target valid checklist items */
+.password-checklist-container ul li.valid {
+  color: rgba(127, 176, 105, 0.5);
+}
+
+/* Target invalid checklist items */
+.password-checklist-container ul li.invalid {
+  color: rgba(38, 31, 34, 0.5);
+}
+
+/* SVG icons */
+.password-checklist-container ul li svg.checklist-icon {
+  width: 8px !important;
+  height: 8px !important;
+  margin-right: 2.5px !important;
+  margin-left: 0;
+}
+
+/* Valid checklist icons */
+.password-checklist-container ul li.valid svg.checklist-icon path {
+  fill: rgba(127, 176, 105, 0.75) !important;
+}
+
+/* Invalid checklist icons */
+.password-checklist-container ul li.invalid svg.checklist-icon path {
+  fill: rgba(229, 62, 62, 0.75) !important;
 }

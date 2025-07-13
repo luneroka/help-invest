@@ -20,7 +20,7 @@ function Login() {
 
         <h2>Connectez-vous</h2>
 
-        <div className="flex flex-col gap-8 bg-theme-bg-main p-8 shadow-md w-full max-w-md">
+        <div className="card">
 
           {/* Form */}
           <form className="flex flex-col gap-8">

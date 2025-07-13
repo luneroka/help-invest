@@ -10,17 +10,17 @@ function MainHeader() {
           <img src="../../public/help!nvest_logo.png" alt="HelpInvest" className="h-8" />
         </Link>
         <div className="flex gap-2 text-theme-accent">
-          <Link to="/dashboard" className="hover:text-white transition-colors">
-            <p>Dashboard</p>
+          <Link to="/dashboard">
+            <p className="nav-link nav-link:hover">Dashboard</p>
           </Link>
           <p>|</p>
-          <p>Épargne</p>
+          <p className="nav-link nav-link:hover">Épargne</p>
           <p>|</p>
-          <p>Immobilier</p>
+          <p className="nav-link nav-link:hover">Immobilier</p>
           <p>|</p>
-          <p>Actions</p>
+          <p className="nav-link nav-link:hover">Actions</p>
           <p>|</p>
-          <p>Autres</p>
+          <p className="nav-link nav-link:hover">Autres</p>
         </div>
       </div>
       <div className="flex gap-2">

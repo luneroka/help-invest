@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import PasswordChecklist from 'react-password-checklist';
 import Layout from '../layout/Layout'
 import AuthHeader from '../headers/AuthHeader'
 
@@ -27,7 +28,7 @@ function Register() {
 
                 <h2>Inscrivez-vous</h2>
 
-                <div className="flex flex-col gap-8 bg-theme-bg-main p-8 shadow-md w-full max-w-md">
+                <div className="card">
 
                     {/* Form */}
                     <form className="flex flex-col gap-8">
@@ -99,7 +100,27 @@ function Register() {
                                     {passwordVisibility ? <FaEyeSlash /> : <FaEye />}
                                 </button>
                             </div>
+                            <div className='password-checklist-container'>
+                                <PasswordChecklist
+                                    rules={[
+                                        'capital',
+                                        'number',
+                                        'specialChar',
+                                        'minLength',
+                                    ]}
+                                    minLength={8}
+                                    value={password}
+                                    valueAgain={confirmationPassword}
+                                    messages={{
+                                        capital: 'Doit contenir au moins 1 lettre majuscule.',
+                                        number: 'Doit contenir au moins 1 caractère numérique.',
+                                        specialChar: 'Doit contenir au moins 1 caractère spécial (@, $, !, %, *, ?, &).',
+                                        minLength: 'Doit contenir au moins 8 caractères.',
+                                    }}
+                                />
+                            </div>
                         </div>
+
 
                         {/* Register Button */}
                         <button
