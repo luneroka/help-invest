@@ -3,9 +3,9 @@ import Footer from './Footer'
 
 function Layout({ header, children }) {
   return (
-    <div className='min-h-screen bg-theme-bg-main'>
+    <div className='min-h-screen bg-theme-bg-main flex flex-col'>
         {header}
-        <main className='mx-6 px-4 py-8'>
+        <main className='flex-1 mx-6 px-4 py-8'>
             {children}
         </main>
         <Footer />
