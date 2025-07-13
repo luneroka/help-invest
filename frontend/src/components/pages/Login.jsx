@@ -1,36 +1,29 @@
 import React, { useState } from 'react'
-import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { Link } from 'react-router-dom'
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import Layout from '../layout/Layout'
 import AuthHeader from '../headers/AuthHeader'
 
 function Login() {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(false)
 
   // Toggle password view
   const handleTogglePasswordView = (e) => {
-    e.preventDefault();
-    setIsVisible((prev) => !prev);
-  };
-
+    e.preventDefault()
+    setIsVisible((prev) => !prev)
+  }
 
   return (
     <Layout header={<AuthHeader />}>
       <div className='flex flex-col flex-1 items-center min-h-full min-w-[300px] xs:min-w-[500px]'>
-
         <h2>Connectez-vous</h2>
 
-        <div className="card">
-
+        <div className='card'>
           {/* Form */}
-          <form className="flex flex-col gap-8">
-
+          <form className='flex flex-col gap-8'>
             {/* Email Input */}
             <div className='flex flex-col gap-2'>
-              <label
-                htmlFor='username'
-                className='block text-small'
-              >
+              <label htmlFor='username' className='block text-small'>
                 Nom d'utilisateur
               </label>
               <input
@@ -38,17 +31,14 @@ function Login() {
                 name='username'
                 id='username'
                 placeholder="Nom d'utilisateur"
-                className="input-field input-field:focus w-full"
+                className='input-field input-field:focus w-full'
                 autoComplete='username'
               />
             </div>
 
             {/* Password Input */}
             <div className='flex flex-col gap-2'>
-              <label
-                htmlFor='password'
-                className='block text-small'
-              >
+              <label htmlFor='password' className='block text-small'>
                 Mot de passe
               </label>
               <div className='relative w-[100%]'>
@@ -57,7 +47,7 @@ function Login() {
                   name='password'
                   id='password'
                   placeholder='Mot de passe'
-                  className="input-field w-full"
+                  className='input-field w-full'
                   autoComplete='current-password'
                 />
 
@@ -82,10 +72,7 @@ function Login() {
             </div>
 
             {/* Connect Button */}
-            <button
-              type='submit'
-              className='btn-primary w-full'
-            >
+            <button type='submit' className='btn-primary w-full'>
               Se connecter
             </button>
           </form>
@@ -97,7 +84,8 @@ function Login() {
             Pas encore inscrit ?{' '}
             <span className='link-default underline link-default:hover'>
               <Link to='/inscription'>Inscrivez-vous ici</Link>
-            </span>.
+            </span>
+            .
           </p>
 
           {/* Copyrights */}

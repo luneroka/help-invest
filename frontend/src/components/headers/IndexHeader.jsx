@@ -3,16 +3,24 @@ import { Link } from 'react-router-dom'
 
 function IndexHeader() {
   return (
-    <div className="flex items-center justify-between bg-theme-main h-16 px-24">
-      <Link to="/">
-        <img src="../../public/help!nvest_logo.png" alt="HelpInvest" className="h-8" />
+    <div className='flex items-center justify-between bg-theme-main h-16 px-24'>
+      <Link to='/'>
+        <img
+          src='../../public/help!nvest_logo.png'
+          alt='HelpInvest'
+          className='h-8'
+        />
       </Link>
-      <div className="flex gap-4">
-        <Link to="/inscription">
-          <h3 className="text-theme-accent hover:text-white transition-colors">S'inscrire</h3>
+      <div className='flex gap-4'>
+        <Link to='/inscription'>
+          <h3 className='text-theme-accent hover:text-white transition-colors'>
+            S'inscrire
+          </h3>
         </Link>
-        <Link to="/connexion">
-          <h3 className="text-theme-accent hover:text-white transition-colors">Se connecter</h3>
+        <Link to='/connexion'>
+          <h3 className='text-theme-accent hover:text-white transition-colors'>
+            Se connecter
+          </h3>
         </Link>
       </div>
     </div>

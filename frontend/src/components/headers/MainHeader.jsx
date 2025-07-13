@@ -1,34 +1,38 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { IoMdArrowDropdown } from "react-icons/io";
+import { IoMdArrowDropdown } from 'react-icons/io'
 
 function MainHeader() {
   return (
-    <div className="flex items-center justify-between bg-theme-main h-16 px-24">
-      <div className="flex gap-4 items-center">
-        <Link to="/">
-          <img src="../../public/help!nvest_logo.png" alt="HelpInvest" className="h-8" />
+    <div className='flex items-center justify-between bg-theme-main h-16 px-24'>
+      <div className='flex gap-4 items-center'>
+        <Link to='/'>
+          <img
+            src='../../public/help!nvest_logo.png'
+            alt='HelpInvest'
+            className='h-8'
+          />
         </Link>
-        <div className="flex gap-2 text-theme-accent">
-          <Link to="/dashboard">
-            <p className="nav-link nav-link:hover">Dashboard</p>
+        <div className='flex gap-2 text-theme-accent'>
+          <Link to='/dashboard'>
+            <p className='nav-link nav-link:hover'>Dashboard</p>
           </Link>
           <p>|</p>
-          <Link to="/opérations">
-            <p className="nav-link nav-link:hover">Opérations</p>
+          <Link to='/opérations'>
+            <p className='nav-link nav-link:hover'>Opérations</p>
           </Link>
           <p>|</p>
-          <Link to="/historique">
-            <p className="nav-link nav-link:hover">Historique</p>
+          <Link to='/historique'>
+            <p className='nav-link nav-link:hover'>Historique</p>
           </Link>
         </div>
       </div>
-      <div className="flex gap-4">
-        <Link to="/profil">
-          <p className="nav-link nav-link:hover">Profile</p>
+      <div className='flex gap-4'>
+        <Link to='/profil'>
+          <p className='nav-link nav-link:hover'>Profile</p>
         </Link>
-        <Link to="/déconnexion">
-          <p className="nav-link nav-link:hover">Déconnexion</p>
+        <Link to='/déconnexion'>
+          <p className='nav-link nav-link:hover'>Déconnexion</p>
         </Link>
       </div>
     </div>
