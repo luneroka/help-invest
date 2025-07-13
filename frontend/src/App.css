@@ -35,6 +35,11 @@
   /* Letter Spacing */
   --letter-spacing-tight: -0.03em;
 
+  /* Custom Spacing Values */
+  --spacing-16: 4rem;     /* 64px */
+  --spacing-24: 6rem;     /* 96px */
+  --spacing-32: 8rem;     /* 128px */
+
   /* Theme Colors */
   --color-theme-main: #2C5F41;
   --color-theme-primary: #4A90A4;

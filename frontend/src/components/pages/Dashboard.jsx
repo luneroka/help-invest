@@ -7,14 +7,14 @@ import { FiExternalLink } from "react-icons/fi";
 function Dashboard() {
   return (
     <Layout header={<MainHeader />}>
-      <div className="p-[64px]">
+      <div className="p-16">
         <h2>Patrimoine total : <span>insert value €</span></h2>
         <div className="flex gap-8 justify-between">
           <div className="border w-full h-[450px]">
             Graph card
           </div>
           <div className="w-full">
-            <div className="border h-full mb-[64px]">
+            <div className="border h-full mb-16">
               Recommendation card
             </div>
             <div className="flex gap-4">
