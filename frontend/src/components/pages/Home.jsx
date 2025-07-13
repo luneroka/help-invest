@@ -35,7 +35,7 @@ function Home() {
             <ol className="list-decimal list-inside pl-4">
               <li><Link to="/inscription" className='link-default link-default:hover'>Créez un compte</Link> ou <Link to='/connexion' className='link-default link-default:hover'>connectez-vous</Link>.</li>
               <li>Choisissez votre profil de risque (par défaut : Équilibré).</li>
-              <li>Ajoutez vos investissements par catégorie et sous-catégorie (ex. : Actions {'>'} AMZN {'>'} 12 000 €).</li>
+              <li>Ajoutez vos investissements par catégorie et sous-catégorie (ex. : Épargne {'>'} Livret A {'>'} 19 000 €).</li>
               <li>Suivez l’évolution de votre portefeuille via un tableau de bord clair et visuel.</li>
               <li>Ajustez vos investissements pour garder un bon équilibre.</li>
             </ol>
@@ -51,7 +51,7 @@ function Home() {
             </ul>
           </div>
 
-          <p>Inscrivez-vous dès maintenant pour reprendre le contrôle sur votre avenir financier !</p>
+          <p>Inscrivez-vous dès maintenant pour prendre le contrôle de votre avenir financier !</p>
         </div>
 
         <div className="flex flex-col items-center justify-start w-full relative">

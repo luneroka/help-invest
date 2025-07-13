@@ -14,18 +14,22 @@ function MainHeader() {
             <p className="nav-link nav-link:hover">Dashboard</p>
           </Link>
           <p>|</p>
-          <p className="nav-link nav-link:hover">Épargne</p>
+          <Link to="/opérations">
+            <p className="nav-link nav-link:hover">Opérations</p>
+          </Link>
           <p>|</p>
-          <p className="nav-link nav-link:hover">Immobilier</p>
-          <p>|</p>
-          <p className="nav-link nav-link:hover">Actions</p>
-          <p>|</p>
-          <p className="nav-link nav-link:hover">Autres</p>
+          <Link to="/historique">
+            <p className="nav-link nav-link:hover">Historique</p>
+          </Link>
         </div>
       </div>
-      <div className="flex gap-2">
-        <h3 className="text-theme-accent">Mon compte</h3>
-        <IoMdArrowDropdown className="size-6 text-theme-accent" />
+      <div className="flex gap-4">
+        <Link to="/profil">
+          <p className="nav-link nav-link:hover">Profile</p>
+        </Link>
+        <Link to="/déconnexion">
+          <p className="nav-link nav-link:hover">Déconnexion</p>
+        </Link>
       </div>
     </div>
   )
