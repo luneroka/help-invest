@@ -221,6 +221,46 @@
     background-color: color-mix(in srgb, var(--color-theme-secondary) 80%, black);
     cursor: pointer;
   }
+
+  .btn-invest {
+    background-color: var(--color-alerts-success);
+    color: var(--color-text-btn);
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-button);
+    line-height: var(--line-height-button);
+    font-weight: var(--font-weight-medium);
+    padding: 1rem 2rem;
+    height: 3rem;
+    transition: background-color 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .btn-invest:hover {
+    background-color: color-mix(in srgb, var(--color-alerts-success) 80%, black);
+    cursor: pointer;
+  }
+
+  .btn-withdraw {
+    background-color: var(--color-alerts-error);
+    color: var(--color-text-btn);
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-button);
+    line-height: var(--line-height-button);
+    font-weight: var(--font-weight-medium);
+    padding: 1rem 2rem;
+    height: 3rem;
+    transition: background-color 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .btn-withdraw:hover {
+    background-color: color-mix(in srgb, var(--color-alerts-error) 80%, black);
+    cursor: pointer;
+  }
   
   .text-currency {
     font-family: var(--font-family-primary);
