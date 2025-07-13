@@ -1,8 +1,14 @@
 import React from 'react'
+import Layout from '../layout/Layout'
+import MainHeader from '../headers/MainHeader'
 
 function Dashboard() {
   return (
-    <div>Dashboard</div>
+    <Layout header={<MainHeader />}>
+      <div>
+        Dashboard
+      </div>
+    </Layout>
   )
 }
 
