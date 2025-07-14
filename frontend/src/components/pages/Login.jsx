@@ -81,16 +81,11 @@ function Login() {
 
           {/* Redirect To Register */}
           <p className='text-small'>
-            Pas encore inscrit ?{' '}
+            Pas encore de compte ?{' '}
             <span className='link-default underline link-default:hover'>
               <Link to='/inscription'>Inscrivez-vous ici</Link>
             </span>
             .
-          </p>
-
-          {/* Copyrights */}
-          <p className='text-xs text-center text-caption'>
-            &copy;2025 HelpInvest. Tous droits réservés.
           </p>
         </div>
       </div>

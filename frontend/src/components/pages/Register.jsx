@@ -120,14 +120,9 @@ function Register() {
           <p className='text-small'>
             Déjà inscrit ?{' '}
             <span className='link-default underline link-default:hover'>
-              <Link to='/connexion'>Connectez-vous ici</Link>
+              <Link to='/connexion'>Connectez-vous</Link>
             </span>
             .
-          </p>
-
-          {/* Copyrights */}
-          <p className='text-xs text-center text-caption'>
-            &copy;2025 HelpInvest. Tous droits réservés.
           </p>
         </div>
       </div>

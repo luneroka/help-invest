@@ -162,8 +162,8 @@ export default function TransactionForm({
       <h2
         className={
           title === 'Investir'
-            ? 'text-alerts-success text-center'
-            : 'text-alerts-error text-center'
+            ? 'text-theme-secondary text-center'
+            : 'text-theme-primary text-center'
         }
       >
         {title}
@@ -273,7 +273,7 @@ export default function TransactionForm({
         {/* Submit Button */}
         <button
           type='submit'
-          className={`${isWithdraw ? 'btn-withdraw' : 'btn-invest'} w-full`}
+          className={`${isWithdraw ? 'btn-primary' : 'btn-secondary'} w-full`}
           disabled={isLoading}
         >
           {isLoading ? 'Traitement...' : title}

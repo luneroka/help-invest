@@ -16,7 +16,7 @@
   --font-size-body: 1rem; /* 16px */
   --font-size-small: 0.875rem; /* 14px */
   --font-size-data: 1.25rem; /* 20px - Data Text */
-  --font-size-button: 1.25rem; /* 20px - Button Text */
+  --font-size-button: 1.125rem; /* 20px - Button Text */
 
   /* Line Heights */
   --line-height-h1: 2.4375rem; /* 39px */
@@ -228,46 +228,22 @@
     cursor: pointer;
   }
 
-  .btn-invest {
-    background-color: var(--color-alerts-success);
-    color: var(--color-text-btn);
-    font-family: var(--font-family-primary);
-    font-size: var(--font-size-button);
-    line-height: var(--line-height-button);
-    font-weight: var(--font-weight-medium);
-    padding: 1rem 2rem;
-    height: 3rem;
-    transition: background-color 0.15s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .btn-invest:hover {
-    background-color: color-mix(
-      in srgb,
-      var(--color-alerts-success) 80%,
-      black
-    );
-    cursor: pointer;
-  }
-
-  .btn-withdraw {
+  .btn-delete {
     background-color: var(--color-alerts-error);
     color: var(--color-text-btn);
     font-family: var(--font-family-primary);
-    font-size: var(--font-size-button);
+    font-size: var(--font-size-small);
     line-height: var(--line-height-button);
     font-weight: var(--font-weight-medium);
     padding: 1rem 2rem;
-    height: 3rem;
+    height: 2.5rem;
     transition: background-color 0.15s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
   }
 
-  .btn-withdraw:hover {
+  .btn-delete:hover {
     background-color: color-mix(in srgb, var(--color-alerts-error) 80%, black);
     cursor: pointer;
   }

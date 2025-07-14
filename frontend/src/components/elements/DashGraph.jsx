@@ -90,7 +90,7 @@ function DashGraph() {
         callbacks: {
           label: function (context) {
             const value = context.parsed
-            return `${formatEUR(value)}`
+            return ` ${formatEUR(value)}`
           }
         }
       },
@@ -113,7 +113,7 @@ function DashGraph() {
     <div className='bg-white shadow-lg overflow-hidden h-full relative'>
       <div className='flex flex-col lg:flex-row items-center gap-6 h-full'>
         {/* Pie Chart */}
-        <div className='flex-shrink-0 flex-1' style={{ minHeight: '550px' }}>
+        <div className='flex-shrink-0 flex-1' style={{ minHeight: '450px' }}>
           <Pie data={data} options={options} />
         </div>
       </div>
@@ -126,7 +126,7 @@ function DashGraph() {
                 className='w-3 h-3 rounded-full'
                 style={{ backgroundColor: colors[index] }}
               />
-              <span className='text-caption'>{item.name}</span>
+              <span className='text-body text-gray-600'>{item.name}</span>
             </div>
           ))}
         </div>

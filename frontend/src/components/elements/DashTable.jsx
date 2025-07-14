@@ -7,10 +7,7 @@ function DashTable() {
       sub_categories: {
         'Livret A/LDDS': 5000,
         'Assurance-Vie': 8000,
-        'PEL/CEL': 2000,
-        Espèces: 5000,
-        PEA: 150000,
-        'PEE/PERCO': 30000
+        'PEL/CEL': 2000
       }
     },
     Immobilier: {
@@ -18,8 +15,7 @@ function DashTable() {
       sub_categories: {
         'Immobilier de Jouissance': 200000,
         SCPI: 50000,
-        'Immobilier locatif': 32000,
-        'Crowdfunding Immobilier': 5500
+        'Immobilier locatif': 32000
       }
     },
     Actions: {

@@ -31,20 +31,20 @@ function Profil() {
             <h2 className='text-center'>Profil de Risque</h2>
             <div className='card h-full'>
               <div className='flex flex-col gap-4'>
-                <p className='text-h3-light'>
-                  Votre profil de risque actuel est paramétré sur :
+                <p className='text-body text-center'>
+                  Votre profil de risque actuel :
                 </p>
                 <p className='text-data text-center'>PRUDENT</p>
               </div>
 
               <div className='flex flex-col gap-4'>
-                <p className='text-h3-light'>
-                  Modifiez votre profil de risque ci-desous :
+                <p className='text-body text-center'>
+                  Modifiez votre profil de risque :
                 </p>
                 <select
                   name='riskProfile'
                   id='risk-profile'
-                  className='input-field input-field:focus w-full'
+                  className='input-field input-field:focus w-full text-center'
                 >
                   <option value='' disabled>
                     Sélectionner une option
@@ -144,7 +144,9 @@ function Profil() {
                   l'accès à votre compte HelpInvest et toutes vos données seront
                   supprimées.
                 </p>
-                <button className='btn-withdraw'>Supprimer le compte</button>
+                <button className='btn-delete w-1/2'>
+                  Supprimer le compte
+                </button>
               </div>
             </div>
           </div>
