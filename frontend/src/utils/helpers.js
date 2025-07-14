@@ -15,6 +15,8 @@ export const formatDate = (dateString) => {
 export const formatAmount = (amount) => {
   return new Intl.NumberFormat('fr-FR', {
     style: 'currency',
-    currency: 'EUR'
+    currency: 'EUR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
   }).format(amount)
 }

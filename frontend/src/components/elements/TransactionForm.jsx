@@ -9,6 +9,7 @@ export default function TransactionForm({
 }) {
   const [formData, setFormData] = useState({
     amount: '',
+    displayAmount: '', // Add this for formatted display
     categoryName: '',
     subCategory: ''
   })
@@ -65,8 +66,36 @@ export default function TransactionForm({
     }
   }
 
+  const handleAmountChange = (e) => {
+    const inputValue = e.target.value
+    // Remove all non-digit characters
+    const numericValue = inputValue.replace(/\D/g, '')
+
+    // Update both raw and formatted values
+    setFormData((prev) => ({
+      ...prev,
+      amount: numericValue,
+      displayAmount: numericValue ? formatNumber(parseInt(numericValue)) : ''
+    }))
+
+    // Clear error when user starts typing
+    if (errors.amount) {
+      setErrors((prev) => ({
+        ...prev,
+        amount: ''
+      }))
+    }
+  }
+
   const handleChange = (e) => {
     const { name, value } = e.target
+
+    // Handle amount separately
+    if (name === 'amount') {
+      handleAmountChange(e)
+      return
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: value
@@ -238,9 +267,9 @@ export default function TransactionForm({
         {isWithdraw &&
           currentBalance !== null &&
           currentBalance !== undefined && (
-            <div className='p-3 bg-gray-100 rounded-lg'>
+            <div className='p-3 bg-gray-100'>
               <span className='text-small text-gray-600'>
-                Solde disponible:{' '}
+                Solde disponible :{' '}
                 <span className='font-medium text-data'>
                   {formatNumber(currentBalance)}€
                 </span>
@@ -254,14 +283,12 @@ export default function TransactionForm({
             Montant (€)
           </label>
           <input
-            type='number'
+            type='text'
             name='amount'
             id={`amount-${actionType}`}
-            value={formData.amount}
-            onChange={handleChange}
+            value={formData.displayAmount}
+            onChange={handleAmountChange}
             placeholder='0'
-            min='0'
-            step='1'
             className='input-field input-field:focus w-full'
             disabled={isLoading}
           />

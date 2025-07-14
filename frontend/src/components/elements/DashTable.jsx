@@ -1,4 +1,5 @@
 import React from 'react'
+import { formatAmount } from '../../utils/helpers'
 
 function DashTable() {
   const mockPortfolioSummary = {
@@ -28,26 +29,19 @@ function DashTable() {
     }
   }
 
-  const formatEUR = (amount) => {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(amount)
-  }
-
   return (
     <div className='bg-white shadow-lg overflow-hidden'>
       <div className='overflow-x-auto'>
-        <table className='min-w-full divide-y divide-gray-200'>
+        <table className='min-w-full divide-y divide-gray-200 table-fixed'>
           <thead className='bg-theme-primary text-white sticky top-0 z-10'>
             <tr>
-              <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider'>
+              <th className='w-1/3 px-6 py-3 text-left text-xs font-medium uppercase tracking-wider'>
                 Catégorie
               </th>
-              <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider'>
+              <th className='w-1/3 px-6 py-3 text-left text-xs font-medium uppercase tracking-wider'>
                 Compte
               </th>
-              <th className='px-6 py-3 text-right text-xs font-medium uppercase tracking-wider'>
+              <th className='w-1/3 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider'>
                 Montant
               </th>
             </tr>
@@ -56,7 +50,7 @@ function DashTable() {
       </div>
 
       <div className='overflow-y-auto max-h-[550px]'>
-        <table className='min-w-full'>
+        <table className='min-w-full table-fixed'>
           <tbody className='bg-white divide-y divide-gray-200'>
             {Object.entries(mockPortfolioSummary).map(
               ([category, data], categoryIndex) => {
@@ -71,29 +65,26 @@ function DashTable() {
                     {index === 0 && (
                       <td
                         rowSpan={subEntries.length}
-                        className='px-6 py-4 whitespace-nowrap border-r border-gray-200'
+                        className='w-1/3 px-6 py-4 whitespace-nowrap border-r border-gray-200 align-top'
                       >
-                        <div className='flex flex-col'>
-                          <span className='text-sm font-bold text-gray-900'>
+                        <div className='flex flex-col max-w-full'>
+                          <span className='text-body font-bold text-text-main truncate'>
                             {category}
                           </span>
-                          <span className='text-xs text-gray-500 mt-1'>
-                            Total:{' '}
-                            <span className='font-medium text-green-600'>
-                              {formatEUR(data.total_balance)}
-                            </span>
+                          <span className='text-small font-medium text-theme-primary mt-1'>
+                            {formatAmount(data.total_balance)}
                           </span>
                         </div>
                       </td>
                     )}
-                    <td className='px-6 py-4 whitespace-nowrap'>
-                      <span className='text-sm text-gray-700'>
+                    <td className='w-1/3 px-6 py-4 whitespace-nowrap'>
+                      <span className='text-sm text-gray-700 truncate block'>
                         {subCategory}
                       </span>
                     </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-right'>
+                    <td className='w-1/3 px-6 py-4 whitespace-nowrap text-right'>
                       <span className='text-sm font-medium text-gray-900'>
-                        {formatEUR(amount)}
+                        {formatAmount(amount)}
                       </span>
                     </td>
                   </tr>
@@ -111,7 +102,7 @@ function DashTable() {
           </span>
           <span className='text-sm font-semibold text-gray-800'>
             Total Patrimoine :{' '}
-            {formatEUR(
+            {formatAmount(
               Object.values(mockPortfolioSummary).reduce(
                 (sum, cat) => sum + cat.total_balance,
                 0

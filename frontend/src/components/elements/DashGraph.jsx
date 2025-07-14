@@ -2,6 +2,7 @@ import React from 'react'
 import { Pie } from 'react-chartjs-2'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
+import { formatAmount } from '../../utils/helpers'
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels)
@@ -37,13 +38,6 @@ function DashGraph() {
         Crypto: 60000
       }
     }
-  }
-
-  const formatEUR = (amount) => {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(amount)
   }
 
   // Calculate total and percentages
@@ -90,7 +84,7 @@ function DashGraph() {
         callbacks: {
           label: function (context) {
             const value = context.parsed
-            return ` ${formatEUR(value)}`
+            return ` ${formatAmount(value)}`
           }
         }
       },
