@@ -1,6 +1,5 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { IoMdArrowDropdown } from 'react-icons/io'
 
 function MainHeader() {
   return (
@@ -29,7 +28,7 @@ function MainHeader() {
       </div>
       <div className='flex gap-4'>
         <Link to='/profil'>
-          <p className='nav-link nav-link:hover'>Profile</p>
+          <p className='nav-link nav-link:hover'>Profil</p>
         </Link>
         <Link to='/déconnexion'>
           <p className='nav-link nav-link:hover'>Déconnexion</p>
