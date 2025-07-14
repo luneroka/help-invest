@@ -3,7 +3,7 @@
   "dockerComposeFile": ["../docker-compose.yml"],
   "service": "flask",
   "workspaceFolder": "/workspace",
-  "postCreateCommand": "cd /workspace/frontend && npm install && git config --global user.name \"${localEnv:GIT_USER_NAME}\" && git config --global user.email \"${localEnv:GIT_USER_EMAIL}\"",
+  "postCreateCommand": "git config --global user.name \"${localEnv:GIT_USER_NAME}\" && git config --global user.email \"${localEnv:GIT_USER_EMAIL}\"",
   "customizations": {
     "vscode": {
       "settings": {
@@ -21,10 +21,14 @@
       ]
     }
   },
-  "forwardPorts": [5001],
+  "forwardPorts": [5001, 5173],
   "portsAttributes": {
     "5001": {
       "label": "Flask App",
+      "onAutoForward": "openPreview"
+    },
+    "5173": {
+      "label": "Vite Dev Server",
       "onAutoForward": "openPreview"
     }
   },
