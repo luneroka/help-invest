@@ -3,7 +3,7 @@
   "dockerComposeFile": ["../docker-compose.yml"],
   "service": "flask",
   "workspaceFolder": "/workspace",
-  "postCreateCommand": "cd /workspace/frontend && npm install",
+  "postCreateCommand": "cd /workspace/frontend && npm install && git config --global user.name \"${localEnv:GIT_USER_NAME}\" && git config --global user.email \"${localEnv:GIT_USER_EMAIL}\"",
   "customizations": {
     "vscode": {
       "settings": {
@@ -35,7 +35,6 @@
   "mounts": [
     "source=${localWorkspaceFolder}/backend/.env,target=/workspace/backend/.env,type=bind,consistency=cached",
     "source=${env:HOME}/.ssh,target=/home/vscode/.ssh,type=bind",
-    "source=/run/host-services/ssh-auth.sock,target=/ssh-agent,type=bind",
-    "source=${env:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind"
+    "source=/run/host-services/ssh-auth.sock,target=/ssh-agent,type=bind"
   ]
 }
