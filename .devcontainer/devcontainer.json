@@ -3,11 +3,6 @@
   "dockerComposeFile": ["../docker-compose.yml"],
   "service": "flask",
   "workspaceFolder": "/workspace",
-  "features": {
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "18"
-    }
-  },
   "postCreateCommand": "cd /workspace/frontend && npm install",
   "customizations": {
     "vscode": {
@@ -21,7 +16,8 @@
         "ms-python.flake8",
         "ms-python.black-formatter",
         "ms-python.vscode-pylance",
-        "esbenp.prettier-vscode"
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss"
       ]
     }
   },
