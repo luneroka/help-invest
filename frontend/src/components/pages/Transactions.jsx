@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Layout from '../layout/Layout'
 import MainHeader from '../headers/MainHeader'
-import TransactionForm from './TransactionForm'
+import TransactionForm from '../elements/TransactionForm'
 
 function Transactions() {
   const [isLoading, setIsLoading] = useState(false)

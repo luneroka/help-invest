@@ -30,7 +30,7 @@ function MainHeader() {
         <Link to='/profil'>
           <p className='nav-link nav-link:hover'>Profil</p>
         </Link>
-        <Link to='/déconnexion'>
+        <Link to='/logout'>
           <p className='nav-link nav-link:hover'>Déconnexion</p>
         </Link>
       </div>
