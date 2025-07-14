@@ -1,4 +1,4 @@
-import React from 'react'
+import { Link } from 'react-router-dom'
 import Layout from '../layout/Layout'
 import MainHeader from '../headers/MainHeader'
 import { PiPiggyBank } from 'react-icons/pi'
@@ -16,14 +16,18 @@ function Dashboard() {
           <div className='w-full'>
             <div className='border h-full mb-16'>Recommendation card</div>
             <div className='flex gap-4'>
-              <button className='btn-secondary flex-1 gap-2 btn-secondary:hover'>
-                Investir
-                <PiPiggyBank />
-              </button>
-              <button className='btn-secondary flex-1 gap-2 btn-secondary:hover'>
-                Profil de Risque
-                <FiExternalLink />
-              </button>
+              <Link to='/opérations' className='flex-1'>
+                <button className='btn-secondary gap-2 w-full btn-secondary:hover'>
+                  Investir
+                  <PiPiggyBank />
+                </button>
+              </Link>
+              <Link to='/risque' className='flex-1'>
+                <button className='btn-secondary gap-2 w-full btn-secondary:hover'>
+                  Profil de Risque
+                  <FiExternalLink />
+                </button>
+              </Link>
             </div>
           </div>
         </div>

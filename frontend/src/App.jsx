@@ -7,6 +7,7 @@ import Register from './components/pages/Register'
 import Transactions from './components/pages/Transactions'
 import History from './components/pages/History'
 import Profil from './components/pages/Profil'
+import Risk from './components/pages/Risk'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path='/profil' element={<Profil />} />
         <Route path='/opérations' element={<Transactions />} />
         <Route path='/historique' element={<History />} />
+        <Route path='/risque' element={<Risk />} />
       </Routes>
     </BrowserRouter>
   )

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import PasswordChecklist from 'react-password-checklist'
@@ -88,7 +88,7 @@ function Register() {
                   onClick={() => toggleConfirmationPasswordVisibility()}
                   className='cursor-pointer absolute right-3 inset-y-0 my-auto text-caption'
                 >
-                  {passwordVisibility ? <FaEyeSlash /> : <FaEye />}
+                  {confirmationPasswordVisibility ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
               <div className='password-checklist-container'>
