@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import Layout from '../layout/Layout'
 import AuthHeader from '../headers/AuthHeader'
@@ -13,6 +13,7 @@ function Login() {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  let navigate = useNavigate()
 
   // Handle input changes
   const handleInputChange = (e) => {
@@ -34,7 +35,7 @@ function Login() {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/login`, // This will use http://localhost:5000
+        `${import.meta.env.VITE_API_BASE_URL}/api/login`,
         {
           username: formData.username,
           password: formData.password
@@ -48,8 +49,7 @@ function Login() {
       )
 
       if (response.data.success) {
-        console.log('Login successful:', response.data)
-        // Redirect to dashboard or home page
+        navigate('/dashboard')
       }
     } catch (err) {
       console.error('Login error:', err)

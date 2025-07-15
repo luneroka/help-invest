@@ -26,7 +26,6 @@ def login():
             }), 400
 
         data = request.get_json()
-        print(f"Parsed JSON: {data}")
 
         if not data:
             print("No data in request")
@@ -85,50 +84,87 @@ def login():
         }), 500
 
 
-@app.route("/logout")
+@app.route("/api/logout", methods=["POST"])
 def logout():
-    session.clear()
-    return redirect("/")
+    try:
+        session.clear()
+
+        return jsonify({
+            "success": True,
+            "message": "Déconnexion réussie"
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": "Erreur lors de la déconnexion"
+        }), 500
 
 
-@app.route("/signup", methods=["GET", "POST"])
+@app.route("/api/signup", methods=["POST"])
 def signup():
-    if request.method == "POST":
+    try:
+        # Check if request contains JSON
+        if not request.is_json:
+            return jsonify({
+                "success": False,
+                "message": "Content-Type must be application/json"
+            }), 400
+        
+        data = request.get_json()
+
+        if not data:
+            return jsonify({
+                "success": False,
+                "message": "No data provided"
+            }), 400
+
         # Retrieve form data
-        username = request.form.get("username")
-        password = request.form.get("password")
-        confirmation = request.form.get("confirmation")
+        username = data.get("username")
+        password = data.get("password")
+        confirmation = data.get("confirmation")
 
         # Validate username input
         if not username:
-            flash("Nom d'utilisateur requis", "error")
-            return render_template("signup.html"), 400
+            return jsonify({
+                "success": False,
+                "message": "Nom d'utilisateur requis"
+            }), 400
 
         # Validate password input
         if not password:
-            flash("Mot de passe requis", "error")
-            return render_template("signup.html"), 400
+            return jsonify({
+                "success": False,
+                "message": "Mot de passe requis"
+            }), 400
 
         # Validate password strength
         password_error = validate_password_strength(password)
         if password_error:
-            flash(password_error, "error")
-            return render_template("signup.html"), 400
+            return jsonify({
+                "success": False,
+                "message": password_error
+            }), 400
 
         # Validate other input
         if not confirmation:
-            flash("Veuillez confirmer votre mot de passe", "error")
-            return render_template("signup.html"), 400
+            return jsonify({
+                "success": False,
+                "message": "Veuillez confirmer le mot de passe"
+            }), 400
 
         if confirmation != password:
-            flash("Les mots de passe ne correspondent pas", "error")
-            return render_template("signup.html"), 400
+            return jsonify({
+                "success": False,
+                "message": "Les mots de passe ne correspondent pas"
+            }), 400
 
         # Check if username already exists
         existing_user = Users.query.filter_by(username=username).first()
         if existing_user:
-            flash("Ce nom d'utilisateur existe déjà", "error")
-            return render_template("signup.html"), 400
+            return jsonify({
+                "success": False,
+                "message": "Ce nom d'utilisateur existe déjà"
+            }), 400
 
         # Hash password and create new user
         hashed_password = generate_password_hash(
@@ -142,14 +178,23 @@ def signup():
         try:
             db.session.add(new_user)
             db.session.commit()
-            flash("Votre compte a été créé avec succès", "success")
-            return redirect("/login")
+            return jsonify({
+                "success": True,
+                "message": "Votre compte a été créé avec succès"
+            }), 201
         except Exception as e:
             db.session.rollback()
-            flash("Une erreur s'est produite. Veuillez réessayer", e)
-            return render_template("/signup.html"), 500
+            return jsonify({
+                "success": False,
+                "message": f"Une erreur s'est produite. Veuillez réessayer: {str(e)}"
+            }), 500
 
-    return render_template("signup.html")
+    except Exception as e:
+        print(f"Exception occurred: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": f"Erreur serveur: {str(e)}"
+        }), 500
 
 
 @app.route("/change-password", methods=["GET", "POST"])

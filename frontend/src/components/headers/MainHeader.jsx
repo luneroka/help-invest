@@ -1,7 +1,32 @@
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 import React from 'react'
 import { Link } from 'react-router-dom'
 
 function MainHeader() {
+  let navigate = useNavigate()
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/logout`,
+        {},
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+
+      if (response.data.success) {
+        navigate('/connexion')
+      }
+    } catch (error) {
+      console.error('Logout error', error)
+    }
+  }
+
   return (
     <div className='flex items-center justify-between bg-theme-main h-16 px-24'>
       <div className='flex gap-4 items-center'>
@@ -30,9 +55,12 @@ function MainHeader() {
         <Link to='/profil'>
           <p className='nav-link nav-link:hover'>Profil</p>
         </Link>
-        <Link to='/logout'>
-          <p className='nav-link nav-link:hover'>Déconnexion</p>
-        </Link>
+        <button
+          onClick={handleLogout}
+          className='nav-link nav-link:hover cursor-pointer'
+        >
+          Déconnexion
+        </button>
       </div>
     </div>
   )
