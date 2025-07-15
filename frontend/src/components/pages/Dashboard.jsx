@@ -1,25 +1,84 @@
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { formatAmount } from '../../utils/helpers'
 import Layout from '../layout/Layout'
 import MainHeader from '../headers/MainHeader'
-import { PiPiggyBank } from 'react-icons/pi'
-import { FiExternalLink } from 'react-icons/fi'
 import DashTable from '../elements/DashTable'
 import DashGraph from '../elements/DashGraph'
+import axios from 'axios'
 
 function Dashboard() {
+  const [portfolioData, setPortfolioData] = useState({})
+  const [totalEstate, setTotalEstate] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  let navigate = useNavigate()
+
+  useEffect(() => {
+    fetchPortfolioData()
+  }, [])
+
+  const fetchPortfolioData = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/api/dashboard`,
+        {
+          withCredentials: true
+        }
+      )
+
+      if (response.data.success) {
+        setPortfolioData(response.data.portfolio_summary || {})
+        setTotalEstate(response.data.total_estate || 0)
+      }
+    } catch (error) {
+      if (error.response?.status === 401) {
+        navigate('/connexion')
+      } else {
+        setError('Impossible de charger les données du portefeuille')
+        setPortfolioData({})
+        setTotalEstate(0)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const portfolioSummary =
+    Object.keys(portfolioData).length > 0 ? portfolioData : {}
+  const displayTotalEstate = totalEstate > 0 ? formatAmount(totalEstate) : 0
+
   return (
     <Layout header={<MainHeader />}>
       <h2>Répartition du Patrimoine</h2>
-      <div className='flex gap-16 justify-between'>
-        <div className='w-full'>
-          <div className='h-full mb-16'>
-            <DashGraph />
+
+      {displayTotalEstate === 0 ? (
+        <div className='text-left'>
+          <span className='text-gray-500'>
+            Aucune donnée de portefeuille disponible.
+          </span>
+        </div>
+      ) : (
+        <div className='flex gap-16 justify-between'>
+          <div className='w-full'>
+            <div className='h-full mb-16'>
+              <DashGraph
+                portfolioSummary={portfolioSummary}
+                loading={loading}
+                error={error}
+              />
+            </div>
+          </div>
+          <div className='w-full'>
+            <DashTable
+              portfolioSummary={portfolioSummary}
+              displayTotalEstate={displayTotalEstate}
+              loading={loading}
+              error={error}
+            />
           </div>
         </div>
-        <div className='w-full'>
-          <DashTable />
-        </div>
-      </div>
+      )}
     </Layout>
   )
 }

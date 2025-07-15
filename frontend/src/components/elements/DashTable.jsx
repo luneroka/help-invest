@@ -1,36 +1,38 @@
 import React from 'react'
 import { formatAmount } from '../../utils/helpers'
 
-function DashTable() {
-  const mockPortfolioSummary = {
-    Épargne: {
-      total_balance: 65000,
-      sub_categories: {
-        'Livret A/LDDS': 5000,
-        'Assurance-Vie': 8000,
-        'PEL/CEL': 2000
-      }
-    },
-    Immobilier: {
-      total_balance: 287500,
-      sub_categories: {
-        'Immobilier de Jouissance': 200000,
-        SCPI: 50000,
-        'Immobilier locatif': 32000
-      }
-    },
-    Actions: {
-      total_balance: 95000,
-      sub_categories: {
-        Actions: 25000,
-        Obligations: 10000,
-        Crypto: 60000
-      }
-    }
+function DashTable({ portfolioSummary, displayTotalEstate, loading, error }) {
+  if (displayTotalEstate === 0) {
+    return (
+      <div className='bg-white shadow-lg overflow-hidden'>
+        <div className='p-6 text-center'>
+          <span className='text-gray-500'>
+            Aucune donnée de portefeuille disponible.
+          </span>
+        </div>
+      </div>
+    )
+  }
+
+  if (loading) {
+    return (
+      <div className='bg-white shadow-lg overflow-hidden'>
+        <div className='p-6 text-center'>
+          <span className='text-gray-500'>
+            Chargement des données du portefeuille...
+          </span>
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className='bg-white shadow-lg overflow-hidden'>
+      {error && (
+        <div className='px-6 py-3 bg-yellow-50 border-l-4 border-yellow-400'>
+          <p className='text-sm text-yellow-700'>{error}</p>
+        </div>
+      )}
       <div className='overflow-x-auto'>
         <table className='min-w-full divide-y divide-gray-200 table-fixed'>
           <thead className='bg-theme-primary text-white sticky top-0 z-10'>
@@ -52,7 +54,7 @@ function DashTable() {
       <div className='overflow-y-auto max-h-[550px]'>
         <table className='min-w-full table-fixed'>
           <tbody className='bg-white divide-y divide-gray-200'>
-            {Object.entries(mockPortfolioSummary).map(
+            {Object.entries(portfolioSummary).map(
               ([category, data], categoryIndex) => {
                 const subEntries = Object.entries(data.sub_categories)
                 return subEntries.map(([subCategory, amount], index) => (
@@ -98,16 +100,10 @@ function DashTable() {
       <div className='px-6 py-4 bg-gray-50 border-t border-gray-200'>
         <div className='flex justify-between items-center'>
           <span className='text-sm text-gray-600'>
-            {Object.keys(mockPortfolioSummary).length} catégories
+            {Object.keys(portfolioSummary).length} catégories
           </span>
           <span className='text-sm font-semibold text-gray-800'>
-            Total Patrimoine :{' '}
-            {formatAmount(
-              Object.values(mockPortfolioSummary).reduce(
-                (sum, cat) => sum + cat.total_balance,
-                0
-              )
-            )}
+            Total Patrimoine : {displayTotalEstate}
           </span>
         </div>
       </div>

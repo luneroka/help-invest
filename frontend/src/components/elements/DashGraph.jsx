@@ -7,52 +7,18 @@ import { formatAmount } from '../../utils/helpers'
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels)
 
-function DashGraph() {
-  // Mock data matching DashTable structure
-  const mockPortfolioSummary = {
-    Épargne: {
-      total_balance: 200000,
-      sub_categories: {
-        'Livret A/LDDS': 5000,
-        'Assurance-Vie': 8000,
-        'PEL/CEL': 2000,
-        Espèces: 5000,
-        PEA: 150000,
-        'PEE/PERCO': 30000
-      }
-    },
-    Immobilier: {
-      total_balance: 287500,
-      sub_categories: {
-        'Immobilier de Jouissance': 200000,
-        SCPI: 50000,
-        'Immobilier locatif': 32000,
-        'Crowdfunding Immobilier': 5500
-      }
-    },
-    Actions: {
-      total_balance: 95000,
-      sub_categories: {
-        Actions: 25000,
-        Obligations: 10000,
-        Crypto: 60000
-      }
-    }
-  }
-
+function DashGraph({ portfolioSummary, loading, error }) {
   // Calculate total and percentages
-  const totalPortfolio = Object.values(mockPortfolioSummary).reduce(
+  const totalPortfolio = Object.values(portfolioSummary).reduce(
     (sum, category) => sum + category.total_balance,
     0
   )
 
-  const chartData = Object.entries(mockPortfolioSummary).map(
-    ([name, data]) => ({
-      name,
-      value: data.total_balance,
-      percentage: data.total_balance / totalPortfolio
-    })
-  )
+  const chartData = Object.entries(portfolioSummary).map(([name, data]) => ({
+    name,
+    value: data.total_balance,
+    percentage: data.total_balance / totalPortfolio
+  }))
 
   // Colors for each category
   const colors = ['#10B981', '#3B82F6', '#F59E0B']
@@ -103,8 +69,25 @@ function DashGraph() {
     }
   }
 
+  if (loading) {
+    return (
+      <div className='bg-white shadow-lg overflow-hidden'>
+        <div className='p-6 text-center'>
+          <span className='text-gray-500'>
+            Chargement des données du portefeuille...
+          </span>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className='bg-white shadow-lg overflow-hidden h-full relative'>
+      {error && (
+        <div className='px-6 py-3 bg-yellow-50 border-l-4 border-yellow-400'>
+          <p className='text-sm text-yellow-700'>{error}</p>
+        </div>
+      )}
       <div className='flex flex-col lg:flex-row items-center gap-6 h-full'>
         {/* Pie Chart */}
         <div className='flex-shrink-0 flex-1' style={{ minHeight: '450px' }}>

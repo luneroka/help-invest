@@ -421,128 +421,92 @@ def update_risk_profile():
         }), 500
 
 
-@app.route("/dashboard", methods=["GET"])
+@app.route("/api/dashboard", methods=["GET"])
 @login_required
 def dashboard():
-    # Display portfolio data
-    user_id = session["user_id"]
+    try:
+        # Display portfolio data
+        user_id = session["user_id"]
+        user = Users.query.filter_by(id=user_id).first()
 
-    # Query user balances
-    portfolio_data = (
-        db.session.query(
-            Portfolios.balance,
-            Categories.category_name,
-            Categories.sub_category
+        if not user:
+            return jsonify({
+                "success": False,
+                "message": "Utilisateur non trouvé"
+            }), 404
+
+        # Query user balances
+        portfolio_data = (
+            db.session.query(
+                Portfolios.balance,
+                Categories.category_name,
+                Categories.sub_category
+            )
+            .join(Categories, Portfolios.category_id == Categories.id)
+            .filter(Portfolios.user_id == user_id)
+            .all()
         )
-        .join(Categories, Portfolios.category_id == Categories.id)
-        .filter(Portfolios.user_id == user_id)
-        .all()
-    )
 
-    # Initialize total estate and portfolio summary
-    total_estate = 0
-    portfolio_summary = {}
+        # Initialize total estate and portfolio summary
+        total_estate = 0
+        portfolio_summary = {}
 
-    for balance, category_name, sub_category_name in portfolio_data:
-        # Skip categories with 0 balance
-        if balance == 0:
-            continue
+        for balance, category_name, sub_category_name in portfolio_data:
+            # Skip categories with 0 balance
+            if balance == 0:
+                continue
 
-        # Add balance to total estate
-        total_estate += balance
+            # Add balance to total estate
+            total_estate += balance
 
-        # Initialize category structure
-        if category_name not in portfolio_summary:
-            portfolio_summary[category_name] = {
-                "total_balance": 0,
-                "sub_categories": {},
+            # Initialize category structure
+            if category_name not in portfolio_summary:
+                portfolio_summary[category_name] = {
+                    "total_balance": 0,
+                    "sub_categories": {},
             }
 
-        # Update total balance for the category
-        portfolio_summary[category_name]["total_balance"] += balance
+            # Update total balance for the category
+            portfolio_summary[category_name]["total_balance"] += balance
 
-        # Update balance of sub-category
-        if (
-            sub_category_name
-            not in portfolio_summary[category_name]["sub_categories"]
-        ):
+            # Update balance of sub-category
+            if (
+                sub_category_name
+                not in portfolio_summary[category_name]["sub_categories"]
+            ):
+                portfolio_summary[category_name]["sub_categories"][
+                    sub_category_name
+                ] = 0
             portfolio_summary[category_name]["sub_categories"][
                 sub_category_name
-            ] = 0
-        portfolio_summary[category_name]["sub_categories"][
-            sub_category_name
-        ] += balance
+            ] += balance
 
-    # Filter out any categories with a total balance of zero
-    portfolio_summary = {
-        category: details
-        for category, details in portfolio_summary.items()
-        if details["total_balance"] > 0
-    }
-
-    # Display recommendation
-
-    # Handle empty portfolio
-    if total_estate == 0:
-        flash("Votre portefeuille est vide. Commencez à construire votre patrimoine !", "info")
-        return render_template(
-            "dashboard.html",
-            portfolio_summary={},
-            total_estate=0,
-            portfolio_analysis=[],
-        )
-
-    # Fetch user's risk profile
-    user = db.session.query(Users).filter(Users.id == user_id).first()
-    risk_profile = user.risk_profile
-
-    # Define default repartition based on risk profiles
-    risk_profiles = {
-        "Prudent": {"Épargne": 0.5, "Immobilier": 0.3, "Actions": 0.2},
-        "Dynamique": {"Épargne": 0.05, "Immobilier": 0.15, "Actions": 0.8},
-        "Équilibré": {"Épargne": 0.25, "Immobilier": 0.25, "Actions": 0.5},
-    }
-
-    # Set default profile
-    reco_percentages = risk_profiles.get(
-        risk_profile, risk_profiles["Équilibré"]
-    )
-
-    # Calculate current and recommended totals dymanically
-    current_totals = {
-        category: details["total_balance"]
-        for category, details in portfolio_summary.items()
-    }
-    reco_totals = {
-        category: total_estate * reco_percentages.get(category, 0)
-        for category in portfolio_summary.keys()
-    }
-
-    # Merge all portfolio data in a single list of dictionaries
-    portfolio_analysis = [
-        {
-            "category": category,
-            "current_balance": current_totals.get(category, 0),
-            "current_percentage": (
-                current_totals.get(category, 0) / total_estate
-                if total_estate > 0
-                else 0
-            ),
-            "recommended_balance": reco_totals.get(category, 0),
-            "recommended_percentage": reco_percentages.get(category, 0),
-            "gap": reco_totals.get(category, 0)
-            - current_totals.get(category, 0),
+        # Filter out any categories with a total balance of zero
+        portfolio_summary = {
+            category: details
+            for category, details in portfolio_summary.items()
+            if details["total_balance"] > 0
         }
-        for category in portfolio_summary.keys()
-    ]
 
-    # Render template
-    return render_template(
-        "dashboard.html",
-        portfolio_summary=portfolio_summary,
-        total_estate=total_estate,
-        portfolio_analysis=portfolio_analysis,
-    )
+        # Return JSON response with simplified data
+        return jsonify({
+            "success": True,
+            "message": "Données du portefeuille récupérées avec succès",
+            "portfolio_summary": portfolio_summary,
+            "total_estate": total_estate,
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "risk_profile": user.risk_profile
+            }
+        }), 200
+
+    except Exception as e:
+        print(f"Exception occurred: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": f"Erreur serveur: {str(e)}"
+        }), 500
 
 
 @app.route("/add-entry", methods=["GET", "POST"])
