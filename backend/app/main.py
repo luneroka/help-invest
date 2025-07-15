@@ -302,7 +302,16 @@ def change_password():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return jsonify({
+        "name": "HelpInvest API",
+        "version": "1.0.0",
+        "status": "running",
+        "endpoints": {
+            "auth": ["/api/login", "/api/logout", "/api/signup"],
+            "user": ["/api/change-password"],
+            "debug": ["/debug/users"]
+        }
+    })
 
 
 @app.route("/risk-profile", methods=["GET", "POST"])
