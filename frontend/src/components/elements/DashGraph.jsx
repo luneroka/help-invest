@@ -14,14 +14,29 @@ function DashGraph({ portfolioSummary, loading, error }) {
     0
   )
 
-  const chartData = Object.entries(portfolioSummary).map(([name, data]) => ({
-    name,
-    value: data.total_balance,
-    percentage: data.total_balance / totalPortfolio
-  }))
+  // Define the desired category order
+  const categoryOrder = ['Épargne', 'Immobilier', 'Actions', 'Autres']
 
-  // Colors for each category
-  const colors = ['#10B981', '#3B82F6', '#F59E0B']
+  // Sort the chart data by the defined order
+  const chartData = Object.entries(portfolioSummary)
+    .sort(([categoryA], [categoryB]) => {
+      const indexA = categoryOrder.indexOf(categoryA)
+      const indexB = categoryOrder.indexOf(categoryB)
+
+      // If category not found in order, put it at the end
+      const orderA = indexA === -1 ? categoryOrder.length : indexA
+      const orderB = indexB === -1 ? categoryOrder.length : indexB
+
+      return orderA - orderB
+    })
+    .map(([name, data]) => ({
+      name,
+      value: data.total_balance,
+      percentage: data.total_balance / totalPortfolio
+    }))
+
+  // Colors for each category (maintain same order as categoryOrder)
+  const colors = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444']
 
   // Chart.js data configuration
   const data = {
