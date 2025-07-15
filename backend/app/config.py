@@ -19,7 +19,7 @@ app.jinja_env.filters["eur"] = eur
 app.jinja_env.filters["percentage"] = percentage
 
 # Wrap app in CORS to disable error and enable cross origin requests
-CORS(app)
+CORS(app, origin='*')
 
 # Initialize Flask-WTF's CSRF protection
 csrf = CSRFProtect(app)
