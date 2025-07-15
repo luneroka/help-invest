@@ -26,10 +26,12 @@ CORS(app,
 # Initialize Flask-WTF's CSRF protection
 # csrf = CSRFProtect(app)
 
-# @app.before_request
-# def exempt_api_from_csrf():
-#     if request.path.startswith('/api/'):
-#         csrf.exempt(request.endpoint)
+# # Exempt API routes from CSRF protection
+# csrf.exempt('/api/login')
+# csrf.exempt('/api/logout')
+# csrf.exempt('/api/signup')
+# csrf.exempt('/api/change-password')
+# csrf.exempt('/api/risk-profile')
 
 # Get the DATABASE_URL environment variable
 database_url = os.environ.get('DATABASE_URL')

@@ -1,5 +1,5 @@
 import re
-from flask import request, redirect, session, flash
+from flask import request, redirect, session, flash, jsonify
 from functools import wraps
 from flask_wtf.csrf import CSRFError
 
@@ -16,11 +16,19 @@ def validate_password_strength(password):
 
 
 def login_required(f):
-    """Decorate routes to require login"""
+    """Decorate routes to require login - works for both HTML and API routes"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("user_id") is None:
-            return redirect("/login")
+            # Check if this is an API request (JSON content type or /api/ path)
+            if request.is_json or request.path.startswith('/api/'):
+                return jsonify({
+                    "success": False,
+                    "message": "Authentication required"
+                }), 401
+            else:
+                # HTML request - redirect to login
+                return redirect("/login")
         return f(*args, **kwargs)
 
     return decorated_function

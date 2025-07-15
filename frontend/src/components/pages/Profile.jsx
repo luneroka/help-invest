@@ -26,6 +26,18 @@ function Profile() {
   const [confirmationPasswordVisibility, setConfirmationPasswordVisibility] =
     useState(false)
 
+  // Handle input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }))
+
+    // Clear error on input change
+    if (error) setError('')
+  }
+
   // Fetch current risk profile on component mount
   useEffect(() => {
     fetchRiskProfile()
@@ -52,22 +64,48 @@ function Profile() {
     }
   }
 
-  // Handle input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }))
-
-    // Clear error on input change
-    if (error) setError('')
-  }
-
   // Handle risk profile change
   const handleRiskProfileChange = (e) => {
     setRiskProfile(e.target.value)
     if (riskError) setRiskError('')
+  }
+
+  // Handle risk profile update
+  const handleRiskProfileSubmit = async (e) => {
+    e.preventDefault()
+    setRiskLoading(true)
+    setRiskError('')
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/risk-profile`,
+        {
+          riskProfile: riskProfile
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+
+      if (response.data.success) {
+        setCurrentRiskProfile(response.data.user.risk_profile)
+        // You could add a success message here
+      }
+    } catch (err) {
+      console.error('Risk profile update error:', err)
+      if (err.response?.status === 401) {
+        navigate('/connexion')
+      } else if (err.response?.data?.message) {
+        setRiskError(err.response.data.message)
+      } else {
+        setRiskError('Une erreur est survenue. Veuillez réessayer.')
+      }
+    } finally {
+      setRiskLoading(false)
+    }
   }
 
   // Handle form submission
@@ -97,49 +135,15 @@ function Profile() {
       }
     } catch (err) {
       console.error('Password change error:', err)
-      if (err.response?.data?.message) {
+      if (err.response?.status === 401) {
+        navigate('/connexion')
+      } else if (err.response?.data?.message) {
         setError(err.response.data.message)
       } else {
         setError('Une erreur est survenue. Veuillez réessayer.')
       }
     } finally {
       setLoading(false)
-    }
-  }
-
-  // Handle risk profile update
-  const handleRiskProfileSubmit = async (e) => {
-    e.preventDefault()
-    setRiskLoading(true)
-    setRiskError('')
-
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/risk-profile`,
-        {
-          riskProfile: riskProfile
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true
-        }
-      )
-
-      if (response.data.success) {
-        setCurrentRiskProfile(response.data.user.risk_profile)
-        // You could add a success message here
-      }
-    } catch (err) {
-      console.error('Risk profile update error:', err)
-      if (err.response?.data?.message) {
-        setRiskError(err.response.data.message)
-      } else {
-        setRiskError('Une erreur est survenue. Veuillez réessayer.')
-      }
-    } finally {
-      setRiskLoading(false)
     }
   }
 
@@ -281,7 +285,7 @@ function Profile() {
                     id='confirmation'
                     placeholder='Confirmer le mot de passe'
                     className='input-field w-full'
-                    autoComplete='confirmation'
+                    autoComplete='new-password'
                     value={formData.confirmation}
                     onChange={handleInputChange}
                     required
@@ -304,7 +308,7 @@ function Profile() {
                   className='btn-primary'
                   disabled={loading}
                 >
-                  {loading ? 'Modification' : 'Modifier'}
+                  {loading ? 'Modification...' : 'Modifier'}
                 </button>
               </form>
 
