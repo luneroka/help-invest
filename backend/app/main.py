@@ -171,7 +171,7 @@ def signup():
             password, method="pbkdf2:sha256", salt_length=16
         )
         new_user = Users(
-            username=username, hash=hashed_password, risk_profile="Équilibré"
+            username=username, hash=hashed_password, risk_profile="équilibré"
         )
 
         # Try adding new user to db
@@ -314,46 +314,111 @@ def index():
     })
 
 
-@app.route("/risk-profile", methods=["GET", "POST"])
+@app.route("/api/risk-profile", methods=["GET"])
 @login_required
-def risk_profile():
-    user_id = session["user_id"]
+def get_risk_profile():
+    try:
+        user_id = session["user_id"]
+        user = Users.query.filter_by(id=user_id).first()
+        
+        if not user:
+            return jsonify({
+                "success": False,
+                "message": "Utilisateur non trouvé"
+            }), 404
+        
+        return jsonify({
+            "success": True,
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "risk_profile": user.risk_profile
+            }
+        }), 200
+        
+    except Exception as e:
+        print(f"Exception occurred: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": f"Erreur serveur: {str(e)}"
+        }), 500
 
-    # Handle POST method
-    if request.method == "POST":
-        user_risk_profile = request.form.get("risk")
-        if not user_risk_profile:
-            flash(
-                "Veuillez sélectionner un profil de risque dans la liste déroulante", "error"
-            )
-            return redirect("/risk-profile")
 
-        # Change valid input to lower case
-        new_profile = user_risk_profile.lower()
+@app.route("/api/risk-profile", methods=["POST"])
+@login_required
+def update_risk_profile():
+    try:
+        # Check if request contains JSON
+        if not request.is_json:
+            return jsonify({
+                "success": False,
+                "message": "Content-Type must be application/json"
+            }), 400
+        
+        data = request.get_json()
 
-        # Retrieve user
-        user = db.session.query(Users).filter(Users.id == user_id).first()
+        if not data:
+            return jsonify({
+                "success": False,
+                "message": "No data provided"
+            }), 400
 
-        # Update db
+        # Retrieve form data
+        risk_profile = data.get("riskProfile")
+
+        # Validate input
+        if not risk_profile:
+            return jsonify({
+                "success": False,
+                "message": "Profil de risque requis"
+            }), 400
+
+        # Validate risk profile value
+        valid_profiles = ["prudent", "équilibré", "dynamique"]
+        if risk_profile.lower() not in valid_profiles:
+            return jsonify({
+                "success": False,
+                "message": "Profil de risque invalide"
+            }), 400
+
+        # Get user
+        user_id = session["user_id"]
+        user = Users.query.filter_by(id=user_id).first()
+        
+        if not user:
+            return jsonify({
+                "success": False,
+                "message": "Utilisateur non trouvé"
+            }), 404
+
+        # Update risk profile
         try:
-            user.risk_profile = new_profile
+            user.risk_profile = risk_profile.lower()
             db.session.commit()
-            flash("Votre profil de risque a été mis à jour avec succès", "success")
-            return redirect("/risk-profile")
+            
+            return jsonify({
+                "success": True,
+                "message": "Profil de risque mis à jour avec succès",
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "risk_profile": user.risk_profile
+                }
+            }), 200
+            
         except Exception as e:
             db.session.rollback()
-            flash(
-                "Une erreur s'est produite. Votre profil de risque n'a pas pu être mis à jour",
-                e,
-            )
-            return redirect("/risk-profile")
+            return jsonify({
+                "success": False,
+                "message": f"Erreur lors de la mise à jour: {str(e)}"
+            }), 500
 
-    # Fetch current risk profile
-    user = db.session.query(Users).filter(Users.id == user_id).first()
-    current_profile = user.risk_profile.upper()
-    return render_template(
-        "risk-profile.html", current_profile=current_profile
-    )
+    except Exception as e:
+        print(f"Exception occurred: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": f"Erreur serveur: {str(e)}"
+        }), 500
 
 
 @app.route("/dashboard", methods=["GET"])

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Layout from '../layout/Layout'
 import MainHeader from '../headers/MainHeader'
@@ -13,14 +13,44 @@ function Profile() {
     newPassword: '',
     confirmation: ''
   })
+  const [riskProfile, setRiskProfile] = useState('')
+  const [currentRiskProfile, setCurrentRiskProfile] = useState('')
   const [loading, setLoading] = useState(false)
+  const [riskLoading, setRiskLoading] = useState(false)
   const [error, setError] = useState('')
+  const [riskError, setRiskError] = useState('')
   let navigate = useNavigate()
 
   // Local state for password visibility and values
   const [passwordVisibility, setPasswordVisibility] = useState(false)
   const [confirmationPasswordVisibility, setConfirmationPasswordVisibility] =
     useState(false)
+
+  // Fetch current risk profile on component mount
+  useEffect(() => {
+    fetchRiskProfile()
+  }, [])
+
+  const fetchRiskProfile = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/api/risk-profile`,
+        {
+          withCredentials: true
+        }
+      )
+
+      if (response.data.success) {
+        setCurrentRiskProfile(response.data.user.risk_profile)
+        setRiskProfile(response.data.user.risk_profile)
+      }
+    } catch (err) {
+      console.error('Error fetching risk profile:', err)
+      if (err.response?.status === 401) {
+        navigate('/connexion')
+      }
+    }
+  }
 
   // Handle input changes
   const handleInputChange = (e) => {
@@ -32,6 +62,12 @@ function Profile() {
 
     // Clear error on input change
     if (error) setError('')
+  }
+
+  // Handle risk profile change
+  const handleRiskProfileChange = (e) => {
+    setRiskProfile(e.target.value)
+    if (riskError) setRiskError('')
   }
 
   // Handle form submission
@@ -71,6 +107,42 @@ function Profile() {
     }
   }
 
+  // Handle risk profile update
+  const handleRiskProfileSubmit = async (e) => {
+    e.preventDefault()
+    setRiskLoading(true)
+    setRiskError('')
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/risk-profile`,
+        {
+          riskProfile: riskProfile
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+
+      if (response.data.success) {
+        setCurrentRiskProfile(response.data.user.risk_profile)
+        // You could add a success message here
+      }
+    } catch (err) {
+      console.error('Risk profile update error:', err)
+      if (err.response?.data?.message) {
+        setRiskError(err.response.data.message)
+      } else {
+        setRiskError('Une erreur est survenue. Veuillez réessayer.')
+      }
+    } finally {
+      setRiskLoading(false)
+    }
+  }
+
   // Toggle password view
   const togglePasswordVisibility = () => {
     setPasswordVisibility((prev) => !prev)
@@ -91,30 +163,53 @@ function Profile() {
                 <p className='text-body text-center'>
                   Votre profil de risque actuel :
                 </p>
-                <p className='text-data text-center'>PRUDENT</p>
-              </div>
-
-              <div className='flex flex-col gap-4'>
-                <p className='text-body text-center'>
-                  Modifiez votre profil de risque :
+                <p className='text-data text-center'>
+                  {currentRiskProfile
+                    ? currentRiskProfile.toUpperCase()
+                    : 'CHARGEMENT...'}
                 </p>
-                <select
-                  name='riskProfile'
-                  id='risk-profile'
-                  className='input-field input-field:focus w-full text-center'
-                >
-                  <option value='' disabled>
-                    Sélectionner une option
-                  </option>
-                  {profiles.map((profile) => (
-                    <option key={`${profile}-key`} value={profile}>
-                      {profile.toUpperCase()}
-                    </option>
-                  ))}
-                </select>
               </div>
 
-              <button className='btn-primary'>Confirmer</button>
+              <form
+                onSubmit={handleRiskProfileSubmit}
+                className='flex flex-col gap-4'
+              >
+                {/* Risk profile error display */}
+                {riskError && (
+                  <div className='text-red-500 text-sm mb-4'>{riskError}</div>
+                )}
+
+                <div className='flex flex-col gap-4'>
+                  <p className='text-body text-center'>
+                    Modifiez votre profil de risque :
+                  </p>
+                  <select
+                    name='riskProfile'
+                    id='risk-profile'
+                    className='input-field input-field:focus w-full text-center'
+                    value={riskProfile}
+                    onChange={handleRiskProfileChange}
+                    required
+                  >
+                    <option value='' disabled>
+                      Sélectionner une option
+                    </option>
+                    {profiles.map((profile) => (
+                      <option key={`${profile}-key`} value={profile}>
+                        {profile.toUpperCase()}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <button
+                  type='submit'
+                  className='btn-primary'
+                  disabled={riskLoading || !riskProfile}
+                >
+                  {riskLoading ? 'Mise à jour...' : 'Confirmer'}
+                </button>
+              </form>
 
               <p className='text-small italic'>
                 Pour en savoir plus sur le profil de risque,{' '}
