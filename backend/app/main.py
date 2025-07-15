@@ -639,104 +639,146 @@ def invest():
         }), 500
 
 
-@app.route("/withdraw", methods=["GET", "POST"])
+@app.route("/api/withdraw", methods=["GET", "POST"])
 @login_required
 def withdraw():
-    user_id = session["user_id"]
-
+    user_id = session["user_id"]  # This line was missing from the GET section!
+    
     if request.method == "POST":
-        # Retrieve and validate user input
-        category_name = request.form.get("category-name")
-        sub_category_name = request.form.get("sub-category")
         try:
-            withdraw_amount = float(request.form.get("amount"))
-        except ValueError:
-            flash("Montant invalide. Veuillez saisir une valeur numérique.", "error")
-            return redirect("/withdraw")
+            # Check if request contains JSON
+            if not request.is_json:
+                return jsonify({
+                    "success": False,
+                    "message": "Content-Type must be application/json"
+                }), 400
 
-        if not category_name or not sub_category_name or withdraw_amount <= 0:
-            flash("Entrée invalide. Veuillez réessayer", "error")
-            return redirect("/withdraw")
+            data = request.get_json()
 
-        # Retrieve category ID and current balance
-        category_query = (
-            db.session.query(Categories)
-            .filter_by(category_name=category_name, sub_category=sub_category_name)
-            .first()
-        )
-        if not category_query:
-            flash(
-                "Cette combinaison de catégorie et de sous-catégorie n'existe pas",
-                "error",
+            if not data:
+                return jsonify({
+                    "success": False,
+                    "message": "No data provided"
+                }), 400
+
+            # Retrieve and validate user input
+            category_name = data.get("categoryName")
+            sub_category_name = data.get("subCategory")
+            
+            try:
+                withdraw_amount = float(data.get("amount"))
+            except (ValueError, TypeError):
+                return jsonify({
+                    "success": False,
+                    "message": "Montant invalide"
+                }), 400
+
+            if not category_name or not sub_category_name or withdraw_amount <= 0:
+                return jsonify({
+                    "success": False,
+                    "message": "Entrée invalide. Veuillez réessayer"
+                }), 400
+
+            # Retrieve category ID and current balance
+            category_query = (
+                db.session.query(Categories)
+                .filter_by(category_name=category_name, sub_category=sub_category_name)
+                .first()
             )
-            return redirect("/withdraw")
+            if not category_query:
+                return jsonify({
+                    "success": False,
+                    "message": "Cette combinaison de catégorie et de sous-catégorie n'existe pas"
+                }), 400
 
-        category_id = category_query.id
+            category_id = category_query.id
 
-        # Fetch the current balance for the category
-        portfolio_entry = (
-            db.session.query(Portfolios)
-            .filter_by(user_id=user_id, category_id=category_id)
-            .first()
-        )
+            # Fetch the current balance for the category
+            portfolio_entry = (
+                db.session.query(Portfolios)
+                .filter_by(user_id=user_id, category_id=category_id)
+                .first()
+            )
 
-        if not portfolio_entry or portfolio_entry.balance < withdraw_amount:
-            flash("Solde insuffisant", "error")
-            return redirect("/withdraw")
+            if not portfolio_entry or portfolio_entry.balance < withdraw_amount:
+                return jsonify({
+                    "success": False,
+                    "message": "Solde insuffisant pour effectuer ce retrait"
+                }), 400
 
-        # Deduct the withdrawal amount from the portfolio balance
-        portfolio_entry.balance -= withdraw_amount
+            # Deduct the withdrawal amount from the portfolio balance
+            portfolio_entry.balance -= withdraw_amount
 
-        # Log the withdrawal as a negative transaction
-        withdrawal_transaction = Transactions(
-            user_id=user_id,
-            category_id=category_id,
-            amount=-withdraw_amount,  # Negative amount indicates withdrawal
-            timestamp=datetime.utcnow(),
-        )
-        try:
-            db.session.add(withdrawal_transaction)
-            db.session.commit()
-            flash("Retrait effectué avec succès !", "success")
-            return redirect("/dashboard")
+            # Log the withdrawal as a negative transaction
+            withdrawal_transaction = Transactions(
+                user_id=user_id,
+                category_id=category_id,
+                amount=-withdraw_amount,  # Negative amount indicates withdrawal
+                timestamp=datetime.utcnow(),
+            )
+
+            try:
+                db.session.add(withdrawal_transaction)
+                db.session.commit()
+                return jsonify({
+                    "success": True,
+                    "message": "Retrait effectué avec succès"
+                }), 201
+
+            except Exception as e:
+                db.session.rollback()
+                return jsonify({
+                    "success": False,
+                    "message": f"Une erreur s'est produite lors de l'enregistrement du retrait: {str(e)}"
+                }), 500
+
         except Exception as e:
-            db.session.rollback()
-            flash(
-                "Une erreur s'est produite lors du traitement de votre retrait",
-                e,
+            print(f"Exception occurred: {str(e)}")
+            return jsonify({
+                "success": False,
+                "message": f"Erreur serveur: {str(e)}"
+            }), 500
+    
+    # GET request - Return available categories with balances for withdrawal
+    try:
+        # Aggregate categories and sub-categories with their total balances
+        withdraw_categories = (
+            db.session.query(
+                Categories.category_name,
+                Categories.sub_category,
+                Portfolios.balance
             )
-            return redirect("/withdraw")
-
-    # Aggregate categories and sub-categories with their total balances
-    withdraw_categories = (
-        db.session.query(
-            Categories.category_name,
-            Categories.sub_category,
-            Portfolios.balance
+            .join(Portfolios, Categories.id == Portfolios.category_id)
+            .filter(Portfolios.user_id == user_id, Portfolios.balance > 0)
+            .all()
         )
-        .join(Portfolios, Categories.id == Portfolios.category_id)
-        .filter(Portfolios.user_id == user_id, Portfolios.balance > 0)
-        .all()
-    )
 
-    # Transform data for the frontend
-    distinct_categories = sorted(
-        set([cat.category_name for cat in withdraw_categories])
-    )
-    withdraw_categories_data = [
-        {
-            "category": entry.category_name,
-            "sub_category": entry.sub_category,
-            "balance": entry.balance,
-        }
-        for entry in withdraw_categories
-    ]
+        # Transform data for the frontend
+        distinct_categories = sorted(
+            set([cat.category_name for cat in withdraw_categories])
+        )
+        withdraw_categories_data = [
+            {
+                "category": entry.category_name,
+                "sub_category": entry.sub_category,
+                "balance": entry.balance,
+            }
+            for entry in withdraw_categories
+        ]
 
-    return render_template(
-        "withdraw.html",
-        distinct_categories=distinct_categories,
-        withdraw_categories=withdraw_categories_data,
-    )
+        return jsonify({
+            "success": True,
+            "message": "Catégories de retrait récupérées avec succès",
+            "distinct_categories": distinct_categories,
+            "withdraw_categories": withdraw_categories_data
+        }), 200
+
+    except Exception as e:
+        print(f"Exception occurred: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": f"Erreur serveur: {str(e)}"
+        }), 500
 
 
 @app.route("/history")

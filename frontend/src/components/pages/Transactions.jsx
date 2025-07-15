@@ -44,11 +44,33 @@ function Transactions() {
           }, 2000)
         }
       } else if (transactionData.actionType === 'withdraw') {
-        // Handle withdrawal - TODO: Implement when you convert withdraw route to API
-        setMessage({
-          type: 'error',
-          text: 'Fonction de retrait non encore implémentée'
-        })
+        // Handle withdrawal
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/api/withdraw`,
+          {
+            categoryName: transactionData.category,
+            subCategory: transactionData.subCategory,
+            amount: transactionData.amount
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            withCredentials: true
+          }
+        )
+
+        if (response.data.success) {
+          setMessage({
+            type: 'success',
+            text: response.data.message
+          })
+
+          // Redirect to dashboard after successful withdrawal
+          setTimeout(() => {
+            navigate('/dashboard')
+          }, 2000)
+        }
       }
     } catch (error) {
       console.error('Transaction error:', error)

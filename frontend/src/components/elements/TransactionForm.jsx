@@ -19,6 +19,7 @@ export default function TransactionForm({
   const [errors, setErrors] = useState({})
   const [categories, setCategories] = useState([])
   const [subCategories, setSubCategories] = useState([])
+  // eslint-disable-next-line no-unused-vars
   const [availableBalances, setAvailableBalances] = useState({})
   const [loadingCategories, setLoadingCategories] = useState(false)
   const navigate = useNavigate()
@@ -34,15 +35,23 @@ export default function TransactionForm({
   const fetchCategories = async () => {
     setLoadingCategories(true)
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/api/invest`,
-        {
-          withCredentials: true
-        }
-      )
+      const endpoint =
+        actionType === 'withdraw'
+          ? `${import.meta.env.VITE_API_BASE_URL}/api/withdraw`
+          : `${import.meta.env.VITE_API_BASE_URL}/api/invest`
+
+      const response = await axios.get(endpoint, {
+        withCredentials: true
+      })
 
       if (response.data.success) {
-        setCategories(response.data.all_categories || [])
+        if (actionType === 'withdraw') {
+          // For withdrawals, use withdraw_categories data
+          setCategories(response.data.withdraw_categories || [])
+        } else {
+          // For deposits, use all_categories data
+          setCategories(response.data.all_categories || [])
+        }
       }
     } catch (error) {
       console.error('Error fetching categories:', error)
@@ -132,9 +141,13 @@ export default function TransactionForm({
 
     // Update subcategories when category changes
     if (name === 'categoryName') {
-      const filteredSubCategories = categories.filter(
-        (cat) => cat.name === value || cat.category_name === value
-      )
+      const filteredSubCategories = categories.filter((cat) => {
+        if (actionType === 'withdraw') {
+          return cat.category === value
+        } else {
+          return cat.name === value || cat.category_name === value
+        }
+      })
       setSubCategories(filteredSubCategories)
       setFormData((prev) => ({
         ...prev,
@@ -163,18 +176,25 @@ export default function TransactionForm({
       newErrors.subCategory = 'Veuillez sélectionner un compte'
     }
 
-    // Additional validation for withdrawals
+    // Additional validation for withdrawals - use the balance from the categories data
     if (
       actionType === 'withdraw' &&
       formData.amount &&
       formData.categoryName &&
       formData.subCategory
     ) {
-      const balanceKey = `${formData.categoryName}-${formData.subCategory}`
-      const availableBalance = availableBalances[balanceKey] || 0
+      // Find the selected category/subcategory combination
+      const selectedCategory = categories.find(
+        (cat) =>
+          cat.category === formData.categoryName &&
+          cat.sub_category === formData.subCategory
+      )
 
-      if (parseFloat(formData.amount) > availableBalance) {
-        newErrors.amount = `Solde insuffisant (disponible: ${formatNumber(availableBalance)}€)`
+      if (selectedCategory) {
+        const availableBalance = selectedCategory.balance || 0
+        if (parseFloat(formData.amount) > availableBalance) {
+          newErrors.amount = `Solde insuffisant (disponible: ${formatNumber(availableBalance)}€)`
+        }
       }
     }
 
@@ -203,12 +223,27 @@ export default function TransactionForm({
 
   // Get unique categories from the API response
   const uniqueCategories = [
-    ...new Set(categories.map((cat) => cat.name || cat.category_name))
+    ...new Set(
+      categories.map((cat) => {
+        if (actionType === 'withdraw') {
+          return cat.category
+        } else {
+          return cat.name || cat.category_name
+        }
+      })
+    )
   ]
 
   const currentBalance =
-    formData.categoryName && formData.subCategory
-      ? availableBalances[`${formData.categoryName}-${formData.subCategory}`]
+    isWithdraw && formData.categoryName && formData.subCategory
+      ? (() => {
+          const selectedCategory = categories.find(
+            (cat) =>
+              cat.category === formData.categoryName &&
+              cat.sub_category === formData.subCategory
+          )
+          return selectedCategory ? selectedCategory.balance : null
+        })()
       : null
 
   return (
@@ -280,6 +315,9 @@ export default function TransactionForm({
             {subCategories.map((cat) => (
               <option key={cat.sub_category} value={cat.sub_category}>
                 {cat.sub_category}
+                {actionType === 'withdraw' &&
+                  cat.balance &&
+                  ` (${formatNumber(cat.balance)}€)`}
               </option>
             ))}
           </select>
