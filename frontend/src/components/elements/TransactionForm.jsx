@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 import { formatNumber } from '../../utils/helpers'
 
 export default function TransactionForm({
@@ -9,7 +11,7 @@ export default function TransactionForm({
 }) {
   const [formData, setFormData] = useState({
     amount: '',
-    displayAmount: '', // Add this for formatted display
+    displayAmount: '',
     categoryName: '',
     subCategory: ''
   })
@@ -18,6 +20,8 @@ export default function TransactionForm({
   const [categories, setCategories] = useState([])
   const [subCategories, setSubCategories] = useState([])
   const [availableBalances, setAvailableBalances] = useState({})
+  const [loadingCategories, setLoadingCategories] = useState(false)
+  const navigate = useNavigate()
 
   // Fetch categories and portfolio data on component mount
   useEffect(() => {
@@ -28,41 +32,58 @@ export default function TransactionForm({
   }, [actionType])
 
   const fetchCategories = async () => {
+    setLoadingCategories(true)
     try {
-      // TODO: Replace with actual API call to get categories
-      // For now, using mock data based on backend structure
-      const mockCategories = [
-        { category_name: 'Épargne', sub_category: 'Espèces' },
-        { category_name: 'Épargne', sub_category: 'Livret A' },
-        { category_name: 'Immobilier', sub_category: 'Immobilier Locatif' },
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/api/invest`,
         {
-          category_name: 'Immobilier',
-          sub_category: 'Crowdfunding Immobilier'
-        },
-        { category_name: 'Actions', sub_category: 'Actions' },
-        { category_name: 'Actions', sub_category: 'Crypto' }
-      ]
-      setCategories(mockCategories)
+          withCredentials: true
+        }
+      )
+
+      if (response.data.success) {
+        setCategories(response.data.all_categories || [])
+      }
     } catch (error) {
       console.error('Error fetching categories:', error)
+      if (error.response?.status === 401) {
+        navigate('/connexion')
+      }
+      setCategories([])
+    } finally {
+      setLoadingCategories(false)
     }
   }
 
   const fetchPortfolioBalances = async () => {
     try {
-      // TODO: Replace with actual API call to get portfolio balances
-      // Mock data for withdraw functionality - keys match the actual categories
-      const mockBalances = {
-        'Épargne-Espèces': 2500,
-        'Épargne-Livret A': 1500,
-        'Immobilier-Immobilier Locatif': 15000,
-        'Immobilier-Crowdfunding Immobilier': 800,
-        'Actions-Actions': 2300,
-        'Actions-Crypto': 500
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/api/dashboard`,
+        {
+          withCredentials: true
+        }
+      )
+
+      if (response.data.success) {
+        const portfolioSummary = response.data.portfolio_summary || {}
+        const balances = {}
+
+        // Convert portfolio summary to balance lookup
+        Object.entries(portfolioSummary).forEach(([category, data]) => {
+          Object.entries(data.sub_categories).forEach(
+            ([subCategory, amount]) => {
+              balances[`${category}-${subCategory}`] = amount
+            }
+          )
+        })
+
+        setAvailableBalances(balances)
       }
-      setAvailableBalances(mockBalances)
     } catch (error) {
       console.error('Error fetching portfolio balances:', error)
+      if (error.response?.status === 401) {
+        navigate('/connexion')
+      }
     }
   }
 
@@ -112,7 +133,7 @@ export default function TransactionForm({
     // Update subcategories when category changes
     if (name === 'categoryName') {
       const filteredSubCategories = categories.filter(
-        (cat) => cat.category_name === value
+        (cat) => cat.name === value || cat.category_name === value
       )
       setSubCategories(filteredSubCategories)
       setFormData((prev) => ({
@@ -169,18 +190,22 @@ export default function TransactionForm({
       return
     }
 
-    // Pass form data with action type to parent
+    // Pass form data with correct field names for API
     onSubmit({
-      ...formData,
       actionType,
+      category: formData.categoryName, // Map to 'category' for API
+      subCategory: formData.subCategory, // Keep as 'subCategory' for API
       amount: parseInt(formData.amount)
     })
   }
 
   const isWithdraw = actionType === 'withdraw'
+
+  // Get unique categories from the API response
   const uniqueCategories = [
-    ...new Set(categories.map((cat) => cat.category_name))
+    ...new Set(categories.map((cat) => cat.name || cat.category_name))
   ]
+
   const currentBalance =
     formData.categoryName && formData.subCategory
       ? availableBalances[`${formData.categoryName}-${formData.subCategory}`]
@@ -213,10 +238,12 @@ export default function TransactionForm({
             value={formData.categoryName}
             onChange={handleChange}
             className='input-field input-field:focus w-full'
-            disabled={isLoading}
+            disabled={isLoading || loadingCategories}
           >
             <option value='' disabled>
-              Sélectionner une catégorie
+              {loadingCategories
+                ? 'Chargement...'
+                : 'Sélectionner une catégorie'}
             </option>
             {uniqueCategories.map((category) => (
               <option key={category} value={category}>
@@ -301,7 +328,7 @@ export default function TransactionForm({
         <button
           type='submit'
           className={`${isWithdraw ? 'btn-primary' : 'btn-secondary'} w-full`}
-          disabled={isLoading}
+          disabled={isLoading || loadingCategories}
         >
           {isLoading ? 'Traitement...' : title}
         </button>

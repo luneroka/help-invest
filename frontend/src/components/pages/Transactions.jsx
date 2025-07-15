@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 import Layout from '../layout/Layout'
 import MainHeader from '../headers/MainHeader'
 import TransactionForm from '../elements/TransactionForm'
@@ -6,29 +8,64 @@ import TransactionForm from '../elements/TransactionForm'
 function Transactions() {
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState(null)
+  const navigate = useNavigate()
 
   const handleTransaction = async (transactionData) => {
     setIsLoading(true)
     setMessage(null)
 
     try {
-      // TODO: Replace with actual API call
-      console.log('Transaction data:', transactionData)
+      if (transactionData.actionType === 'deposit') {
+        // Handle investment (deposit)
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/api/invest`,
+          {
+            categoryName: transactionData.category,
+            subCategory: transactionData.subCategory,
+            amount: transactionData.amount
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            withCredentials: true
+          }
+        )
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+        if (response.data.success) {
+          setMessage({
+            type: 'success',
+            text: response.data.message
+          })
 
-      // Mock success response
-      setMessage({
-        type: 'success',
-        text: `${transactionData.actionType === 'withdraw' ? 'Retrait' : 'Dépôt'} de ${transactionData.amount}€ effectué avec succès!`
-      })
-      // eslint-disable-next-line no-unused-vars
+          // Redirect to dashboard after successful investment
+          setTimeout(() => {
+            navigate('/dashboard')
+          }, 2000)
+        }
+      } else if (transactionData.actionType === 'withdraw') {
+        // Handle withdrawal - TODO: Implement when you convert withdraw route to API
+        setMessage({
+          type: 'error',
+          text: 'Fonction de retrait non encore implémentée'
+        })
+      }
     } catch (error) {
-      setMessage({
-        type: 'error',
-        text: 'Une erreur est survenue. Veuillez réessayer.'
-      })
+      console.error('Transaction error:', error)
+
+      if (error.response?.status === 401) {
+        navigate('/connexion')
+      } else if (error.response?.data?.message) {
+        setMessage({
+          type: 'error',
+          text: error.response.data.message
+        })
+      } else {
+        setMessage({
+          type: 'error',
+          text: 'Une erreur est survenue. Veuillez réessayer.'
+        })
+      }
     } finally {
       setIsLoading(false)
     }

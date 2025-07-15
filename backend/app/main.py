@@ -509,90 +509,134 @@ def dashboard():
         }), 500
 
 
-@app.route("/add-entry", methods=["GET", "POST"])
+@app.route("/api/invest", methods=["GET", "POST"])
 @login_required
-def add_entry():
+def invest():
     if request.method == "POST":
-        # Retrieve form data
-        user_id = session["user_id"]
-        category_name = request.form.get("category-name")
-        sub_category = request.form.get("sub-category")
-        amount = request.form.get("amount")
-        timestamp = datetime.utcnow()
-
-        # Validate input
         try:
-            amount = float(amount)
-            if amount == 0:
-                flash("Le montant ne peut pas être nul", "error")
-                return redirect("/add-entry")
-        except ValueError:
-            flash("Montant invalide")
-            return redirect("/add-entry")
+            # Check if request contains JSON
+            if not request.is_json:
+                return jsonify({
+                    "success": False,
+                    "message": "Content-Type must be application/json"
+                }), 400
 
-        if not category_name or not sub_category:
-            flash("La catégorie et la sous-catégorie sont requises", "error")
-            return redirect("/add-entry")
+            data = request.get_json()
 
-        # Query for the category
-        category_query = Categories.query.filter_by(
-            category_name=category_name, sub_category=sub_category
-        ).first()
-        if not category_query:
-            flash(
-                "Cette combinaison de catégorie et de sous-catégorie n'existe pas",
-                "error",
-            )
-            return redirect("/add-entry")
+            if not data:
+                return jsonify({
+                    "success": False,
+                    "message": "No data provided"
+                }), 400
+            
+            # Retrieve form data
+            user_id = session["user_id"]
+            category_name = data.get("categoryName")
+            sub_category = data.get("subCategory")
+            amount = data.get("amount")
+            timestamp = datetime.utcnow()
 
-        # Create and save the new entry
-        category_id = category_query.id
-        new_entry = Transactions(
-            user_id=user_id,
-            category_id=category_id,
-            amount=amount,
-            timestamp=timestamp,
-        )
-        try:
-            db.session.add(new_entry)
+            # Validate input
+            try:
+                amount = float(amount)
+                if amount <= 0:
+                    return jsonify({
+                        "success": False,
+                        "message": "Le montant doit être supérieur à zéro"
+                    }), 400
 
-            # Update balance in Portfolios table
-            portfolio = Portfolios.query.filter_by(
-                user_id=user_id, category_id=category_id
+            except (ValueError, TypeError):
+                return jsonify({
+                    "success": False,
+                    "message": "Montant invalide"
+                }), 400
+
+            if not category_name or not sub_category:
+                return jsonify({
+                    "success": False,
+                    "message": "La catégorie et la sous-catégorie sont requises"
+                }), 400
+
+            # Query for the category
+            category_query = Categories.query.filter_by(
+                category_name=category_name, sub_category=sub_category
             ).first()
-            if portfolio:
-                portfolio.balance += amount
-            else:
-                portfolio = Portfolios(
-                    user_id=user_id, category_id=category_id, balance=amount
-                )
-                db.session.add(portfolio)
+            if not category_query:
+                return jsonify({
+                    "success": False,
+                    "message": "Cette combinaison de catégorie et de sous-catégorie n'existe pas"
+                }), 400
 
-            # Commit changes
-            db.session.commit()
-            flash("Investissement ajouté avec succès !", "success")
-            return redirect("/dashboard")
+            # Create and save the new entry
+            category_id = category_query.id
+            new_entry = Transactions(
+                user_id=user_id,
+                category_id=category_id,
+                amount=amount,
+                timestamp=timestamp,
+            )
+            
+            try:
+                db.session.add(new_entry)
 
+                # Update balance in Portfolios table
+                portfolio = Portfolios.query.filter_by(
+                    user_id=user_id, category_id=category_id
+                ).first()
+                if portfolio:
+                    portfolio.balance += amount
+                else:
+                    portfolio = Portfolios(
+                        user_id=user_id, category_id=category_id, balance=amount
+                    )
+                    db.session.add(portfolio)
+
+                # Commit changes
+                db.session.commit()
+                return jsonify({
+                    "success": True,
+                    "message": "Investissement ajouté avec succès"
+                }), 201
+
+            except Exception as e:
+                db.session.rollback()
+                return jsonify({
+                    "success": False,
+                    "message": f"Une erreur s'est produite lors de l'ajout de l'entrée: {str(e)}"
+                }), 500
+                
         except Exception as e:
-            db.session.rollback()
-            flash("Une erreur s'est produite lors de l'ajout de l'entrée", e)
-            return redirect("/dashboard")
+            print(f"Exception occurred: {str(e)}")
+            return jsonify({
+                "success": False,
+                "message": f"Erreur serveur: {str(e)}"
+            }), 500
 
-    # Get unique categories and all categories
-    distinct_categories = (
-        Categories.query.with_entities(
-            Categories.category_name
+    # GET request - Return available categories
+    try:
+        # Get unique categories and all categories
+        distinct_categories = (
+            Categories.query.with_entities(
+                Categories.category_name
             ).distinct().all()
-    )
-    all_categories = [
-        serialize_category(cat) for cat in Categories.query.all()
-    ]
+        )
+        all_categories = [
+            serialize_category(cat) for cat in Categories.query.all()
+        ]
 
-    return render_template(
-        "add-entry.html",
-        categories=distinct_categories,
-        all_categories=all_categories,
-    )
+        return jsonify({
+            "success": True,
+            "message": "Catégories récupérées avec succès",
+            "distinct_categories": [cat.category_name for cat in distinct_categories],
+            "all_categories": all_categories
+        }), 200
+
+    except Exception as e:
+        print(f"Exception occurred: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": f"Erreur serveur: {str(e)}"
+        }), 500
 
 
 @app.route("/withdraw", methods=["GET", "POST"])
