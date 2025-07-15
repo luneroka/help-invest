@@ -197,52 +197,79 @@ def signup():
         }), 500
 
 
-@app.route("/change-password", methods=["GET", "POST"])
+@app.route("/api/change-password", methods=["POST"])
 @login_required
 def change_password():
-    if request.method == "POST":
+    try:
+        # Check if request contains JSON
+        if not request.is_json:
+            return jsonify({
+                "success": False,
+                "message": "Content-Type must be application/json"
+            }), 400
+        
+        data = request.get_json()
+
+        if not data:
+            return jsonify({
+                "success": False,
+                "message": "No data provided"
+            }), 400
+
         # Retrieve form data
-        current_password = request.form.get("current-password")
-        new_password = request.form.get("new-password")
-        confirmation = request.form.get("confirmation")
+        current_password = data.get("currentPassword")
+        new_password = data.get("newPassword")
+        confirmation = data.get("confirmation")
 
         # Validate input
         if not current_password:
-            flash("Mot de passe actuel requis", "error")
-            return render_template("change-password.html"), 400
+            return jsonify({
+                "success": False,
+                "message": "Mot de passe actuel requis"
+            }), 400
 
         if not new_password:
-            flash("Nouveau mot de passe requis", "error")
-            return render_template("change-password.html"), 400
+            return jsonify({
+                "success": False,
+                "message": "Nouveau mot de passe requis"
+            }), 400
 
         if not confirmation:
-            flash("Veuillez confirmer le nouveau mot de passe", "error")
-            return render_template("change-password.html"), 400
+            return jsonify({
+                "success": False,
+                "message": "Veuillez confirmer le nouveau mot de passe"
+            }), 400
 
         if confirmation != new_password:
-            flash("Les mots de passe ne correspondent pas", "error")
-            return render_template("change-password.html"), 400
+            return jsonify({
+                "success": False,
+                "message": "Les mots de passe ne correspondent pas"
+            }), 400
 
         # Validate password strength
         password_error = validate_password_strength(new_password)
         if password_error:
-            flash(password_error, "error")
-            return render_template("change-password.html"), 400
+            return jsonify({
+                "success": False,
+                "message": password_error
+            }), 400
 
         # Retrieve user
         user = Users.query.filter_by(id=session["user_id"]).first()
 
         # Validate current password
         if not user or not check_password_hash(user.hash, current_password):
-            flash("Le mot de passe actuel est invalide", "error")
-            return render_template("change-password.html"), 400
+            return jsonify({
+                "success": False,
+                "message": "Mot de passe actuel incorrect"
+            }), 401
 
         # Check if new password is different from current password
         if check_password_hash(user.hash, new_password):
-            flash(
-                "Le nouveau mot de passe doit être différent de l'ancien", "error"
-            )
-            return render_template("change-password.html"), 400
+            return jsonify({
+                "success": False,
+                "message": "Le nouveau mot de passe doit être différent de l'ancien"
+            }), 400
 
         # Hash new password
         new_hashed_password = generate_password_hash(
@@ -254,17 +281,23 @@ def change_password():
             user.hash = new_hashed_password
             db.session.commit()
             session.clear()
-            flash(
-                "Votre mot de passe a été mis à jour avec succès ! Veuillez vous reconnecter",
-                "success",
-            )
-            return redirect("/login")
+            return jsonify({
+                "success": True,
+                "message": "Votre mot de passe a été mis à jour avec succès ! Veuillez vous reconnecter"
+            }), 200
         except Exception as e:
             db.session.rollback()
-            flash("Une erreur s'est produite. Veuillez réessayer", e)
-            return render_template("/change-password.html"), 500
+            return jsonify({
+                "success": False,
+                "message": f"Une erreur s'est produite. Veuillez réessayer: {str(e)}"
+            }), 500
 
-    return render_template("change-password.html")
+    except Exception as e:
+        print(f"Exception occurred: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": f"Erreur serveur: {str(e)}"
+        }), 500
 
 
 @app.route("/")

@@ -6,7 +6,7 @@ import Login from './components/pages/Login'
 import Register from './components/pages/Register'
 import Transactions from './components/pages/Transactions'
 import History from './components/pages/History'
-import Profil from './components/pages/Profil'
+import Profile from './components/pages/Profile'
 import Risk from './components/pages/Risk'
 
 function App() {
@@ -17,7 +17,7 @@ function App() {
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/connexion' element={<Login />} />
         <Route path='/inscription' element={<Register />} />
-        <Route path='/profil' element={<Profil />} />
+        <Route path='/profil' element={<Profile />} />
         <Route path='/opérations' element={<Transactions />} />
         <Route path='/historique' element={<History />} />
         <Route path='/risque' element={<Risk />} />

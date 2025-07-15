@@ -1,18 +1,75 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Layout from '../layout/Layout'
 import MainHeader from '../headers/MainHeader'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import axios from 'axios'
 
-function Profil() {
+function Profile() {
   const profiles = ['prudent', 'équilibré', 'dynamique']
+
+  const [formData, setFormData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmation: ''
+  })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  let navigate = useNavigate()
 
   // Local state for password visibility and values
   const [passwordVisibility, setPasswordVisibility] = useState(false)
   const [confirmationPasswordVisibility, setConfirmationPasswordVisibility] =
     useState(false)
-  const [password, setPassword] = useState('')
-  const [confirmationPassword, setConfirmationPassword] = useState('')
+
+  // Handle input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }))
+
+    // Clear error on input change
+    if (error) setError('')
+  }
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/change-password`,
+        {
+          currentPassword: formData.currentPassword,
+          newPassword: formData.newPassword,
+          confirmation: formData.confirmation
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+
+      if (response.data.success) {
+        navigate('/connexion')
+      }
+    } catch (err) {
+      console.error('Password change error:', err)
+      if (err.response?.data?.message) {
+        setError(err.response.data.message)
+      } else {
+        setError('Une erreur est survenue. Veuillez réessayer.')
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
 
   // Toggle password view
   const togglePasswordVisibility = () => {
@@ -72,8 +129,15 @@ function Profil() {
           <div className='flex flex-col h-full'>
             <h2 className='text-center'>Gérer mon compte</h2>
             <div className='card'>
-              <form className='flex flex-col gap-4'>
-                <label htmlFor='password' className='block text-small'>
+              <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+                {/* Error display */}
+                {error && (
+                  <div className='text-red-500 text-sm mb-4'>{error}</div>
+                )}
+
+                {/* Email Input */}
+                <div className='flex flex-col gap-2'></div>
+                <label htmlFor='current-password' className='block text-small'>
                   Changer le mot de passe
                 </label>
 
@@ -81,25 +145,29 @@ function Profil() {
                 <div className='relative w-full'>
                   <input
                     type='password'
-                    name='current-password'
-                    id='current-password'
+                    name='currentPassword'
+                    id='currentPassword'
                     placeholder='Mot de passe actuel'
                     className='input-field w-full'
                     autoComplete='current-password'
+                    value={formData.currentPassword}
+                    onChange={handleInputChange}
+                    required
                   />
                 </div>
 
-                {/* Password input */}
+                {/* New password input */}
                 <div className='relative w-full'>
                   <input
                     type={passwordVisibility ? 'text' : 'password'}
-                    name='password'
-                    id='password'
-                    placeholder='Mot de passe'
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    name='newPassword'
+                    id='newPassword'
+                    placeholder='Nouveau mot de passe'
                     className='input-field w-full'
-                    autoComplete='current-password'
+                    autoComplete='new-password'
+                    value={formData.newPassword}
+                    onChange={handleInputChange}
+                    required
                   />
                   <button
                     type='button'
@@ -114,12 +182,14 @@ function Profil() {
                 <div className='relative w-full'>
                   <input
                     type={confirmationPasswordVisibility ? 'text' : 'password'}
-                    required
+                    name='confirmation'
+                    id='confirmation'
                     placeholder='Confirmer le mot de passe'
-                    value={confirmationPassword}
-                    onChange={(e) => setConfirmationPassword(e.target.value)}
                     className='input-field w-full'
-                    autoComplete='new-password'
+                    autoComplete='confirmation'
+                    value={formData.confirmation}
+                    onChange={handleInputChange}
+                    required
                   />
                   <button
                     type='button'
@@ -134,7 +204,13 @@ function Profil() {
                   </button>
                 </div>
 
-                <button className='btn-primary'>Modifier</button>
+                <button
+                  type='submit'
+                  className='btn-primary'
+                  disabled={loading}
+                >
+                  {loading ? 'Modification' : 'Modifier'}
+                </button>
               </form>
 
               <div className='flex flex-col gap-4'>
@@ -156,4 +232,4 @@ function Profil() {
   )
 }
 
-export default Profil
+export default Profile
