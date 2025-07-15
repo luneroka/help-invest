@@ -1,4 +1,4 @@
-from flask import request, redirect, render_template, flash, session
+from flask import request, redirect, render_template, flash, session, jsonify, make_response
 from .config import app, db
 from .models import Users, Categories, Portfolios, Transactions
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -11,41 +11,78 @@ from .helpers import (
 from datetime import datetime
 
 # CSRF Error handler
-register_error_handlers(app)
+# register_error_handlers(app)
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/api/login", methods=["POST"])
 def login():
-    if request.method == "POST":
+    try:
+        # Check if request contains JSON
+        if not request.is_json:
+            print("Request is not JSON")
+            return jsonify({
+                "success": False,
+                "message": "Content-Type must be application/json"
+            }), 400
+
+        data = request.get_json()
+        print(f"Parsed JSON: {data}")
+
+        if not data:
+            print("No data in request")
+            return jsonify({
+                "success": False,
+                "message": "No data provided"
+            }), 400
+
         # Retrieve form data
-        username = request.form.get("username")
-        password = request.form.get("password")
+        username = data.get("username")
+        password = data.get("password")
 
         # Validate input
         if not username:
-            flash("Nom d'utilisateur requis", "error")
-            return render_template("login.html"), 403
+            return jsonify({
+                "success": False,
+                "message": "Nom d'utilisateur requis"
+            }), 400
 
         if not password:
-            flash("Mot de passe requis", "error")
-            return render_template("login.html"), 403
+            return jsonify({
+                "success": False,
+                "message": "Mot de passe requis"
+            }), 400
 
         # Query database for username
         user = Users.query.filter_by(username=username).first()
 
         # Validate username and password
         if not user or not check_password_hash(user.hash, password):
-            flash("Nom d'utilisateur ou mot de passe incorrect", "error")
-            return render_template("login.html"), 403
+            return jsonify({
+                "success": False,
+                "message": "Nom d'utilisateur ou mot de passe incorrect"
+            }), 401
 
-        # Log the use in
+        # Log the user in
         session.clear()
         session["user_id"] = user.id
 
-        # Redirect user to dashboard
-        return redirect("/dashboard")
+        # Return success with user data
+        return jsonify({
+            "success": True,
+            "message": "Connexion réussie",
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "risk_profile": user.risk_profile
+            }
+        }), 200
 
-    return render_template("login.html")
+    except Exception as e:
+        print(f"Exception occurred: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": f"Erreur serveur: {str(e)}"
+        }), 500
 
 
 @app.route("/logout")
@@ -679,4 +716,4 @@ with app.app_context():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

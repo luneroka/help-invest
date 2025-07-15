@@ -1,4 +1,3 @@
-
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -6,7 +5,6 @@ from flask_cors import CORS
 from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
 from .helpers import eur, percentage
-# from flask_migrate import Migrate
 
 # Load environment variables from .env file
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
@@ -19,10 +17,19 @@ app.jinja_env.filters["eur"] = eur
 app.jinja_env.filters["percentage"] = percentage
 
 # Wrap app in CORS to disable error and enable cross origin requests
-CORS(app, origin='*')
+CORS(app, 
+    origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    supports_credentials=True,
+    allow_headers=["Content-Type", "Authorization"],
+    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
 # Initialize Flask-WTF's CSRF protection
-csrf = CSRFProtect(app)
+# csrf = CSRFProtect(app)
+
+# @app.before_request
+# def exempt_api_from_csrf():
+#     if request.path.startswith('/api/'):
+#         csrf.exempt(request.endpoint)
 
 # Get the DATABASE_URL environment variable
 database_url = os.environ.get('DATABASE_URL')
