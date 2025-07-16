@@ -108,7 +108,7 @@ function Transactions() {
         )}
 
         {/* Transaction Forms */}
-        <div className='grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-5xl'>
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-5xl place-items-center'>
           <TransactionForm
             title='Investir'
             actionType='deposit'
