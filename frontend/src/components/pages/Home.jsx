@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import axios from 'axios'
 import Layout from '../layout/Layout'
 import IndexHeader from '../../components/headers/IndexHeader'
@@ -8,7 +8,6 @@ import MainHeader from '../headers/MainHeader'
 function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [loading, setLoading] = useState(true)
-  const navigate = useNavigate()
 
   useEffect(() => {
     checkAuthStatus()
@@ -26,6 +25,7 @@ function Home() {
       if (response.data.success) {
         setIsLoggedIn(true)
       }
+      // eslint-disable-next-line no-unused-vars
     } catch (error) {
       // User is not logged in
       setIsLoggedIn(false)
