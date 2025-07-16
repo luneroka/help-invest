@@ -257,6 +257,7 @@
   .nav-link {
     color: var(--color-theme-accent);
     font-family: var(--font-family-primary);
+    font-size: var(--font-size-body);
     font-weight: 500;
     transition: color 0.15s ease;
   }
@@ -344,19 +345,49 @@
     color: var(--color-text-main);
   }
 
+  .text-responsive-caption {
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-small);
+    line-height: var(--line-height-small);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-text-captions);
+  }
+
+  .text-responsive-nav-link {
+    color: var(--color-theme-accent);
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-body);
+    font-weight: 500;
+    transition: color 0.15s ease;
+  }
+
+  .text-responsive-nav-link:hover {
+    color: var(--color-gray-200);
+  }
+
   /* Mobile responsive overrides */
   @media (max-width: 768px) {
     .text-responsive-h1 {
-      font-size: calc(var(--font-size-h1) - 0.25rem);
-      line-height: calc(var(--line-height-h1) - 0.25rem);
+      font-size: calc(var(--font-size-h1) - 0.5rem);
+      line-height: calc(var(--line-height-h1) - 0.5rem);
     }
 
     .text-responsive-h3 {
-      font-size: calc(var(--font-size-h3) - 0.125rem);
-      line-height: calc(var(--line-height-h3) - 0.125rem);
+      font-size: calc(var(--font-size-h3) - 0.25rem);
+      line-height: calc(var(--line-height-h3) - 0.25rem);
     }
 
     .text-responsive-body {
+      font-size: calc(var(--font-size-body) - 0.125rem);
+      line-height: calc(var(--line-height-body) - 0.125rem);
+    }
+
+    .text-responsive-caption {
+      font-size: calc(var(--font-size-small) - 0.125rem);
+      line-height: calc(var(--line-height-small) - 0.125rem);
+    }
+
+    .text-responsive-nav-link {
       font-size: calc(var(--font-size-body) - 0.125rem);
       line-height: calc(var(--line-height-body) - 0.125rem);
     }

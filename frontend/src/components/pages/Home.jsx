@@ -70,7 +70,7 @@ function Home() {
               une vue claire de vos investissements, regroupés au même endroit.
               En mettant régulièrement à jour vos données, vous pourrez :
             </p>
-            <ul className='list-disc list-inside pl-4 text-responsive-body'>
+            <ul className='list-disc list-inside pl-2 md:pl-4 text-responsive-body'>
               <li>Visualiser la répartition de votre portefeuille,</li>
               <li>Évaluer sa cohérence avec votre profil de risque,</li>
               <li>Recevoir des recommandations personnalisées.</li>
@@ -79,7 +79,7 @@ function Home() {
 
           <div className='flex flex-col gap-2'>
             <h3 className='text-responsive-h3'>Comment ça fonctionne ?</h3>
-            <ol className='list-decimal list-inside pl-4 text-responsive-body'>
+            <ol className='list-decimal list-inside pl-2 md:pl-4 text-responsive-body'>
               <li>
                 <Link
                   to='/inscription'
@@ -115,7 +115,7 @@ function Home() {
             <h3 className='text-responsive-h3'>
               Une structure inspirée de la pyramide de Maslow
             </h3>
-            <ul className='list-disc list-inside pl-4 text-responsive-body'>
+            <ul className='list-disc list-inside pl-2 md:pl-4 text-responsive-body'>
               <li>
                 <strong>Épargne : </strong>Sécurisez votre liquidité.
               </li>
@@ -146,7 +146,7 @@ function Home() {
             className='w-full origin-top'
           />
           <div className='items-end'>
-            <p className='text-caption px-2 py-1 text-end'>
+            <p className='text-responsive-caption px-2 py-1 text-end'>
               Illustration : Guillaume Simonin - La pyramide du patrimoine.
               <br />
               Le guide visuel d'éducation financière, Maxima 2024.
