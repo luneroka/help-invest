@@ -3,57 +3,50 @@ import Layout from '../layout/Layout'
 import MainHeader from '../headers/MainHeader'
 import { formatAmount } from '../../utils/helpers'
 import { RiDeleteBin6Line } from 'react-icons/ri'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 function History() {
   const [transactions, setTransactions] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-
-  // Sample data
-  const sampleData = [
-    {
-      category_name: 'Épargne',
-      sub_category: 'PEA',
-      amount: 20000,
-      timestamp: '07-07-2025 16:32:48'
-    },
-    {
-      category_name: 'Actions',
-      sub_category: 'Crypto',
-      amount: 140000,
-      timestamp: '31-06-2025 16:32:48'
-    },
-    {
-      category_name: 'Immobilier',
-      sub_category: 'Immobilier Locatif',
-      amount: 27000,
-      timestamp: '31-12-2025 16:32:48'
-    }
-  ]
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pagination, setPagination] = useState({})
+  const navigate = useNavigate()
 
   useEffect(() => {
-    // Simulate API call
-    const fetchTransactions = async () => {
-      try {
-        setLoading(true)
-        // const response = await fetch('/api/transactions');
-        // const data = await response.json();
-
-        // Simulate loading delay
-        setTimeout(() => {
-          setTransactions(sampleData)
-          setLoading(false)
-        }, 1000)
-        // eslint-disable-next-line no-unused-vars
-      } catch (error) {
-        setError('Erreur lors du chargement des opérations.')
-        setLoading(false)
-      }
-    }
-
     fetchTransactions()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const fetchTransactions = async (page = 1) => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/api/history?page=${page}&per_page=10`,
+        {
+          withCredentials: true
+        }
+      )
+
+      if (response.data.success) {
+        setTransactions(response.data.transaction_history)
+        setPagination(response.data.pagination)
+        setCurrentPage(page)
+      }
+    } catch (error) {
+      console.error('Error fetching transactions:', error)
+
+      if (error.response?.status === 401) {
+        navigate('/connexion')
+      } else {
+        setError('Erreur lors du chargement des opérations')
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleDeleteTransaction = () => {}
 
@@ -87,7 +80,7 @@ function History() {
       <h2>Historique des opérations</h2>
       <div className=''>
         {transactions.length === 0 ? (
-          <div className='text-center py-12'>
+          <div className='text-left py-12'>
             <p className='text-gray-600 text-lg'>Aucune opération trouvée</p>
             <p className='text-gray-500 mt-2'>
               Vos futures opérations apparaîtront ici
@@ -119,14 +112,14 @@ function History() {
                 <tbody>
                   {transactions.map((transaction) => (
                     <tr
-                      key={transaction.timestamp}
+                      key={transaction.id}
                       className='border-b border-gray-100 hover:bg-gray-50'
                     >
                       <td className='py-3 px-4 text-small'>
                         {transaction.category_name}
                       </td>
                       <td className={'py-3 px-4 text-small'}>
-                        {transaction.sub_category}
+                        {transaction.sub_category_name}
                       </td>
                       <td className='py-3 px-4 text-small'>
                         {formatAmount(transaction.amount)}
@@ -138,7 +131,7 @@ function History() {
                         <button
                           className='text-red-600 hover:text-red-800 transition-colors cursor-pointer'
                           onClick={() =>
-                            handleDeleteTransaction(transaction.timestamp)
+                            handleDeleteTransaction(transaction.id)
                           }
                         >
                           <RiDeleteBin6Line className='text-lg' />
@@ -152,14 +145,39 @@ function History() {
 
             {transactions.length > 0 && (
               <div className='mt-4 text-center text-caption'>
-                {transactions.length} opération
-                {transactions.length > 1 ? 's' : ''} trouvée
-                {transactions.length > 1 ? 's' : ''}
+                {pagination.total || transactions.length} opération
+                {(pagination.total || transactions.length) > 1 ? 's' : ''}{' '}
+                trouvée
+                {(pagination.total || transactions.length) > 1 ? 's' : ''}
               </div>
             )}
           </div>
         )}
       </div>
+
+      {pagination.pages > 1 && (
+        <div className='flex justify-center items-center gap-4 mt-6'>
+          <button
+            disabled={!pagination.has_prev}
+            onClick={() => fetchTransactions(currentPage - 1)}
+            className='px-4 py-2 bg-theme-primary text-white rounded disabled:bg-gray-300 cursor-pointer'
+          >
+            Précédent
+          </button>
+
+          <span className='text-sm text-gray-600'>
+            Page {pagination.page || 1} sur {pagination.pages || 1}
+          </span>
+
+          <button
+            disabled={!pagination.has_next}
+            onClick={() => fetchTransactions(currentPage + 1)}
+            className='px-4 py-2 bg-theme-primary text-white rounded disabled:bg-gray-300 cursor-pointer'
+          >
+            Suivant
+          </button>
+        </div>
+      )}
     </Layout>
   )
 }

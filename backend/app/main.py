@@ -781,55 +781,80 @@ def withdraw():
         }), 500
 
 
-@app.route("/history")
+@app.route("/api/history", methods=['GET'])
 @login_required
 def view_history():
-    # Retrieve data for table
-    user_id = session["user_id"]
+    try:
+        # Retrieve data for table
+        user_id = session["user_id"]
 
-    page = request.args.get("page", 1, type=int)
-    per_page = 10
+        # Pagination parameters
+        page = request.args.get('page', 1, type=int)
+        per_page = min(request.args.get('per_page', 10, type=int), 100)
 
-    # Query user's transactions
-    transaction_entries = (
-        db.session.query(
-            Transactions,
-            Categories.category_name.label("category_name"),
-            Categories.sub_category.label("sub_category_name"),
+        # Query user's transactions
+        pagination = (
+            db.session.query(
+                Transactions,
+                Categories.category_name.label("category_name"),
+                Categories.sub_category.label("sub_category_name"),
+            )
+            .join(Categories, Transactions.category_id == Categories.id)
+            .filter(Transactions.user_id == user_id)
+            .order_by(Transactions.timestamp.desc())
+            .paginate(page=page, per_page=per_page, error_out=False)
         )
-        .join(Categories, Transactions.category_id == Categories.id)
-        .filter(Transactions.user_id == user_id)
-        .order_by(Transactions.timestamp.desc())
-    )
 
-    # Apply pagination
-    pagination = transaction_entries.paginate(
-        page=page, per_page=per_page, error_out=False
-    )
+        # Check if we have any transactions
+        if not pagination.items:
+            return jsonify({
+                "success": True,
+                "message": "Aucune transaction trouvée",
+                "transaction_history": [],
+                "pagination": {
+                    "page": 1,
+                    "per_page": per_page,
+                    "total": 0,
+                    "pages": 0,
+                    "has_next": False,
+                    "has_prev": False
+                }
+            }), 200
 
-    if not transaction_entries:
-        flash("Aucun historique de transactions trouvé", "info")
-        return redirect("/dashboard")
+        # Create a dictionary to hold table data
+        transaction_history = [
+            {
+                "id": entry.Transactions.id,
+                "category_name": entry.category_name,
+                "sub_category_name": entry.sub_category_name,
+                "amount": entry.Transactions.amount,
+                "timestamp": entry.Transactions.timestamp.strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                ),
+            }
+            for entry in pagination.items
+        ]
 
-    # Create a dictionary to hold table data
-    transaction_history = [
-        {
-            "id": entry.Transactions.id,
-            "category_name": entry.category_name,
-            "sub_category_name": entry.sub_category_name,
-            "amount": entry.Transactions.amount,
-            "timestamp": entry.Transactions.timestamp.strftime(
-                "%Y-%m-%d %H:%M:%S"
-            ),
-        }
-        for entry in pagination.items
-    ]
+        return jsonify({
+            "success": True,
+            "message": "Historique des transactions récupéré avec succès",
+            "transaction_history": transaction_history,
+            "pagination": {
+                "page": pagination.page,
+                "per_page": pagination.per_page,
+                "total": pagination.total,
+                "pages": pagination.pages,
+                "has_next": pagination.has_next,
+                "has_prev": pagination.has_prev
+            }
+        }), 200
 
-    return render_template(
-        "history.html",
-        portfolio_history=transaction_history,
-        pagination=pagination,
-    )
+    except Exception as e:
+        print(f"Exception occurred: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": f"Erreur serveur: {str(e)}"
+        }), 500
 
 
 @app.route("/delete-entry", methods=["POST"])
