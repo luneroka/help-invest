@@ -857,58 +857,85 @@ def view_history():
         }), 500
 
 
-@app.route("/delete-entry", methods=["POST"])
+@app.route("/api/delete-entry", methods=["DELETE", "POST"])
 @login_required
 def delete_entry():
-    # Retrieve entry id from the form
-    entry_id = request.form.get("entry_id")
+    try: 
+        # Check if request contains JSON
+        if not request.is_json:
+            return jsonify({
+                "success": False,
+                "message": "Content-Type must be application/json"
+            }), 400
 
-    if not entry_id:
-        flash("Identifiant d'entrée invalide", "error")
-        return redirect("/history")
+        data = request.get_json()
 
-    # Retrieve portfolio transaction by id
-    transaction = Transactions.query.filter_by(
-        id=entry_id, user_id=session["user_id"]
-    ).first()
+        if not data:
+            return jsonify({
+                "success": False,
+                "message": "No data provided"
+            }), 400
 
-    if not transaction:
-        flash(
-            "Transaction introuvable ou vous n'avez pas l'autorisation de la supprimer",
-            "error",
-        )
-        return redirect("/history")
+        # Retrieve entry id from JSON data
+        entry_id = data.get("entry_id")
 
-    # Calculate corresponding portfolio entry
-    portfolio_entry = Portfolios.query.filter_by(
-        user_id=session["user_id"], category_id=transaction.category_id
-    ).first()
+        if not entry_id:
+            return jsonify({
+                "success": False,
+                "message": "Identifiant d'entrée requis"
+            }), 400
 
-    if not portfolio_entry:
-        flash("Entrée de portefeuille introuvable", "error")
-        return redirect("/history")
+        # Retrieve portfolio transaction by id
+        transaction = Transactions.query.filter_by(
+            id=entry_id, user_id=session["user_id"]
+        ).first()
 
-    # Adjust portfolio balance based on transaction type (positive or negative)
-    try:
-        # Update portfolio balance
-        portfolio_entry.balance -= transaction.amount
+        if not transaction:
+            return jsonify({
+                "success": False,
+                "message": "Transaction introuvable ou vous n'avez pas l'autorisation de la supprimer"
+            }), 404
 
-        # Delete the transaction entry
-        db.session.delete(transaction)
+        # Calculate corresponding portfolio entry
+        portfolio_entry = Portfolios.query.filter_by(
+            user_id=session["user_id"], category_id=transaction.category_id
+        ).first()
 
-        # Commit changes to both tables
-        db.session.commit()
+        if not portfolio_entry:
+            return jsonify({
+                "success": False,
+                "message": "Entrée de portefeuille introuvable"
+            }), 404
 
-        flash("Transaction supprimée avec succès", "success")
+        # Adjust portfolio balance based on transaction type (positive or negative)
+        try:
+            # Update portfolio balance (reverse the transaction)
+            portfolio_entry.balance -= transaction.amount
+
+            # Delete the transaction entry
+            db.session.delete(transaction)
+
+            # Commit changes to both tables
+            db.session.commit()
+
+            return jsonify({
+                "success": True,
+                "message": "Transaction supprimée avec succès"
+            }), 200
+
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({
+                "success": False,
+                "message": f"Une erreur s'est produite lors de la suppression: {str(e)}"
+            }), 500
+
     except Exception as e:
-        db.session.rollback()
-        flash(
-            "Une erreur s'est produite lors de la suppression de la transaction",
-            e,
-        )
-
-    # Redirect to history page
-    return redirect("/history")
+        print(f"Exception occurred: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": f"Erreur serveur: {str(e)}"
+        }), 500
 
 
 # Instantiate db

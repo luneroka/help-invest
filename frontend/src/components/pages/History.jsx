@@ -10,6 +10,7 @@ function History() {
   const [transactions, setTransactions] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [message, setMessage] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [pagination, setPagination] = useState({})
   const navigate = useNavigate()
@@ -48,7 +49,57 @@ function History() {
     }
   }
 
-  const handleDeleteTransaction = () => {}
+  const handleDeleteTransaction = async (transactionId) => {
+    if (
+      !window.confirm('Êtes-vous sûr de vouloir supprimer cette transaction?')
+    ) {
+      return
+    }
+
+    try {
+      const response = await axios.delete(
+        `${import.meta.env.VITE_API_BASE_URL}/api/delete-entry`,
+        {
+          data: { entry_id: transactionId },
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+
+      if (response.data.success) {
+        setMessage({
+          type: 'success',
+          text: response.data.message
+        })
+
+        // Refresh the transactions list
+        fetchTransactions(currentPage)
+
+        // Clear message after 3 seconds
+        setTimeout(() => {
+          setMessage(null)
+        }, 3000)
+      }
+    } catch (error) {
+      console.error('Delete error:', error)
+
+      if (error.response?.status === 401) {
+        navigate('/connexion')
+      } else {
+        setMessage({
+          type: 'error',
+          text: error.response?.data?.message || 'Erreur lors de la suppression'
+        })
+
+        // Clear message after 3 seconds
+        setTimeout(() => {
+          setMessage(null)
+        }, 3000)
+      }
+    }
+  }
 
   if (loading) {
     return (
@@ -78,6 +129,20 @@ function History() {
   return (
     <Layout header={<MainHeader />}>
       <h2>Historique des opérations</h2>
+
+      {/* Success/Error Message */}
+      {message && (
+        <div
+          className={`mb-4 p-4 rounded-lg ${
+            message.type === 'success'
+              ? 'bg-green-50 border border-green-200 text-green-800'
+              : 'bg-red-50 border border-red-200 text-red-800'
+          }`}
+        >
+          {message.text}
+        </div>
+      )}
+
       <div className=''>
         {transactions.length === 0 ? (
           <div className='text-left py-12'>
@@ -118,7 +183,7 @@ function History() {
                       <td className='py-3 px-4 text-small'>
                         {transaction.category_name}
                       </td>
-                      <td className={'py-3 px-4 text-small'}>
+                      <td className='py-3 px-4 text-small'>
                         {transaction.sub_category_name}
                       </td>
                       <td className='py-3 px-4 text-small'>
@@ -160,7 +225,7 @@ function History() {
           <button
             disabled={!pagination.has_prev}
             onClick={() => fetchTransactions(currentPage - 1)}
-            className='px-4 py-2 bg-theme-primary text-white rounded disabled:bg-gray-300 cursor-pointer'
+            className='px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300'
           >
             Précédent
           </button>
@@ -172,7 +237,7 @@ function History() {
           <button
             disabled={!pagination.has_next}
             onClick={() => fetchTransactions(currentPage + 1)}
-            className='px-4 py-2 bg-theme-primary text-white rounded disabled:bg-gray-300 cursor-pointer'
+            className='px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300'
           >
             Suivant
           </button>
