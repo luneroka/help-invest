@@ -133,44 +133,46 @@ function History() {
       {/* Success/Error Message */}
       {message && (
         <div
-          className={`mb-4 p-4 rounded-lg ${
+          className={`mb-4 p-3 md:p-4 rounded-lg ${
             message.type === 'success'
               ? 'bg-green-50 border border-green-200 text-green-800'
               : 'bg-red-50 border border-red-200 text-red-800'
           }`}
         >
-          {message.text}
+          <p className='text-sm md:text-base'>{message.text}</p>
         </div>
       )}
 
       <div className=''>
         {transactions.length === 0 ? (
-          <div className='text-left py-12'>
-            <p className='text-gray-600 text-lg'>Aucune opération trouvée</p>
-            <p className='text-gray-500 mt-2'>
+          <div className='text-center py-8 md:py-12'>
+            <p className='text-gray-600 text-base md:text-lg'>
+              Aucune opération trouvée
+            </p>
+            <p className='text-gray-500 mt-2 text-sm md:text-base'>
               Vos futures opérations apparaîtront ici
             </p>
           </div>
         ) : (
           <div className=''>
             <div className='overflow-x-auto'>
-              <table className='w-full'>
+              <table className='w-full min-w-[600px]'>
                 <thead>
                   <tr className='border-b border-gray-200'>
-                    <th className='text-left py-3 px-4 font-semibold'>
+                    <th className='text-left py-2 md:py-3 px-2 md:px-4 font-semibold text-xs md:text-sm'>
                       Catégorie
                     </th>
-                    <th className='text-left py-3 px-4 font-semibold'>
+                    <th className='text-left py-2 md:py-3 px-2 md:px-4 font-semibold text-xs md:text-sm'>
                       Compte
                     </th>
-                    <th className='text-left py-3 px-4 font-semibold'>
+                    <th className='text-left py-2 md:py-3 px-2 md:px-4 font-semibold text-xs md:text-sm'>
                       Montant
                     </th>
-                    <th className='text-left py-3 px-4 font-semibold'>
-                      Horodatage
+                    <th className='text-left py-2 md:py-3 px-2 md:px-4 font-semibold text-xs md:text-sm'>
+                      Date
                     </th>
-                    <th className='text-center py-3 px-4 font-semibold'>
-                      Supprimer
+                    <th className='text-center py-2 md:py-3 px-2 md:px-4 font-semibold text-xs md:text-sm'>
+                      Action
                     </th>
                   </tr>
                 </thead>
@@ -180,26 +182,44 @@ function History() {
                       key={transaction.id}
                       className='border-b border-gray-100 hover:bg-gray-50'
                     >
-                      <td className='py-3 px-4 text-small'>
-                        {transaction.category_name}
+                      <td className='py-2 md:py-3 px-2 md:px-4 text-xs md:text-sm'>
+                        <span className='block truncate max-w-[120px] md:max-w-none'>
+                          {transaction.category_name}
+                        </span>
                       </td>
-                      <td className='py-3 px-4 text-small'>
-                        {transaction.sub_category_name}
+                      <td className='py-2 md:py-3 px-2 md:px-4 text-xs md:text-sm'>
+                        <span className='block truncate max-w-[120px] md:max-w-none'>
+                          {transaction.sub_category_name}
+                        </span>
                       </td>
-                      <td className='py-3 px-4 text-small'>
-                        {formatAmount(transaction.amount)}
+                      <td className='py-2 md:py-3 px-2 md:px-4 text-xs md:text-sm font-medium'>
+                        <span
+                          className={`${transaction.amount >= 0 ? 'text-alerts-success' : 'text-alerts-error'}`}
+                        >
+                          {formatAmount(transaction.amount)}
+                        </span>
                       </td>
-                      <td className='py-3 px-4 text-small'>
-                        {transaction.timestamp}
+                      <td className='py-2 md:py-3 px-2 md:px-4 text-xs md:text-sm'>
+                        <span className='block truncate'>
+                          {new Date(transaction.timestamp).toLocaleDateString(
+                            'fr-FR',
+                            {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric'
+                            }
+                          )}
+                        </span>
                       </td>
-                      <td className='py-3 px-4 text-center'>
+                      <td className='py-2 md:py-3 px-2 md:px-4 text-center'>
                         <button
-                          className='text-red-600 hover:text-red-800 transition-colors cursor-pointer'
+                          className='text-alerts-error hover:text-red-800 transition-colors cursor-pointer p-1 md:p-2'
                           onClick={() =>
                             handleDeleteTransaction(transaction.id)
                           }
+                          title='Supprimer'
                         >
-                          <RiDeleteBin6Line className='text-lg' />
+                          <RiDeleteBin6Line className='text-base md:text-lg' />
                         </button>
                       </td>
                     </tr>
@@ -208,36 +228,42 @@ function History() {
               </table>
             </div>
 
+            {/* Transaction Count */}
             {transactions.length > 0 && (
-              <div className='mt-4 text-center text-caption'>
-                {pagination.total || transactions.length} opération
-                {(pagination.total || transactions.length) > 1 ? 's' : ''}{' '}
-                trouvée
-                {(pagination.total || transactions.length) > 1 ? 's' : ''}
+              <div className='mt-3 md:mt-4 text-center'>
+                <p className='text-xs md:text-sm text-gray-600'>
+                  {pagination.total || transactions.length} opération
+                  {(pagination.total || transactions.length) > 1
+                    ? 's'
+                    : ''}{' '}
+                  trouvée
+                  {(pagination.total || transactions.length) > 1 ? 's' : ''}
+                </p>
               </div>
             )}
           </div>
         )}
       </div>
 
+      {/* Pagination Controls */}
       {pagination.pages > 1 && (
-        <div className='flex justify-center items-center gap-4 mt-6'>
+        <div className='flex flex-col sm:flex-row justify-center items-center gap-3 md:gap-4 mt-4 md:mt-6'>
           <button
             disabled={!pagination.has_prev}
             onClick={() => fetchTransactions(currentPage - 1)}
-            className='px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300'
+            className='w-full sm:w-auto px-4 py-2 text-sm md:text-base bg-blue-500 text-white rounded disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors'
           >
             Précédent
           </button>
 
-          <span className='text-sm text-gray-600'>
+          <span className='text-xs md:text-sm text-gray-600 order-first sm:order-none'>
             Page {pagination.page || 1} sur {pagination.pages || 1}
           </span>
 
           <button
             disabled={!pagination.has_next}
             onClick={() => fetchTransactions(currentPage + 1)}
-            className='px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300'
+            className='w-full sm:w-auto px-4 py-2 text-sm md:text-base bg-blue-500 text-white rounded disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors'
           >
             Suivant
           </button>
