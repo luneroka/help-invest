@@ -316,6 +316,51 @@
   .link-default:hover {
     color: var(--color-links-hover);
   }
+
+  /* Responsive Typography Classes */
+  .text-responsive-h1 {
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-h1);
+    line-height: var(--line-height-h1);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-tight);
+    color: var(--color-text-headings);
+  }
+
+  .text-responsive-h3 {
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-h3);
+    line-height: var(--line-height-h3);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: var(--letter-spacing-tight);
+    color: var(--color-text-small-headings);
+  }
+
+  .text-responsive-body {
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-body);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-text-main);
+  }
+
+  /* Mobile responsive overrides */
+  @media (max-width: 768px) {
+    .text-responsive-h1 {
+      font-size: calc(var(--font-size-h1) - 0.25rem);
+      line-height: calc(var(--line-height-h1) - 0.25rem);
+    }
+
+    .text-responsive-h3 {
+      font-size: calc(var(--font-size-h3) - 0.125rem);
+      line-height: calc(var(--line-height-h3) - 0.125rem);
+    }
+
+    .text-responsive-body {
+      font-size: calc(var(--font-size-body) - 0.125rem);
+      line-height: calc(var(--line-height-body) - 0.125rem);
+    }
+  }
 }
 
 /* PASSWORD CHECKLIST */

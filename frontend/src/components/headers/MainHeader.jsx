@@ -28,7 +28,7 @@ function MainHeader() {
   }
 
   return (
-    <div className='flex items-center justify-between bg-theme-main h-16 px-24'>
+    <div className='flex items-center justify-between bg-theme-main h-16 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24'>
       <div className='flex gap-4 items-center'>
         <Link to='/'>
           <img
