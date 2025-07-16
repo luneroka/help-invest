@@ -59,9 +59,9 @@ function Dashboard() {
           </span>
         </div>
       ) : (
-        <div className='flex gap-16 justify-between'>
-          <div className='w-full'>
-            <div className='h-full mb-16'>
+        <div className='flex flex-col xl:flex-row gap-8 xl:gap-16 justify-between'>
+          <div className='w-full xl:w-1/2'>
+            <div className='h-full mb-8 xl:mb-16'>
               <DashGraph
                 portfolioSummary={portfolioSummary}
                 loading={loading}
@@ -69,7 +69,7 @@ function Dashboard() {
               />
             </div>
           </div>
-          <div className='w-full'>
+          <div className='w-full xl:w-1/2'>
             <DashTable
               portfolioSummary={portfolioSummary}
               displayTotalEstate={displayTotalEstate}

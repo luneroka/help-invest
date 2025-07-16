@@ -99,26 +99,30 @@ function DashGraph({ portfolioSummary, loading, error }) {
   return (
     <div className='bg-white shadow-lg overflow-hidden h-full relative'>
       {error && (
-        <div className='px-6 py-3 bg-yellow-50 border-l-4 border-yellow-400'>
+        <div className='px-4 md:px-6 py-3 bg-yellow-50 border-l-4 border-yellow-400'>
           <p className='text-sm text-yellow-700'>{error}</p>
         </div>
       )}
-      <div className='flex flex-col lg:flex-row items-center gap-6 h-full'>
+      <div className='flex flex-col items-center gap-4 md:gap-6 h-full p-4 md:p-6'>
         {/* Pie Chart */}
-        <div className='flex-shrink-0 flex-1' style={{ minHeight: '450px' }}>
+        <div
+          className='flex-shrink-0 w-full h-100'
+          style={{ minHeight: '300px', maxHeight: '550px' }}
+        >
           <Pie data={data} options={options} />
         </div>
-      </div>
-      {/* Legends */}
-      <div className='absolute bottom-4 left-4'>
-        <div className='flex flex-col gap-1'>
+
+        {/* Legends - Below chart on mobile, positioned on desktop */}
+        <div className='flex flex-col gap-1 md:absolute md:bottom-4 md:left-4'>
           {chartData.map((item, index) => (
             <div key={index} className='flex items-center gap-2'>
               <div
-                className='w-3 h-3 rounded-full'
+                className='w-3 h-3 rounded-full flex-shrink-0'
                 style={{ backgroundColor: colors[index] }}
               />
-              <span className='text-body text-gray-600'>{item.name}</span>
+              <span className='text-sm md:text-body text-gray-600'>
+                {item.name}
+              </span>
             </div>
           ))}
         </div>
