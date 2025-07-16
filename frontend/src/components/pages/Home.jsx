@@ -1,11 +1,51 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
 import Layout from '../layout/Layout'
 import IndexHeader from '../../components/headers/IndexHeader'
+import MainHeader from '../headers/MainHeader'
 
 function Home() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    checkAuthStatus()
+  }, [])
+
+  const checkAuthStatus = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/api/risk-profile`,
+        {
+          withCredentials: true
+        }
+      )
+
+      if (response.data.success) {
+        setIsLoggedIn(true)
+      }
+    } catch (error) {
+      // User is not logged in
+      setIsLoggedIn(false)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <Layout header={<IndexHeader />}>
+        <div className='flex justify-center items-center min-h-64'>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600'></div>
+        </div>
+      </Layout>
+    )
+  }
+
   return (
-    <Layout header={<IndexHeader />}>
+    <Layout header={isLoggedIn ? <MainHeader /> : <IndexHeader />}>
       <div className='flex items-start'>
         <div className='flex flex-col gap-4 w-full'>
           <div className='flex flex-col gap-2'>
