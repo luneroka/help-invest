@@ -160,13 +160,11 @@ function Profile() {
     <Layout header={<MainHeader />}>
       <div className='flex flex-col items-center min-h-full'>
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-16 w-full max-w-6xl'>
-          <div className='flex flex-col h-full'>
+          <div className='flex flex-col items-center h-full'>
             <h2 className='text-center'>Profil de Risque</h2>
             <div className='card h-full'>
               <div className='flex flex-col gap-4'>
-                <p className='text-body text-center'>
-                  Votre profil de risque actuel :
-                </p>
+                <p className='text-center'>Votre profil de risque actuel :</p>
                 <p className='text-data text-center'>
                   {currentRiskProfile
                     ? currentRiskProfile.toUpperCase()
@@ -184,7 +182,7 @@ function Profile() {
                 )}
 
                 <div className='flex flex-col gap-4'>
-                  <p className='text-body text-center'>
+                  <p className='text-center'>
                     Modifiez votre profil de risque :
                   </p>
                   <select
@@ -225,7 +223,7 @@ function Profile() {
             </div>
           </div>
 
-          <div className='flex flex-col h-full'>
+          <div className='flex flex-col items-center h-full'>
             <h2 className='text-center'>Gérer mon compte</h2>
             <div className='card'>
               <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
@@ -319,7 +317,7 @@ function Profile() {
                   l'accès à votre compte HelpInvest et toutes vos données seront
                   supprimées.
                 </p>
-                <button className='btn-delete w-1/2'>
+                <button className='btn-delete w-full xl:w-1/2'>
                   Supprimer le compte
                 </button>
               </div>
