@@ -49,14 +49,14 @@ function Home() {
       <div className='flex flex-col gap-8 lg:flex-row lg:items-start'>
         <div className='flex flex-col gap-4 w-full max-w-[850px]'>
           <div className='flex flex-col gap-2'>
-            <h1 className='text-responsive-h1'>Bienvenue sur HelpInvest !</h1>
-            <p className='text-body italic text-responsive-body'>
+            <h1>Bienvenue sur HelpInvest !</h1>
+            <p className='italic'>
               Votre assistant virtuel pour suivre et optimiser votre
               portefeuille.
             </p>
           </div>
 
-          <div className='text-pretty text-responsive-body'>
+          <div className='text-pretty'>
             <strong>Avertissement : </strong>Cet outil est un guide d'aide à la
             décision. Il ne remplace pas un conseiller financier. Les marchés
             sont volatils et les performances passées ne garantissent pas les
@@ -64,13 +64,13 @@ function Home() {
           </div>
 
           <div className='flex flex-col gap-2'>
-            <h3 className='text-responsive-h3'>Pourquoi HelpInvest ?</h3>
-            <p className='text-pretty text-responsive-body'>
+            <h3>Pourquoi HelpInvest ?</h3>
+            <p className='text-pretty'>
               Que vous soyez débutant ou expérimenté, l'application vous offre
               une vue claire de vos investissements, regroupés au même endroit.
               En mettant régulièrement à jour vos données, vous pourrez :
             </p>
-            <ul className='list-disc list-inside pl-2 md:pl-4 text-responsive-body'>
+            <ul className='list-disc list-inside pl-2 md:pl-4'>
               <li>Visualiser la répartition de votre portefeuille,</li>
               <li>Évaluer sa cohérence avec votre profil de risque,</li>
               <li>Recevoir des recommandations personnalisées.</li>
@@ -78,8 +78,8 @@ function Home() {
           </div>
 
           <div className='flex flex-col gap-2'>
-            <h3 className='text-responsive-h3'>Comment ça fonctionne ?</h3>
-            <ol className='list-decimal list-inside pl-2 md:pl-4 text-responsive-body'>
+            <h3>Comment ça fonctionne ?</h3>
+            <ol className='list-decimal list-inside pl-2 md:pl-4'>
               <li>
                 <Link
                   to='/inscription'
@@ -112,10 +112,8 @@ function Home() {
           </div>
 
           <div className='flex flex-col gap-2'>
-            <h3 className='text-responsive-h3'>
-              Une structure inspirée de la pyramide de Maslow
-            </h3>
-            <ul className='list-disc list-inside pl-2 md:pl-4 text-responsive-body'>
+            <h3>Une structure inspirée de la pyramide de Maslow</h3>
+            <ul className='list-disc list-inside pl-2 md:pl-4'>
               <li>
                 <strong>Épargne : </strong>Sécurisez votre liquidité.
               </li>
@@ -133,7 +131,7 @@ function Home() {
             </ul>
           </div>
 
-          <p className='text-responsive-body'>
+          <p>
             Inscrivez-vous dès maintenant pour prendre le contrôle de votre
             avenir financier !
           </p>
@@ -146,7 +144,7 @@ function Home() {
             className='w-full origin-top'
           />
           <div className='items-end'>
-            <p className='text-responsive-caption px-2 py-1 text-end'>
+            <p className='text-caption px-2 py-1 text-end'>
               Illustration : Guillaume Simonin - La pyramide du patrimoine.
               <br />
               Le guide visuel d'éducation financière, Maxima 2024.

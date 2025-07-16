@@ -109,7 +109,7 @@ function Register() {
             </div>
 
             {/* Passwords */}
-            <div className='flex flex-col gap-2'>
+            <div className='flex flex-col gap-4 sm:gap-2'>
               <label htmlFor='password' className='block text-small'>
                 Mot de passe
               </label>

@@ -271,7 +271,7 @@
     flex-direction: column;
     gap: 2rem;
     background-color: var(--color-theme-bg-main);
-    padding: 3rem;
+    padding: 2rem;
     box-shadow:
       0 4px 6px -1px rgba(0, 0, 0, 0.1),
       0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -318,78 +318,47 @@
     color: var(--color-links-hover);
   }
 
-  /* Responsive Typography Classes */
-  .text-responsive-h1 {
-    font-family: var(--font-family-primary);
-    font-size: var(--font-size-h1);
-    line-height: var(--line-height-h1);
-    font-weight: var(--font-weight-bold);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-text-headings);
-  }
-
-  .text-responsive-h3 {
-    font-family: var(--font-family-primary);
-    font-size: var(--font-size-h3);
-    line-height: var(--line-height-h3);
-    font-weight: var(--font-weight-medium);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-text-small-headings);
-  }
-
-  .text-responsive-body {
-    font-family: var(--font-family-secondary);
-    font-size: var(--font-size-body);
-    line-height: var(--line-height-body);
-    font-weight: var(--font-weight-regular);
-    color: var(--color-text-main);
-  }
-
-  .text-responsive-caption {
-    font-family: var(--font-family-secondary);
-    font-size: var(--font-size-small);
-    line-height: var(--line-height-small);
-    font-weight: var(--font-weight-regular);
-    color: var(--color-text-captions);
-  }
-
-  .text-responsive-nav-link {
-    color: var(--color-theme-accent);
-    font-family: var(--font-family-primary);
-    font-size: var(--font-size-body);
-    font-weight: 500;
-    transition: color 0.15s ease;
-  }
-
-  .text-responsive-nav-link:hover {
-    color: var(--color-gray-200);
-  }
-
   /* Mobile responsive overrides */
   @media (max-width: 768px) {
-    .text-responsive-h1 {
+    h1 {
       font-size: calc(var(--font-size-h1) - 0.5rem);
       line-height: calc(var(--line-height-h1) - 0.5rem);
     }
 
-    .text-responsive-h3 {
+    h2 {
+      font-size: calc(var(--font-size-h2) - 0.25rem);
+      line-height: calc(var(--line-height-h2) - 0.25rem);
+      margin-bottom: 16px;
+    }
+
+    h3 {
       font-size: calc(var(--font-size-h3) - 0.25rem);
       line-height: calc(var(--line-height-h3) - 0.25rem);
     }
 
-    .text-responsive-body {
+    body {
       font-size: calc(var(--font-size-body) - 0.125rem);
       line-height: calc(var(--line-height-body) - 0.125rem);
     }
 
-    .text-responsive-caption {
+    .text-caption {
       font-size: calc(var(--font-size-small) - 0.125rem);
       line-height: calc(var(--line-height-small) - 0.125rem);
     }
 
-    .text-responsive-nav-link {
+    .nav-link {
       font-size: calc(var(--font-size-body) - 0.125rem);
       line-height: calc(var(--line-height-body) - 0.125rem);
+    }
+
+    .input-field {
+      font-size: var(--font-size-small);
+    }
+
+    .card {
+      padding: 1.5rem;
+      gap: 1.5rem;
+      max-width: 100%;
     }
   }
 }

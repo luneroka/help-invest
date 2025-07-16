@@ -105,32 +105,24 @@ function MainHeader() {
         <div className='md:hidden bg-theme-main border-t border-theme-accent/20'>
           <div className='flex flex-col px-4 py-2'>
             <Link to='/dashboard' onClick={closeMenu}>
-              <p className='text-responsive-nav-link text-responsive-nav-link:hover py-1'>
-                Dashboard
-              </p>
+              <p className='nav-link nav-link:hover py-1'>Dashboard</p>
             </Link>
             <Link to='/opérations' onClick={closeMenu}>
-              <p className='text-responsive-nav-link text-responsive-nav-link:hover py-1'>
-                Opérations
-              </p>
+              <p className='nav-link nav-link:hover py-1'>Opérations</p>
             </Link>
             <Link to='/historique' onClick={closeMenu}>
-              <p className='text-responsive-nav-link text-responsive-nav-link:hover py-1'>
-                Historique
-              </p>
+              <p className='nav-link nav-link:hover py-1'>Historique</p>
             </Link>
             <div className='border-t border-theme-accent/20 my-2'></div>
             <Link to='/profil' onClick={closeMenu}>
-              <p className='text-responsive-nav-link text-responsive-nav-link:hover py-1'>
-                Profil
-              </p>
+              <p className='nav-link nav-link:hover py-1'>Profil</p>
             </Link>
             <button
               onClick={() => {
                 handleLogout()
                 closeMenu()
               }}
-              className='text-responsive-nav-link text-responsive-nav-link:hover cursor-pointer text-left py-1'
+              className='nav-link nav-link:hover cursor-pointer text-left py-1'
             >
               Déconnexion
             </button>
