@@ -938,6 +938,77 @@ def delete_entry():
         }), 500
 
 
+@app.route("/api/delete-account", methods=["POST"])
+@login_required
+def delete_account():
+    try:
+        # Check if response contains JSON
+        if not request.is_json:
+            return jsonify({
+                "success": False,
+                "message": "Content-Type must be application/json"
+            }), 400
+        
+        data = request.get_json()
+
+        if not data:
+            return jsonify({
+                "success": False,
+                "message": "No data provided"
+            }), 400
+
+        password = data.get("password")
+        if not password:
+            return jsonify({
+                "success": False,
+                "message": "Mot de passe requis pour confirmer la suppression du compte"
+            }), 400
+
+        # Get current user
+        user_id = session["user_id"]
+        user = Users.query.filter_by(id=user_id).first()
+
+        if not user:
+            return jsonify({
+                "success": False,
+                "message": "Utilisateur non trouvé"
+            }), 404
+
+        # Verify password
+        if not check_password_hash(user.hash, password):
+            return jsonify({
+                "success": False,
+                "message": "Mot de passe incorrect"
+            }), 401
+        
+        try:
+            # Delete user with cascade to portfolios and transactions
+            db.session.delete(user)
+            db.session.commit()
+
+            # Clear session
+            session.clear()
+
+            return jsonify({
+                "success": True,
+                "message": "Votre compte a été supprimé avec succès"
+            }), 200
+        
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({
+                "success": False,
+                "message": f"Erreur lors de la suppression : {str(e)}"
+            }), 500
+    
+    except Exception as e:
+        print(f"Exception occurred: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": f"Erreur serveur: {str(e)}"
+        }), 500
+
+
 # Instantiate db
 with app.app_context():
     db.create_all()

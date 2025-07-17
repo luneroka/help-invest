@@ -58,10 +58,10 @@ function Register() {
       if (response.data.success) {
         navigate('/connexion')
       }
-    } catch (err) {
-      console.error('Signup error:', err)
-      if (err.response?.data?.message) {
-        setError(err.response.data.message)
+    } catch (error) {
+      console.error('Signup error:', error)
+      if (error.response?.data?.message) {
+        setError(error.response.data.message)
       } else {
         setError('Une erreur est survenue. Veuillez réessayer.')
       }

@@ -7,6 +7,10 @@ class Users(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     hash = db.Column(db.String(120), nullable=False)
     risk_profile = db.Column(db.String(80), nullable=False)
+    
+    # Add relationships with cascade delete
+    portfolios = db.relationship('Portfolios', backref='user', cascade='all, delete-orphan')
+    transactions = db.relationship('Transactions', backref='user', cascade='all, delete-orphan')
 
 
 class Categories(db.Model):
@@ -33,8 +37,3 @@ class Transactions(db.Model):
         )
     amount = db.Column(db.Integer, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
-
-
-# Define relationships for easier querying
-user = db.relationship("Users", backref="portfolios")
-category = db.relationship("Categories", backref="portfolios")
