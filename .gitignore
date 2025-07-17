@@ -11,7 +11,9 @@ node_modules
 
 # Firebase credentials
 firebase-service-account.json
+firebase-service-account-local.json
 *service-account*.json
+firebase-adminsdk-*.json
 
 # Logs
 logs
