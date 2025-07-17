@@ -1,44 +1,29 @@
 {
-  "name": "Flask Dev Container",
+  "name": "Frontend Dev Container",
   "dockerComposeFile": ["../docker-compose.yml"],
-  "service": "flask",
+  "service": "frontend",
   "workspaceFolder": "/workspace",
   "postCreateCommand": "git config --global user.name \"${localEnv:GIT_USER_NAME}\" && git config --global user.email \"${localEnv:GIT_USER_EMAIL}\"",
+  "runServices": ["frontend", "flask", "postgres"],
+  "forwardPorts": [5173, 5001],
   "customizations": {
     "vscode": {
-      "settings": {
-        "python.linting.enabled": true,
-        "python.linting.flake8Enabled": true,
-        "python.formatting.provider": "black"
-      },
       "extensions": [
-        "ms-python.python",
-        "ms-python.flake8",
-        "ms-python.black-formatter",
-        "ms-python.vscode-pylance",
         "esbenp.prettier-vscode",
-        "bradlc.vscode-tailwindcss"
-      ]
+        "bradlc.vscode-tailwindcss",
+        "dbaeumer.vscode-eslint"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
     }
-  },
-  "forwardPorts": [5001, 5173],
-  "portsAttributes": {
-    "5001": {
-      "label": "Flask App",
-      "onAutoForward": "openPreview"
-    },
-    "5173": {
-      "label": "Vite Dev Server",
-      "onAutoForward": "openPreview"
-    }
-  },
-  "remoteEnv": {
-    "FLASK_ENV": "development",
-    "SSH_AUTH_SOCK": "/ssh-agent"
   },
   "mounts": [
     "source=${localWorkspaceFolder}/backend/.env,target=/workspace/backend/.env,type=bind,consistency=cached",
     "source=${env:HOME}/.ssh,target=/home/vscode/.ssh,type=bind",
     "source=/run/host-services/ssh-auth.sock,target=/ssh-agent,type=bind"
-  ]
+  ],
+  "remoteEnv": {
+    "SSH_AUTH_SOCK": "/ssh-agent"
+  }
 }

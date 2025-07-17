@@ -8,6 +8,7 @@ Procfile
 .env
 __pycache__/
 node_modules
+devcontainer-flask.json
 
 # Firebase credentials
 firebase-service-account.json
