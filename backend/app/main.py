@@ -1,296 +1,42 @@
-from flask import request, redirect, render_template, flash, session, jsonify, make_response
+from flask import request, jsonify
 from .config import app, db
 from .models import Users, Categories, Portfolios, Transactions
-from werkzeug.security import check_password_hash, generate_password_hash
 from .helpers import (
-    validate_password_strength,
-    login_required,
+    firebase_token_required,
     serialize_category,
-    register_error_handlers,
 )
 from datetime import datetime
 
-# CSRF Error handler
+# Remove CSRF error handler registration since we're using Firebase JWT
 # register_error_handlers(app)
 
 
-@app.route("/api/login", methods=["POST"])
-def login():
+@app.route("/api/sync-user", methods=["POST"])
+@firebase_token_required
+def sync_user(firebase_uid, user_email):
+    """Create or update user record in database after Firebase authentication"""
     try:
-        # Check if request contains JSON
-        if not request.is_json:
-            print("Request is not JSON")
-            return jsonify({
-                "success": False,
-                "message": "Content-Type must be application/json"
-            }), 400
+        # Extract additional user info from request if provided
+        data = request.get_json() or {}
+        display_name = data.get("displayName")
+        
+        # Get or create user in database
+        user = Users.get_or_create_user(
+            firebase_uid=firebase_uid,
+            email=user_email,
+            name=display_name
+        )
 
-        data = request.get_json()
-
-        if not data:
-            print("No data in request")
-            return jsonify({
-                "success": False,
-                "message": "No data provided"
-            }), 400
-
-        # Retrieve form data
-        username = data.get("username")
-        password = data.get("password")
-
-        # Validate input
-        if not username:
-            return jsonify({
-                "success": False,
-                "message": "Nom d'utilisateur requis"
-            }), 400
-
-        if not password:
-            return jsonify({
-                "success": False,
-                "message": "Mot de passe requis"
-            }), 400
-
-        # Query database for username
-        user = Users.query.filter_by(username=username).first()
-
-        # Validate username and password
-        if not user or not check_password_hash(user.hash, password):
-            return jsonify({
-                "success": False,
-                "message": "Nom d'utilisateur ou mot de passe incorrect"
-            }), 401
-
-        # Log the user in
-        session.clear()
-        session["user_id"] = user.id
-
-        # Return success with user data
         return jsonify({
             "success": True,
-            "message": "Connexion réussie",
+            "message": "Utilisateur synchronisé avec succès",
             "user": {
                 "id": user.id,
+                "email": user.email,
                 "username": user.username,
                 "risk_profile": user.risk_profile
             }
         }), 200
-
-    except Exception as e:
-        print(f"Exception occurred: {str(e)}")
-        return jsonify({
-            "success": False,
-            "message": f"Erreur serveur: {str(e)}"
-        }), 500
-
-
-@app.route("/api/logout", methods=["POST"])
-def logout():
-    try:
-        session.clear()
-
-        return jsonify({
-            "success": True,
-            "message": "Déconnexion réussie"
-        }), 200
-    except Exception as e:
-        return jsonify({
-            "success": False,
-            "message": "Erreur lors de la déconnexion"
-        }), 500
-
-
-@app.route("/api/signup", methods=["POST"])
-def signup():
-    try:
-        # Check if request contains JSON
-        if not request.is_json:
-            return jsonify({
-                "success": False,
-                "message": "Content-Type must be application/json"
-            }), 400
-        
-        data = request.get_json()
-
-        if not data:
-            return jsonify({
-                "success": False,
-                "message": "No data provided"
-            }), 400
-
-        # Retrieve form data
-        username = data.get("username")
-        password = data.get("password")
-        confirmation = data.get("confirmation")
-
-        # Validate username input
-        if not username:
-            return jsonify({
-                "success": False,
-                "message": "Nom d'utilisateur requis"
-            }), 400
-
-        # Validate password input
-        if not password:
-            return jsonify({
-                "success": False,
-                "message": "Mot de passe requis"
-            }), 400
-
-        # Validate password strength
-        password_error = validate_password_strength(password)
-        if password_error:
-            return jsonify({
-                "success": False,
-                "message": password_error
-            }), 400
-
-        # Validate other input
-        if not confirmation:
-            return jsonify({
-                "success": False,
-                "message": "Veuillez confirmer le mot de passe"
-            }), 400
-
-        if confirmation != password:
-            return jsonify({
-                "success": False,
-                "message": "Les mots de passe ne correspondent pas"
-            }), 400
-
-        # Check if username already exists
-        existing_user = Users.query.filter_by(username=username).first()
-        if existing_user:
-            return jsonify({
-                "success": False,
-                "message": "Ce nom d'utilisateur existe déjà"
-            }), 400
-
-        # Hash password and create new user
-        hashed_password = generate_password_hash(
-            password, method="pbkdf2:sha256", salt_length=16
-        )
-        new_user = Users(
-            username=username, hash=hashed_password, risk_profile="équilibré"
-        )
-
-        # Try adding new user to db
-        try:
-            db.session.add(new_user)
-            db.session.commit()
-            return jsonify({
-                "success": True,
-                "message": "Votre compte a été créé avec succès"
-            }), 201
-        except Exception as e:
-            db.session.rollback()
-            return jsonify({
-                "success": False,
-                "message": f"Une erreur s'est produite. Veuillez réessayer: {str(e)}"
-            }), 500
-
-    except Exception as e:
-        print(f"Exception occurred: {str(e)}")
-        return jsonify({
-            "success": False,
-            "message": f"Erreur serveur: {str(e)}"
-        }), 500
-
-
-@app.route("/api/change-password", methods=["POST"])
-@login_required
-def change_password():
-    try:
-        # Check if request contains JSON
-        if not request.is_json:
-            return jsonify({
-                "success": False,
-                "message": "Content-Type must be application/json"
-            }), 400
-        
-        data = request.get_json()
-
-        if not data:
-            return jsonify({
-                "success": False,
-                "message": "No data provided"
-            }), 400
-
-        # Retrieve form data
-        current_password = data.get("currentPassword")
-        new_password = data.get("newPassword")
-        confirmation = data.get("confirmation")
-
-        # Validate input
-        if not current_password:
-            return jsonify({
-                "success": False,
-                "message": "Mot de passe actuel requis"
-            }), 400
-
-        if not new_password:
-            return jsonify({
-                "success": False,
-                "message": "Nouveau mot de passe requis"
-            }), 400
-
-        if not confirmation:
-            return jsonify({
-                "success": False,
-                "message": "Veuillez confirmer le nouveau mot de passe"
-            }), 400
-
-        if confirmation != new_password:
-            return jsonify({
-                "success": False,
-                "message": "Les mots de passe ne correspondent pas"
-            }), 400
-
-        # Validate password strength
-        password_error = validate_password_strength(new_password)
-        if password_error:
-            return jsonify({
-                "success": False,
-                "message": password_error
-            }), 400
-
-        # Retrieve user
-        user = Users.query.filter_by(id=session["user_id"]).first()
-
-        # Validate current password
-        if not user or not check_password_hash(user.hash, current_password):
-            return jsonify({
-                "success": False,
-                "message": "Mot de passe actuel incorrect"
-            }), 401
-
-        # Check if new password is different from current password
-        if check_password_hash(user.hash, new_password):
-            return jsonify({
-                "success": False,
-                "message": "Le nouveau mot de passe doit être différent de l'ancien"
-            }), 400
-
-        # Hash new password
-        new_hashed_password = generate_password_hash(
-            new_password, method="pbkdf2:sha256", salt_length=16
-        )
-
-        # Try updating users table with new password
-        try:
-            user.hash = new_hashed_password
-            db.session.commit()
-            session.clear()
-            return jsonify({
-                "success": True,
-                "message": "Votre mot de passe a été mis à jour avec succès ! Veuillez vous reconnecter"
-            }), 200
-        except Exception as e:
-            db.session.rollback()
-            return jsonify({
-                "success": False,
-                "message": f"Une erreur s'est produite. Veuillez réessayer: {str(e)}"
-            }), 500
 
     except Exception as e:
         print(f"Exception occurred: {str(e)}")
@@ -306,31 +52,33 @@ def index():
         "name": "HelpInvest API",
         "version": "1.0.0",
         "status": "running",
+        "authentication": "Firebase JWT",
+        "description": "Authentication is handled by Firebase on the frontend. All protected routes require Authorization header with Firebase ID token.",
         "endpoints": {
-            "auth": ["/api/login", "/api/logout", "/api/signup"],
-            "user": ["/api/change-password"],
-            "debug": ["/debug/users"]
+            "user": ["/api/sync-user", "/api/risk-profile"],
+            "portfolio": ["/api/dashboard", "/api/invest", "/api/withdraw", "/api/history"],
+            "account": ["/api/delete-entry", "/api/delete-account"]
         }
     })
 
 
 @app.route("/api/risk-profile", methods=["GET"])
-@login_required
-def get_risk_profile():
+@firebase_token_required
+def get_risk_profile(firebase_uid, user_email):
     try:
-        user_id = session["user_id"]
-        user = Users.query.filter_by(id=user_id).first()
+        user = Users.query.filter_by(firebase_uid=firebase_uid).first()
         
         if not user:
             return jsonify({
                 "success": False,
-                "message": "Utilisateur non trouvé"
+                "message": "Utilisateur non trouvé. Veuillez vous reconnecter."
             }), 404
         
         return jsonify({
             "success": True,
             "user": {
                 "id": user.id,
+                "email": user.email,
                 "username": user.username,
                 "risk_profile": user.risk_profile
             }
@@ -345,10 +93,9 @@ def get_risk_profile():
 
 
 @app.route("/api/risk-profile", methods=["POST"])
-@login_required
-def update_risk_profile():
+@firebase_token_required
+def update_risk_profile(firebase_uid, user_email):
     try:
-        # Check if request contains JSON
         if not request.is_json:
             return jsonify({
                 "success": False,
@@ -356,24 +103,14 @@ def update_risk_profile():
             }), 400
         
         data = request.get_json()
-
-        if not data:
-            return jsonify({
-                "success": False,
-                "message": "No data provided"
-            }), 400
-
-        # Retrieve form data
         risk_profile = data.get("riskProfile")
 
-        # Validate input
         if not risk_profile:
             return jsonify({
                 "success": False,
                 "message": "Profil de risque requis"
             }), 400
 
-        # Validate risk profile value
         valid_profiles = ["prudent", "équilibré", "dynamique"]
         if risk_profile.lower() not in valid_profiles:
             return jsonify({
@@ -381,17 +118,13 @@ def update_risk_profile():
                 "message": "Profil de risque invalide"
             }), 400
 
-        # Get user
-        user_id = session["user_id"]
-        user = Users.query.filter_by(id=user_id).first()
-        
+        user = Users.query.filter_by(firebase_uid=firebase_uid).first()
         if not user:
             return jsonify({
                 "success": False,
-                "message": "Utilisateur non trouvé"
+                "message": "Utilisateur non trouvé. Veuillez vous reconnecter."
             }), 404
 
-        # Update risk profile
         try:
             user.risk_profile = risk_profile.lower()
             db.session.commit()
@@ -401,6 +134,7 @@ def update_risk_profile():
                 "message": "Profil de risque mis à jour avec succès",
                 "user": {
                     "id": user.id,
+                    "email": user.email,
                     "username": user.username,
                     "risk_profile": user.risk_profile
                 }
@@ -422,17 +156,14 @@ def update_risk_profile():
 
 
 @app.route("/api/dashboard", methods=["GET"])
-@login_required
-def dashboard():
+@firebase_token_required
+def dashboard(firebase_uid, user_email):
     try:
-        # Display portfolio data
-        user_id = session["user_id"]
-        user = Users.query.filter_by(id=user_id).first()
-
+        user = Users.query.filter_by(firebase_uid=firebase_uid).first()
         if not user:
             return jsonify({
                 "success": False,
-                "message": "Utilisateur non trouvé"
+                "message": "Utilisateur non trouvé. Veuillez vous reconnecter."
             }), 404
 
         # Query user balances
@@ -443,7 +174,7 @@ def dashboard():
                 Categories.sub_category
             )
             .join(Categories, Portfolios.category_id == Categories.id)
-            .filter(Portfolios.user_id == user_id)
+            .filter(Portfolios.user_id == user.id)
             .all()
         )
 
@@ -452,43 +183,29 @@ def dashboard():
         portfolio_summary = {}
 
         for balance, category_name, sub_category_name in portfolio_data:
-            # Skip categories with 0 balance
             if balance == 0:
                 continue
 
-            # Add balance to total estate
             total_estate += balance
 
-            # Initialize category structure
             if category_name not in portfolio_summary:
                 portfolio_summary[category_name] = {
                     "total_balance": 0,
                     "sub_categories": {},
-            }
+                }
 
-            # Update total balance for the category
             portfolio_summary[category_name]["total_balance"] += balance
 
-            # Update balance of sub-category
-            if (
-                sub_category_name
-                not in portfolio_summary[category_name]["sub_categories"]
-            ):
-                portfolio_summary[category_name]["sub_categories"][
-                    sub_category_name
-                ] = 0
-            portfolio_summary[category_name]["sub_categories"][
-                sub_category_name
-            ] += balance
+            if sub_category_name not in portfolio_summary[category_name]["sub_categories"]:
+                portfolio_summary[category_name]["sub_categories"][sub_category_name] = 0
+            portfolio_summary[category_name]["sub_categories"][sub_category_name] += balance
 
-        # Filter out any categories with a total balance of zero
         portfolio_summary = {
             category: details
             for category, details in portfolio_summary.items()
             if details["total_balance"] > 0
         }
 
-        # Return JSON response with simplified data
         return jsonify({
             "success": True,
             "message": "Données du portefeuille récupérées avec succès",
@@ -496,6 +213,7 @@ def dashboard():
             "total_estate": total_estate,
             "user": {
                 "id": user.id,
+                "email": user.email,
                 "username": user.username,
                 "risk_profile": user.risk_profile
             }
@@ -510,11 +228,17 @@ def dashboard():
 
 
 @app.route("/api/invest", methods=["GET", "POST"])
-@login_required
-def invest():
+@firebase_token_required
+def invest(firebase_uid, user_email):
+    user = Users.query.filter_by(firebase_uid=firebase_uid).first()
+    if not user:
+        return jsonify({
+            "success": False,
+            "message": "Utilisateur non trouvé. Veuillez vous reconnecter."
+        }), 404
+
     if request.method == "POST":
         try:
-            # Check if request contains JSON
             if not request.is_json:
                 return jsonify({
                     "success": False,
@@ -522,21 +246,11 @@ def invest():
                 }), 400
 
             data = request.get_json()
-
-            if not data:
-                return jsonify({
-                    "success": False,
-                    "message": "No data provided"
-                }), 400
-            
-            # Retrieve form data
-            user_id = session["user_id"]
             category_name = data.get("categoryName")
             sub_category = data.get("subCategory")
             amount = data.get("amount")
             timestamp = datetime.utcnow()
 
-            # Validate input
             try:
                 amount = float(amount)
                 if amount <= 0:
@@ -544,7 +258,6 @@ def invest():
                         "success": False,
                         "message": "Le montant doit être supérieur à zéro"
                     }), 400
-
             except (ValueError, TypeError):
                 return jsonify({
                     "success": False,
@@ -557,7 +270,6 @@ def invest():
                     "message": "La catégorie et la sous-catégorie sont requises"
                 }), 400
 
-            # Query for the category
             category_query = Categories.query.filter_by(
                 category_name=category_name, sub_category=sub_category
             ).first()
@@ -567,10 +279,9 @@ def invest():
                     "message": "Cette combinaison de catégorie et de sous-catégorie n'existe pas"
                 }), 400
 
-            # Create and save the new entry
             category_id = category_query.id
             new_entry = Transactions(
-                user_id=user_id,
+                user_id=user.id,
                 category_id=category_id,
                 amount=amount,
                 timestamp=timestamp,
@@ -579,19 +290,17 @@ def invest():
             try:
                 db.session.add(new_entry)
 
-                # Update balance in Portfolios table
                 portfolio = Portfolios.query.filter_by(
-                    user_id=user_id, category_id=category_id
+                    user_id=user.id, category_id=category_id
                 ).first()
                 if portfolio:
                     portfolio.balance += amount
                 else:
                     portfolio = Portfolios(
-                        user_id=user_id, category_id=category_id, balance=amount
+                        user_id=user.id, category_id=category_id, balance=amount
                     )
                     db.session.add(portfolio)
 
-                # Commit changes
                 db.session.commit()
                 return jsonify({
                     "success": True,
@@ -612,17 +321,12 @@ def invest():
                 "message": f"Erreur serveur: {str(e)}"
             }), 500
 
-    # GET request - Return available categories
+    # GET request
     try:
-        # Get unique categories and all categories
         distinct_categories = (
-            Categories.query.with_entities(
-                Categories.category_name
-            ).distinct().all()
+            Categories.query.with_entities(Categories.category_name).distinct().all()
         )
-        all_categories = [
-            serialize_category(cat) for cat in Categories.query.all()
-        ]
+        all_categories = [serialize_category(cat) for cat in Categories.query.all()]
 
         return jsonify({
             "success": True,
@@ -640,13 +344,17 @@ def invest():
 
 
 @app.route("/api/withdraw", methods=["GET", "POST"])
-@login_required
-def withdraw():
-    user_id = session["user_id"]  # This line was missing from the GET section!
+@firebase_token_required
+def withdraw(firebase_uid, user_email):
+    user = Users.query.filter_by(firebase_uid=firebase_uid).first()
+    if not user:
+        return jsonify({
+            "success": False,
+            "message": "Utilisateur non trouvé. Veuillez vous reconnecter."
+        }), 404
     
     if request.method == "POST":
         try:
-            # Check if request contains JSON
             if not request.is_json:
                 return jsonify({
                     "success": False,
@@ -654,14 +362,6 @@ def withdraw():
                 }), 400
 
             data = request.get_json()
-
-            if not data:
-                return jsonify({
-                    "success": False,
-                    "message": "No data provided"
-                }), 400
-
-            # Retrieve and validate user input
             category_name = data.get("categoryName")
             sub_category_name = data.get("subCategory")
             
@@ -679,7 +379,6 @@ def withdraw():
                     "message": "Entrée invalide. Veuillez réessayer"
                 }), 400
 
-            # Retrieve category ID and current balance
             category_query = (
                 db.session.query(Categories)
                 .filter_by(category_name=category_name, sub_category=sub_category_name)
@@ -693,10 +392,9 @@ def withdraw():
 
             category_id = category_query.id
 
-            # Fetch the current balance for the category
             portfolio_entry = (
                 db.session.query(Portfolios)
-                .filter_by(user_id=user_id, category_id=category_id)
+                .filter_by(user_id=user.id, category_id=category_id)
                 .first()
             )
 
@@ -706,14 +404,12 @@ def withdraw():
                     "message": "Solde insuffisant pour effectuer ce retrait"
                 }), 400
 
-            # Deduct the withdrawal amount from the portfolio balance
             portfolio_entry.balance -= withdraw_amount
 
-            # Log the withdrawal as a negative transaction
             withdrawal_transaction = Transactions(
-                user_id=user_id,
+                user_id=user.id,
                 category_id=category_id,
-                amount=-withdraw_amount,  # Negative amount indicates withdrawal
+                amount=-withdraw_amount,
                 timestamp=datetime.utcnow(),
             )
 
@@ -739,9 +435,8 @@ def withdraw():
                 "message": f"Erreur serveur: {str(e)}"
             }), 500
     
-    # GET request - Return available categories with balances for withdrawal
+    # GET request
     try:
-        # Aggregate categories and sub-categories with their total balances
         withdraw_categories = (
             db.session.query(
                 Categories.category_name,
@@ -749,11 +444,10 @@ def withdraw():
                 Portfolios.balance
             )
             .join(Portfolios, Categories.id == Portfolios.category_id)
-            .filter(Portfolios.user_id == user_id, Portfolios.balance > 0)
+            .filter(Portfolios.user_id == user.id, Portfolios.balance > 0)
             .all()
         )
 
-        # Transform data for the frontend
         distinct_categories = sorted(
             set([cat.category_name for cat in withdraw_categories])
         )
@@ -782,17 +476,19 @@ def withdraw():
 
 
 @app.route("/api/history", methods=['GET'])
-@login_required
-def view_history():
+@firebase_token_required
+def view_history(firebase_uid, user_email):
     try:
-        # Retrieve data for table
-        user_id = session["user_id"]
+        user = Users.query.filter_by(firebase_uid=firebase_uid).first()
+        if not user:
+            return jsonify({
+                "success": False,
+                "message": "Utilisateur non trouvé. Veuillez vous reconnecter."
+            }), 404
 
-        # Pagination parameters
         page = request.args.get('page', 1, type=int)
         per_page = min(request.args.get('per_page', 10, type=int), 100)
 
-        # Query user's transactions
         pagination = (
             db.session.query(
                 Transactions,
@@ -800,12 +496,11 @@ def view_history():
                 Categories.sub_category.label("sub_category_name"),
             )
             .join(Categories, Transactions.category_id == Categories.id)
-            .filter(Transactions.user_id == user_id)
+            .filter(Transactions.user_id == user.id)
             .order_by(Transactions.timestamp.desc())
             .paginate(page=page, per_page=per_page, error_out=False)
         )
 
-        # Check if we have any transactions
         if not pagination.items:
             return jsonify({
                 "success": True,
@@ -821,16 +516,13 @@ def view_history():
                 }
             }), 200
 
-        # Create a dictionary to hold table data
         transaction_history = [
             {
                 "id": entry.Transactions.id,
                 "category_name": entry.category_name,
                 "sub_category_name": entry.sub_category_name,
                 "amount": entry.Transactions.amount,
-                "timestamp": entry.Transactions.timestamp.strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                ),
+                "timestamp": entry.Transactions.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             }
             for entry in pagination.items
         ]
@@ -858,10 +550,16 @@ def view_history():
 
 
 @app.route("/api/delete-entry", methods=["DELETE", "POST"])
-@login_required
-def delete_entry():
-    try: 
-        # Check if request contains JSON
+@firebase_token_required
+def delete_entry(firebase_uid, user_email):
+    try:
+        user = Users.query.filter_by(firebase_uid=firebase_uid).first()
+        if not user:
+            return jsonify({
+                "success": False,
+                "message": "Utilisateur non trouvé. Veuillez vous reconnecter."
+            }), 404
+
         if not request.is_json:
             return jsonify({
                 "success": False,
@@ -869,14 +567,6 @@ def delete_entry():
             }), 400
 
         data = request.get_json()
-
-        if not data:
-            return jsonify({
-                "success": False,
-                "message": "No data provided"
-            }), 400
-
-        # Retrieve entry id from JSON data
         entry_id = data.get("entry_id")
 
         if not entry_id:
@@ -885,9 +575,8 @@ def delete_entry():
                 "message": "Identifiant d'entrée requis"
             }), 400
 
-        # Retrieve portfolio transaction by id
         transaction = Transactions.query.filter_by(
-            id=entry_id, user_id=session["user_id"]
+            id=entry_id, user_id=user.id
         ).first()
 
         if not transaction:
@@ -896,9 +585,8 @@ def delete_entry():
                 "message": "Transaction introuvable ou vous n'avez pas l'autorisation de la supprimer"
             }), 404
 
-        # Calculate corresponding portfolio entry
         portfolio_entry = Portfolios.query.filter_by(
-            user_id=session["user_id"], category_id=transaction.category_id
+            user_id=user.id, category_id=transaction.category_id
         ).first()
 
         if not portfolio_entry:
@@ -907,15 +595,9 @@ def delete_entry():
                 "message": "Entrée de portefeuille introuvable"
             }), 404
 
-        # Adjust portfolio balance based on transaction type (positive or negative)
         try:
-            # Update portfolio balance (reverse the transaction)
             portfolio_entry.balance -= transaction.amount
-
-            # Delete the transaction entry
             db.session.delete(transaction)
-
-            # Commit changes to both tables
             db.session.commit()
 
             return jsonify({
@@ -939,59 +621,24 @@ def delete_entry():
 
 
 @app.route("/api/delete-account", methods=["POST"])
-@login_required
-def delete_account():
+@firebase_token_required
+def delete_account(firebase_uid, user_email):
     try:
-        # Check if response contains JSON
-        if not request.is_json:
-            return jsonify({
-                "success": False,
-                "message": "Content-Type must be application/json"
-            }), 400
-        
-        data = request.get_json()
-
-        if not data:
-            return jsonify({
-                "success": False,
-                "message": "No data provided"
-            }), 400
-
-        password = data.get("password")
-        if not password:
-            return jsonify({
-                "success": False,
-                "message": "Mot de passe requis pour confirmer la suppression du compte"
-            }), 400
-
-        # Get current user
-        user_id = session["user_id"]
-        user = Users.query.filter_by(id=user_id).first()
-
+        user = Users.query.filter_by(firebase_uid=firebase_uid).first()
         if not user:
             return jsonify({
                 "success": False,
-                "message": "Utilisateur non trouvé"
+                "message": "Utilisateur non trouvé. Veuillez vous reconnecter."
             }), 404
-
-        # Verify password
-        if not check_password_hash(user.hash, password):
-            return jsonify({
-                "success": False,
-                "message": "Mot de passe incorrect"
-            }), 401
         
         try:
             # Delete user with cascade to portfolios and transactions
             db.session.delete(user)
             db.session.commit()
 
-            # Clear session
-            session.clear()
-
             return jsonify({
                 "success": True,
-                "message": "Votre compte a été supprimé avec succès"
+                "message": "Votre compte a été supprimé avec succès. Veuillez également supprimer votre compte Firebase."
             }), 200
         
         except Exception as e:

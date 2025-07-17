@@ -2,9 +2,10 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
 from .helpers import eur, percentage
+import firebase_admin
+from firebase_admin import credentials
 
 # Load environment variables from .env file
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
@@ -23,15 +24,14 @@ CORS(app,
     allow_headers=["Content-Type", "Authorization"],
     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
-# Initialize Flask-WTF's CSRF protection
-# csrf = CSRFProtect(app)
-
-# # Exempt API routes from CSRF protection
-# csrf.exempt('/api/login')
-# csrf.exempt('/api/logout')
-# csrf.exempt('/api/signup')
-# csrf.exempt('/api/change-password')
-# csrf.exempt('/api/risk-profile')
+# Initialize Firebase Admin SDK
+firebase_credentials_path = os.environ.get('FIREBASE_CREDENTIALS_PATH')
+if firebase_credentials_path and os.path.exists(firebase_credentials_path):
+    cred = credentials.Certificate(firebase_credentials_path)
+    firebase_admin.initialize_app(cred)
+    print("Firebase Admin SDK initialized successfully")
+else:
+    print("Firebase credentials not found - authentication will not work")
 
 # Get the DATABASE_URL environment variable
 database_url = os.environ.get('DATABASE_URL')
@@ -52,7 +52,7 @@ if not database_url:
 # Configure the SQLAlchemy database URI
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 
-# Set-up secret key, necessary for flash messages and CSRF protection
+# Set-up secret key, necessary for session management (if needed for other purposes)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 # Only for development phase. Enable when deploying

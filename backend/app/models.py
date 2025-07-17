@@ -4,13 +4,33 @@ from datetime import datetime
 
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    hash = db.Column(db.String(120), nullable=False)
-    risk_profile = db.Column(db.String(80), nullable=False)
+    firebase_uid = db.Column(db.String(128), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    username = db.Column(db.String(80), unique=True, nullable=True)  # Keep for backward compatibility
+    risk_profile = db.Column(db.String(80), nullable=False, default="équilibré")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    # Add relationships with cascade delete
-    portfolios = db.relationship('Portfolios', backref='user', cascade='all, delete-orphan')
-    transactions = db.relationship('Transactions', backref='user', cascade='all, delete-orphan')
+    # Relationships
+    portfolios = db.relationship('Portfolios', backref='user', lazy=True, cascade='all, delete-orphan')
+    transactions = db.relationship('Transactions', backref='user', lazy=True, cascade='all, delete-orphan')
+    
+    def __repr__(self):
+        return f'<User {self.email}>'
+    
+    @staticmethod
+    def get_or_create_user(firebase_uid, email, name=None):
+        """Get existing user or create new one from Firebase data"""
+        user = Users.query.filter_by(firebase_uid=firebase_uid).first()
+        if not user:
+            user = Users(
+                firebase_uid=firebase_uid,
+                email=email,
+                username=name or email.split('@')[0],  # Use name or email prefix as username
+                risk_profile="équilibré"
+            )
+            db.session.add(user)
+            db.session.commit()
+        return user
 
 
 class Categories(db.Model):
