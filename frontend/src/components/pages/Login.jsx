@@ -3,12 +3,13 @@ import { Link, useNavigate } from 'react-router-dom'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import Layout from '../layout/Layout'
 import AuthHeader from '../headers/AuthHeader'
-import axios from 'axios'
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import { authorizedRequest } from '../../utils/authorizedRequest'
 
 function Login() {
   const [isVisible, setIsVisible] = useState(false)
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: ''
   })
   const [loading, setLoading] = useState(false)
@@ -33,28 +34,34 @@ function Login() {
     setLoading(true)
     setError('')
 
+    const auth = getAuth()
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/login`,
-        {
-          username: formData.username,
-          password: formData.password
-        },
-        {
+      await signInWithEmailAndPassword(auth, formData.email, formData.password)
+      // Sync user with backend after Firebase login
+      const user = auth.currentUser
+      if (user) {
+        await authorizedRequest({
+          method: 'post',
+          url: `${import.meta.env.VITE_API_BASE_URL}/api/sync-user`,
+          data: {
+            displayName: user.displayName || ''
+          },
           headers: {
             'Content-Type': 'application/json'
-          },
-          withCredentials: true
-        }
-      )
-
-      if (response.data.success) {
-        navigate('/dashboard')
+          }
+        })
       }
+      navigate('/dashboard')
     } catch (err) {
       console.error('Login error:', err)
-      if (err.response?.data?.message) {
-        setError(err.response.data.message)
+      // Firebase error messages
+      if (
+        err.code === 'auth/user-not-found' ||
+        err.code === 'auth/wrong-password'
+      ) {
+        setError('Email ou mot de passe incorrect.')
+      } else if (err.code === 'auth/invalid-email') {
+        setError('Adresse email invalide.')
       } else {
         setError('Une erreur est survenue. Veuillez réessayer.')
       }
@@ -82,17 +89,17 @@ function Login() {
 
             {/* Email Input */}
             <div className='flex flex-col gap-2'>
-              <label htmlFor='username' className='block text-small'>
-                Nom d'utilisateur
+              <label htmlFor='email' className='block text-small'>
+                Adresse email
               </label>
               <input
-                type='text'
-                name='username'
-                id='username'
-                placeholder="Nom d'utilisateur"
+                type='email'
+                name='email'
+                id='email'
+                placeholder='Adresse email'
                 className='input-field input-field:focus w-full'
-                autoComplete='username'
-                value={formData.username}
+                autoComplete='email'
+                value={formData.email}
                 onChange={handleInputChange}
                 required
               />

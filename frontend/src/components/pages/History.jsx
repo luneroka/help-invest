@@ -3,7 +3,7 @@ import Layout from '../layout/Layout'
 import MainHeader from '../headers/MainHeader'
 import { formatAmount } from '../../utils/helpers'
 import { RiDeleteBin6Line } from 'react-icons/ri'
-import axios from 'axios'
+import { authorizedRequest } from '../../utils/authorizedRequest'
 import { useNavigate } from 'react-router-dom'
 
 function History() {
@@ -24,12 +24,10 @@ function History() {
       setLoading(true)
       setError(null)
 
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/api/history?page=${page}&per_page=10`,
-        {
-          withCredentials: true
-        }
-      )
+      const response = await authorizedRequest({
+        method: 'get',
+        url: `${import.meta.env.VITE_API_BASE_URL}/api/history?page=${page}&per_page=10`
+      })
 
       if (response.data.success) {
         setTransactions(response.data.transaction_history)
@@ -57,16 +55,14 @@ function History() {
     }
 
     try {
-      const response = await axios.delete(
-        `${import.meta.env.VITE_API_BASE_URL}/api/delete-entry`,
-        {
-          data: { entry_id: transactionId },
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true
+      const response = await authorizedRequest({
+        method: 'delete',
+        url: `${import.meta.env.VITE_API_BASE_URL}/api/delete-entry`,
+        data: { entry_id: transactionId },
+        headers: {
+          'Content-Type': 'application/json'
         }
-      )
+      })
 
       if (response.data.success) {
         setMessage({

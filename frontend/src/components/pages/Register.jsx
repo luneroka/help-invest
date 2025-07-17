@@ -2,13 +2,15 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import PasswordChecklist from 'react-password-checklist'
-import axios from 'axios'
 import Layout from '../layout/Layout'
 import AuthHeader from '../headers/AuthHeader'
+// Import Firebase Auth
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
+import { authorizedRequest } from '../../utils/authorizedRequest'
 
 function Register() {
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: '',
     confirmation: ''
   })
@@ -28,8 +30,6 @@ function Register() {
       ...prev,
       [name]: value
     }))
-
-    // Clear error on input change
     if (error) setError('')
   }
 
@@ -39,29 +39,44 @@ function Register() {
     setLoading(true)
     setError('')
 
+    // Password confirmation check
+    if (formData.password !== formData.confirmation) {
+      setError('Les mots de passe ne correspondent pas.')
+      setLoading(false)
+      return
+    }
+
+    const auth = getAuth()
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/signup`,
-        {
-          username: formData.username,
-          password: formData.password,
-          confirmation: formData.confirmation
-        },
-        {
+      await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      )
+      // Sync user with backend after Firebase registration
+      const user = auth.currentUser
+      if (user) {
+        await authorizedRequest({
+          method: 'post',
+          url: `${import.meta.env.VITE_API_BASE_URL}/api/sync-user`,
+          data: {
+            displayName: user.displayName || ''
+          },
           headers: {
             'Content-Type': 'application/json'
-          },
-          withCredentials: true
-        }
-      )
-
-      if (response.data.success) {
-        navigate('/connexion')
+          }
+        })
       }
+      navigate('/connexion')
     } catch (error) {
       console.error('Signup error:', error)
-      if (error.response?.data?.message) {
-        setError(error.response.data.message)
+      // Firebase error messages
+      if (error.code === 'auth/email-already-in-use') {
+        setError('Cet email est déjà utilisé.')
+      } else if (error.code === 'auth/invalid-email') {
+        setError('Adresse email invalide.')
+      } else if (error.code === 'auth/weak-password') {
+        setError('Le mot de passe est trop faible.')
       } else {
         setError('Une erreur est survenue. Veuillez réessayer.')
       }
@@ -92,17 +107,17 @@ function Register() {
 
             {/* Email Input */}
             <div className='flex flex-col gap-2'>
-              <label htmlFor='username' className='block text-small'>
-                Nom d'utilisateur
+              <label htmlFor='email' className='block text-small'>
+                Adresse email
               </label>
               <input
-                type='text'
-                name='username'
-                id='username'
-                placeholder="Nom d'utilisateur"
+                type='email'
+                name='email'
+                id='email'
+                placeholder='Adresse email'
                 className='input-field input-field:focus w-full'
-                autoComplete='username'
-                value={formData.username}
+                autoComplete='email'
+                value={formData.email}
                 onChange={handleInputChange}
                 required
               />

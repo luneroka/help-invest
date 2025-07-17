@@ -1,38 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import axios from 'axios'
 import Layout from '../layout/Layout'
 import IndexHeader from '../../components/headers/IndexHeader'
 import MainHeader from '../headers/MainHeader'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
 function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    checkAuthStatus()
-  }, [])
-
-  const checkAuthStatus = async () => {
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/api/risk-profile`,
-        {
-          withCredentials: true
-        }
-      )
-
-      if (response.data.success) {
-        setIsLoggedIn(true)
-      }
-      // eslint-disable-next-line no-unused-vars
-    } catch (error) {
-      // User is not logged in
-      setIsLoggedIn(false)
-    } finally {
+    const auth = getAuth()
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user)
       setLoading(false)
-    }
-  }
+    })
+    return () => unsubscribe()
+  }, [])
 
   if (loading) {
     return (

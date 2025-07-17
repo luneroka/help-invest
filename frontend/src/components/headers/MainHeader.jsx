@@ -1,7 +1,7 @@
-import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { getAuth, signOut } from 'firebase/auth'
 
 function MainHeader() {
   const navigate = useNavigate()
@@ -9,20 +9,9 @@ function MainHeader() {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/logout`,
-        {},
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true
-        }
-      )
-
-      if (response.data.success) {
-        navigate('/connexion')
-      }
+      const auth = getAuth()
+      await signOut(auth)
+      navigate('/connexion')
     } catch (error) {
       console.error('Logout error', error)
     }

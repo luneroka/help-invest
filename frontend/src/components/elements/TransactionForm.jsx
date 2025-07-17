@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
 import { formatNumber } from '../../utils/helpers'
+import { authorizedRequest } from '../../utils/authorizedRequest'
 
 export default function TransactionForm({
   title,
@@ -40,8 +40,9 @@ export default function TransactionForm({
           ? `${import.meta.env.VITE_API_BASE_URL}/api/withdraw`
           : `${import.meta.env.VITE_API_BASE_URL}/api/invest`
 
-      const response = await axios.get(endpoint, {
-        withCredentials: true
+      const response = await authorizedRequest({
+        method: 'get',
+        url: endpoint
       })
 
       if (response.data.success) {
@@ -66,12 +67,10 @@ export default function TransactionForm({
 
   const fetchPortfolioBalances = async () => {
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/api/dashboard`,
-        {
-          withCredentials: true
-        }
-      )
+      const response = await authorizedRequest({
+        method: 'get',
+        url: `${import.meta.env.VITE_API_BASE_URL}/api/dashboard`
+      })
 
       if (response.data.success) {
         const portfolioSummary = response.data.portfolio_summary || {}

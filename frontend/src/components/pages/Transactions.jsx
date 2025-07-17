@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import { authorizedRequest } from '../../utils/authorizedRequest'
 import Layout from '../layout/Layout'
 import MainHeader from '../headers/MainHeader'
 import TransactionForm from '../elements/TransactionForm'
@@ -17,20 +17,18 @@ function Transactions() {
     try {
       if (transactionData.actionType === 'deposit') {
         // Handle investment (deposit)
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_BASE_URL}/api/invest`,
-          {
+        const response = await authorizedRequest({
+          method: 'post',
+          url: `${import.meta.env.VITE_API_BASE_URL}/api/invest`,
+          data: {
             categoryName: transactionData.category,
             subCategory: transactionData.subCategory,
             amount: transactionData.amount
           },
-          {
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            withCredentials: true
+          headers: {
+            'Content-Type': 'application/json'
           }
-        )
+        })
 
         if (response.data.success) {
           setMessage({
@@ -45,20 +43,18 @@ function Transactions() {
         }
       } else if (transactionData.actionType === 'withdraw') {
         // Handle withdrawal
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_BASE_URL}/api/withdraw`,
-          {
+        const response = await authorizedRequest({
+          method: 'post',
+          url: `${import.meta.env.VITE_API_BASE_URL}/api/withdraw`,
+          data: {
             categoryName: transactionData.category,
             subCategory: transactionData.subCategory,
             amount: transactionData.amount
           },
-          {
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            withCredentials: true
+          headers: {
+            'Content-Type': 'application/json'
           }
-        )
+        })
 
         if (response.data.success) {
           setMessage({

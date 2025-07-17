@@ -8,20 +8,59 @@ import Transactions from './components/pages/Transactions'
 import History from './components/pages/History'
 import Profile from './components/pages/Profile'
 import Risk from './components/pages/Risk'
+import { AuthProvider } from './contexts/AuthContext'
+import PrivateRoute from './routes/PrivateRoute'
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/dashboard' element={<Dashboard />} />
-        <Route path='/connexion' element={<Login />} />
-        <Route path='/inscription' element={<Register />} />
-        <Route path='/profil' element={<Profile />} />
-        <Route path='/opérations' element={<Transactions />} />
-        <Route path='/historique' element={<History />} />
-        <Route path='/risque' element={<Risk />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/connexion' element={<Login />} />
+          <Route path='/inscription' element={<Register />} />
+          <Route
+            path='/dashboard'
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path='/profil'
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path='/opérations'
+            element={
+              <PrivateRoute>
+                <Transactions />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path='/historique'
+            element={
+              <PrivateRoute>
+                <History />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path='/risque'
+            element={
+              <PrivateRoute>
+                <Risk />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   )
 }

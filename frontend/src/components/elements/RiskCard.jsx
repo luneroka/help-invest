@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import { authorizedRequest } from '../../utils/authorizedRequest'
 
 function RiskCard() {
   const profiles = ['prudent', 'équilibré', 'dynamique']
@@ -18,12 +18,10 @@ function RiskCard() {
 
   const fetchRiskProfile = async () => {
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/api/risk-profile`,
-        {
-          withCredentials: true
-        }
-      )
+      const response = await authorizedRequest({
+        method: 'get',
+        url: `${import.meta.env.VITE_API_BASE_URL}/api/risk-profile`
+      })
 
       if (response.data.success) {
         setCurrentRiskProfile(response.data.user.risk_profile)
@@ -50,18 +48,16 @@ function RiskCard() {
     setRiskError('')
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/risk-profile`,
-        {
+      const response = await authorizedRequest({
+        method: 'post',
+        url: `${import.meta.env.VITE_API_BASE_URL}/api/risk-profile`,
+        data: {
           riskProfile: riskProfile
         },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true
+        headers: {
+          'Content-Type': 'application/json'
         }
-      )
+      })
 
       if (response.data.success) {
         setCurrentRiskProfile(response.data.user.risk_profile)

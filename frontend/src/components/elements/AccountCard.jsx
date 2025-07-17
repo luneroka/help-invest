@@ -1,7 +1,13 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
-import axios from 'axios'
+import {
+  getAuth,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider
+} from 'firebase/auth'
+import { authorizedRequest } from '../../utils/authorizedRequest'
 
 function AccountCard() {
   const [loading, setLoading] = useState(false)
@@ -39,31 +45,44 @@ function AccountCard() {
     setLoading(true)
     setError('')
 
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/change-password`,
-        {
-          currentPassword: formData.currentPassword,
-          newPassword: formData.newPassword,
-          confirmation: formData.confirmation
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true
-        }
-      )
+    const auth = getAuth()
+    const user = auth.currentUser
 
-      if (response.data.success) {
-        navigate('/connexion')
-      }
+    if (!user) {
+      setError('Utilisateur non connecté.')
+      setLoading(false)
+      return
+    }
+
+    if (formData.newPassword !== formData.confirmation) {
+      setError('Les mots de passe ne correspondent pas.')
+      setLoading(false)
+      return
+    }
+
+    try {
+      // Reauthenticate user
+      const credential = EmailAuthProvider.credential(
+        user.email,
+        formData.currentPassword
+      )
+      await reauthenticateWithCredential(user, credential)
+
+      // Update password in Firebase
+      await updatePassword(user, formData.newPassword)
+
+      // Optionally, sync with backend if needed (not required for Firebase password change)
+      // await authorizedRequest({ ... })
+
+      navigate('/connexion')
     } catch (err) {
       console.error('Password change error:', err)
-      if (err.response?.status === 401) {
-        navigate('/connexion')
-      } else if (err.response?.data?.message) {
-        setError(err.response.data.message)
+      if (err.code === 'auth/wrong-password') {
+        setError('Mot de passe actuel incorrect.')
+      } else if (err.code === 'auth/weak-password') {
+        setError('Le nouveau mot de passe est trop faible.')
+      } else if (err.code === 'auth/too-many-requests') {
+        setError('Trop de tentatives. Veuillez réessayer plus tard.')
       } else {
         setError('Une erreur est survenue. Veuillez réessayer.')
       }
@@ -89,14 +108,12 @@ function AccountCard() {
 
     setDeleteLoading(true)
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/delete-account`,
-        { password: deletePassword },
-        {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true
-        }
-      )
+      const response = await authorizedRequest({
+        method: 'post',
+        url: `${import.meta.env.VITE_API_BASE_URL}/api/delete-account`,
+        data: { password: deletePassword },
+        headers: { 'Content-Type': 'application/json' }
+      })
 
       if (response.data.success) {
         navigate('/')

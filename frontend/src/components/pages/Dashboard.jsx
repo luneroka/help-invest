@@ -5,7 +5,7 @@ import Layout from '../layout/Layout'
 import MainHeader from '../headers/MainHeader'
 import DashTable from '../elements/DashTable'
 import DashGraph from '../elements/DashGraph'
-import axios from 'axios'
+import { authorizedRequest } from '../../utils/authorizedRequest'
 
 function Dashboard() {
   const [portfolioData, setPortfolioData] = useState({})
@@ -20,12 +20,10 @@ function Dashboard() {
 
   const fetchPortfolioData = async () => {
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/api/dashboard`,
-        {
-          withCredentials: true
-        }
-      )
+      const response = await authorizedRequest({
+        method: 'get',
+        url: `${import.meta.env.VITE_API_BASE_URL}/api/dashboard`
+      })
 
       if (response.data.success) {
         setPortfolioData(response.data.portfolio_summary || {})
