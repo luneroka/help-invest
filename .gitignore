@@ -9,6 +9,10 @@ Procfile
 __pycache__/
 node_modules
 
+# Firebase credentials
+firebase-service-account.json
+*service-account*.json
+
 # Logs
 logs
 *.log
