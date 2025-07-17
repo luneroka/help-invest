@@ -47,6 +47,9 @@ elif firebase_credentials_json:
 else:
     print("Firebase credentials not found - authentication will not work")
 
+if not firebase_admin._apps:
+    firebase_admin.initialize_app(cred)
+
 # Get the DATABASE_URL environment variable
 database_url = os.environ.get('DATABASE_URL')
 if database_url and database_url.startswith("postgres://"):
