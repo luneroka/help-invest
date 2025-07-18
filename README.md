@@ -1,33 +1,35 @@
 # HELP-INVEST
 
-**Video Demo:** [Watch here](https://youtu.be/tMvmXQEJahI)
-
-HELP-INVEST is a portfolio management tool that helps users track their investments across categories, compare their portfolio with personalized recommendations based on their risk profile, and make informed decisions.
+HELP-INVEST is a portfolio visualization tool that lets users dynamically track and visualize their investments across categories. The app provides interactive graphs and tables to help you understand your portfolio allocation and evolution over time. Authentication is handled securely via Firebase.
 
 ## 📸 Screenshots
 
+
 **Home Page**:
-![helpInvest-Dashboard](https://github.com/luneroka/help-invest/blob/main/static/helpinvest-dash.png)
+![helpInvest-Home](https://github.com/luneroka/help-invest/blob/main/frontend/public/helpinvest-index.png)
 
-## 📚 Features
+**Dashboard**:
+![helpInvest-Dashboard](https://github.com/luneroka/help-invest/blob/main/frontend/public/helpinvest-dashboard.png)
 
-- **User Authentication:** Login, sign-up, change password.
-- **Set Risk Profile:** Choose a risk profile between low, moderate or high.
+
+- **User Authentication (Firebase):** Login, sign-up, change password.
+- **Set Risk Profile:** Choose a risk profile between low, moderate or high for your own reference.
 - **Portfolio Management:** Add, view, delete investments; track transactions.
-- **Dashboard:** Table view of your investments in each category (Savings, Real Estate and Stock Market)
-- **Recommendations:** Get recommendation on your current vs expected portfolio balance, based on your risk profile.
+- **Dashboard:** Graph and table view of your investments in each category (Savings, Real Estate and Stock Market)
 
 ## 🛠️ Tech Stack
 
 - **Database:** PostgreSQL
-- **Backend:** Flask
-- **Frontend:** Jinja, JavaScript, Bootstrap
+- **Backend:** Flask (Python)
+- **Frontend:** React 18 (Vite, JavaScript, CSS)
+- **Styling:** CSS (with future support for Tailwind or Bootstrap if desired)
+- **Dev Tools:** Vite, ESLint, Prettier
 - **Version Control:** Git, GitHub
 - **Containerization:** Docker (including Docker Compose for multi-container setup)
 
-## 🐳 Docker Setup
+## 🐳 Docker & Development Setup
 
-This project is fully containerized for development and deployment using Docker.
+This project is fully containerized for development and deployment using Docker. The frontend is now a modern React app powered by Vite.
 
 ### 📦 Requirements
 
@@ -42,13 +44,9 @@ This project is fully containerized for development and deployment using Docker.
    cd help-invest
    ```
 
-2. **Create a `.env` file**:
-   Copy the `.env.example` or create one manually with at least the following:
-   ```
-   FLASK_ENV=development
-   SECRET_KEY=your-secret-key
-   DATABASE_URL=postgresql://postgres:yourpassword@db:5432/helpinvest
-   ```
+2. **Set up environment variables**:
+   - Copy `backend/.env.example` to `backend/.env` and fill in your secrets and database credentials.
+   - Copy `frontend/.env.example` to `frontend/.env` and fill in your Vite and Firebase secrets.
 
 3. **Run the containers**:
    ```bash
@@ -56,7 +54,32 @@ This project is fully containerized for development and deployment using Docker.
    ```
 
 4. **Access the app**:
-   Open your browser at [http://localhost:5000](http://localhost:5000)
+   - **Frontend (React):** [http://localhost:5173](http://localhost:5173)
+   - **Backend (Flask API):** [http://localhost:5001](http://localhost:5001)
+
+The React frontend will proxy API requests to the Flask backend automatically during development.
+
+---
+
+## 🧑‍💻 Frontend (React + Vite)
+
+- Source code: `frontend/`
+- Main entry: `frontend/src/main.jsx`
+- To run the frontend only (for development):
+  ```bash
+  cd frontend
+  npm install
+  npm run dev
+  ```
+- The app will be available at [http://localhost:5173](http://localhost:5173)
+
+## 🐍 Backend (Flask)
+
+- Source code: `backend/app/`
+- Main entry: `backend/app/main.py`
+- Flask runs on port 5001 inside Docker
+
+---
 
 ## 🙏 Credits
 
