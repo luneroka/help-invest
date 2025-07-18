@@ -77,7 +77,10 @@ function AccountCard() {
       navigate('/connexion')
     } catch (err) {
       console.error('Password change error:', err)
-      if (err.code === 'auth/wrong-password') {
+      if (
+        err.code === 'auth/wrong-password' ||
+        err.code === 'auth/invalid-credential'
+      ) {
         setError('Mot de passe actuel incorrect.')
       } else if (err.code === 'auth/weak-password') {
         setError('Le nouveau mot de passe est trop faible.')

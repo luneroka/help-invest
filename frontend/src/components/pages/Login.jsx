@@ -57,11 +57,11 @@ function Login() {
       // Firebase error messages
       if (
         err.code === 'auth/user-not-found' ||
-        err.code === 'auth/wrong-password'
+        err.code === 'auth/wrong-password' ||
+        err.code === 'auth/invalid-credential' ||
+        err.code === 'auth/invalid-email'
       ) {
         setError('Email ou mot de passe incorrect.')
-      } else if (err.code === 'auth/invalid-email') {
-        setError('Adresse email invalide.')
       } else {
         setError('Une erreur est survenue. Veuillez réessayer.')
       }
