@@ -29,26 +29,22 @@ CORS(app,
 firebase_credentials_path = os.environ.get('FIREBASE_CREDENTIALS_PATH')
 firebase_credentials_json = os.environ.get('FIREBASE_CREDENTIALS_JSON')
 
+cred = None
 if firebase_credentials_path and os.path.exists(firebase_credentials_path):
-    # Use file path (for local development)
     cred = credentials.Certificate(firebase_credentials_path)
-    firebase_admin.initialize_app(cred)
-    print("Firebase Admin SDK initialized successfully from file")
 elif firebase_credentials_json:
-    # Use JSON string from environment variable (for production)
     try:
         firebase_config = json.loads(firebase_credentials_json)
         cred = credentials.Certificate(firebase_config)
-        firebase_admin.initialize_app(cred)
-        print("Firebase Admin SDK initialized successfully from environment variable")
     except json.JSONDecodeError as e:
         print(f"Error parsing Firebase credentials JSON: {e}")
         print("Firebase credentials not found - authentication will not work")
 else:
     print("Firebase credentials not found - authentication will not work")
 
-if not firebase_admin._apps:
+if cred and not firebase_admin._apps:
     firebase_admin.initialize_app(cred)
+    print("Firebase Admin SDK initialized successfully")
 
 # Get the DATABASE_URL environment variable
 database_url = os.environ.get('DATABASE_URL')
