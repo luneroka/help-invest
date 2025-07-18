@@ -2,6 +2,8 @@
 
 HELP-INVEST is a portfolio visualization tool that lets users dynamically track and visualize their investments across categories. The app provides interactive graphs and tables to help you understand your portfolio allocation and evolution over time. Authentication is handled securely via Firebase.
 
+The entire app was fully designed in [Figma](https://www.figma.com/design/lELnfIX5lB8fBOr428PVmy/help-invest?node-id=15-527&t=DG0Sj8OBKxWuo7TT-1).
+
 ## 📸 Screenshots
 
 
