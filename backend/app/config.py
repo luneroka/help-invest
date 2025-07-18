@@ -72,8 +72,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 # Set-up secret key, necessary for session management (if needed for other purposes)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
-# Only for development phase. Enable when deploying
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+# Only for development phase. Disable when deploying
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 
 # Create instance of the database

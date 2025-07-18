@@ -3,7 +3,7 @@ services:
     image: postgres:15
     restart: always
     env_file:
-      - ./backend/.env
+      - ./.env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -29,7 +29,7 @@ services:
     ports:
       - '5001:5000'
     env_file:
-      - ./backend/.env
+      - ./.env
     networks:
       - app-network
     depends_on:
@@ -43,6 +43,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - '5173:5173'
+    env_file:
+      - ./.env
     networks:
       - app-network
     environment:
