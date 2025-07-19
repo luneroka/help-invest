@@ -91,7 +91,7 @@ function MainHeader() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className='md:hidden bg-theme-main border-t border-theme-accent/20'>
+        <nav role="navigation" className='md:hidden bg-theme-main border-t border-theme-accent/20'>
           <div className='flex flex-col px-4 py-2'>
             <Link to='/dashboard' onClick={closeMenu}>
               <p className='nav-link nav-link:hover py-1'>Dashboard</p>
@@ -116,7 +116,7 @@ function MainHeader() {
               Déconnexion
             </button>
           </div>
-        </div>
+        </nav>
       )}
     </>
   )
