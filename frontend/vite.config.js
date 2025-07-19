@@ -17,5 +17,10 @@ export default defineConfig({
     proxy: {
       '/api': 'http://backend:5000'
     }
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/setupTests.js'
   }
 })
