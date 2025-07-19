@@ -20,7 +20,7 @@ describe('DashTable', () => {
             />
         )
         expect(
-            screen.getByText(/aucune donnée de portefeuille disponible./i)
+            screen.getByText(/aucune donnée de portefeuille disponible/i)
         ).toBeInTheDocument
     })
 
@@ -34,7 +34,7 @@ describe('DashTable', () => {
             />
         )
         expect(
-            screen.getByText(/Chargement des données du portefeuille.../i)
+            screen.getByText(/Chargement des données du portefeuille/i)
         ).toBeInTheDocument()
     })
 
