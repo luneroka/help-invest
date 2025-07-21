@@ -1,4 +1,3 @@
-// RiskCard.test.jsx
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mockNavigate = vi.fn()
