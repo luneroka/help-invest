@@ -131,13 +131,13 @@ function RiskCard() {
           </button>
         </form>
 
-        <p className='text-small italic'>
+        {/* <p className='text-small italic'>
           Pour en savoir plus sur le profil de risque,{' '}
           <Link to='/risque' className='link-default link-default:hover'>
             cliquez ici
           </Link>
           .
-        </p>
+        </p> */}
       </div>
     </div>
   )

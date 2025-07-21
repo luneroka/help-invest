@@ -7,7 +7,6 @@ import Register from './components/pages/Register'
 import Transactions from './components/pages/Transactions'
 import History from './components/pages/History'
 import Profile from './components/pages/Profile'
-import Risk from './components/pages/Risk'
 import { AuthProvider } from './contexts/AuthContext'
 import PrivateRoute from './routes/PrivateRoute'
 
@@ -48,14 +47,6 @@ function App() {
             element={
               <PrivateRoute>
                 <History />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path='/risque'
-            element={
-              <PrivateRoute>
-                <Risk />
               </PrivateRoute>
             }
           />
