@@ -4,9 +4,14 @@ import { useAuth } from '../utils/useAuth'
 
 function PrivateRoute({ children }) {
   const location = useLocation()
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
 
-  // Pass the attempted URL in state so that Login can redirect back after successful login
+  if (loading) {
+    // Show a loading spinner or message while auth state is being determined
+    return <div>Chargement...</div>
+  }
+
+  // Only redirect if loading is false and user is not authenticated
   return user ? (
     children
   ) : (
