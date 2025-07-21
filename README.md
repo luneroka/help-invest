@@ -24,7 +24,7 @@ The entire app was fully designed in [Figma](https://www.figma.com/design/lELnfI
 - **Database:** PostgreSQL
 - **Backend:** Flask (Python)
 - **Frontend:** React 18 (Vite, JavaScript, CSS)
-- **Styling:** CSS (with future support for Tailwind or Bootstrap if desired)
+- **Styling:** CSS, Tailwind CSS
 - **Dev Tools:** Vite, ESLint, Prettier
 - **Version Control:** Git, GitHub
 - **Containerization:** Docker (including Docker Compose for multi-container setup)
