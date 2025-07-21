@@ -24,7 +24,7 @@ The entire app was fully designed in [Figma](https://www.figma.com/design/lELnfI
 - **Database:** PostgreSQL
 - **Backend:** Flask (Python)
 - **Frontend:** React 18 (Vite, JavaScript, CSS)
-- **Styling:** CSS (with future support for Tailwind or Bootstrap if desired)
+- **Styling:** CSS, Tailwind CSS
 - **Dev Tools:** Vite, ESLint, Prettier
 - **Version Control:** Git, GitHub
 - **Containerization:** Docker (including Docker Compose for multi-container setup)
@@ -82,6 +82,47 @@ The React frontend will proxy API requests to the Flask backend automatically du
 - Flask runs on port 5001 inside Docker
 
 ---
+
+## 🧪 Unit Testing (Vitest + React Testing Library)
+
+Unit tests for the frontend are written using [Vitest](https://vitest.dev/) and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/).
+
+### Running Tests
+
+1. **Install dependencies** (if not already done):
+   ```bash
+   cd frontend
+   npm install
+   ```
+
+2. **Run all tests**:
+   ```bash
+   npm run test
+   ```
+
+3. **Watch mode** (for live feedback during development):
+   ```bash
+   npm run test:watch
+   ```
+
+### Test Files
+
+- Test files are located alongside components in `frontend/src/` and use the `.test.jsx` or `.test.tsx` extension.
+- Example test file: `frontend/src/components/SomeComponent.test.jsx`
+
+### Example Test (React Component)
+
+```jsx
+import { render, screen } from '@testing-library/react'
+import SomeComponent from './SomeComponent'
+
+test('renders the component', () => {
+  render(<SomeComponent />)
+  expect(screen.getByText(/hello/i)).toBeInTheDocument()
+})
+```
+
+For more information, see the [Vitest documentation](https://vitest.dev/) and [React Testing Library docs](https://testing-library.com/docs/react-testing-library/intro/).
 
 ## 🙏 Credits
 

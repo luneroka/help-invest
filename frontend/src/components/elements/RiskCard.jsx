@@ -100,7 +100,9 @@ function RiskCard() {
           )}
 
           <div className='flex flex-col gap-4'>
-            <p className='text-center'>Modifiez votre profil de risque :</p>
+            <label htmlFor='risk-profile' className='text-center'>
+              Modifiez votre profil de risque :
+            </label>
             <select
               name='riskProfile'
               id='risk-profile'
@@ -129,13 +131,13 @@ function RiskCard() {
           </button>
         </form>
 
-        <p className='text-small italic'>
+        {/* <p className='text-small italic'>
           Pour en savoir plus sur le profil de risque,{' '}
           <Link to='/risque' className='link-default link-default:hover'>
             cliquez ici
           </Link>
           .
-        </p>
+        </p> */}
       </div>
     </div>
   )
