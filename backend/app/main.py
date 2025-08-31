@@ -56,7 +56,7 @@ def index():
         "description": "Authentication is handled by Firebase on the frontend. All protected routes require Authorization header with Firebase ID token.",
         "endpoints": {
             "user": ["/api/sync-user", "/api/risk-profile"],
-            "portfolio": ["/api/dashboard", "/api/invest", "/api/withdraw", "/api/history"],
+            "portfolio": ["/api/dashboard", "/api/epargne", "/api/invest", "/api/withdraw", "/api/history"],
             "account": ["/api/delete-entry", "/api/delete-account"]
         }
     })
@@ -611,6 +611,64 @@ def delete_entry(firebase_uid, user_email):
                 "success": False,
                 "message": f"Une erreur s'est produite lors de la suppression: {str(e)}"
             }), 500
+
+    except Exception as e:
+        print(f"Exception occurred: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": f"Erreur serveur: {str(e)}"
+        }), 500
+
+
+@app.route("/api/epargne", methods=["GET"])
+@firebase_token_required
+def epargne(firebase_uid, user_email):
+    try:
+        user = Users.query.filter_by(firebase_uid=firebase_uid).first()
+        if not user:
+            return jsonify({
+                "success": False,
+                "message": "Utilisateur non trouvé. Veuillez vous reconnecter."
+            }), 404
+
+        # Query user balances for "Épargne" category only
+        epargne_data = (
+            db.session.query(
+                Portfolios.balance,
+                Categories.sub_category
+            )
+            .join(Categories, Portfolios.category_id == Categories.id)
+            .filter(
+                Portfolios.user_id == user.id,
+                Categories.category_name == "Épargne",
+                Portfolios.balance > 0
+            )
+            .all()
+        )
+
+        # Initialize epargne summary
+        total_epargne = 0
+        epargne_summary = {}
+
+        for balance, sub_category_name in epargne_data:
+            total_epargne += balance
+
+            if sub_category_name not in epargne_summary:
+                epargne_summary[sub_category_name] = 0
+            epargne_summary[sub_category_name] += balance
+
+        return jsonify({
+            "success": True,
+            "message": "Données d'épargne récupérées avec succès",
+            "epargne_summary": epargne_summary,
+            "total_epargne": total_epargne,
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "username": user.username,
+                "risk_profile": user.risk_profile
+            }
+        }), 200
 
     except Exception as e:
         print(f"Exception occurred: {str(e)}")
