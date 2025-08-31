@@ -1,4 +1,4 @@
-import { formatAmount } from '../../utils/helpers';
+import { formatAmount } from '../../../utils/helpers';
 
 function DashTable({ portfolioSummary, displayTotalEstate, loading, error }) {
   if (displayTotalEstate === 0) {
