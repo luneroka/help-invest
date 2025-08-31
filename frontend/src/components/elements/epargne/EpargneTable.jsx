@@ -16,6 +16,42 @@ function EpargneTable({
   onViewModeChange,
 }) {
   const [hoveredIcons, setHoveredIcons] = useState({});
+  const [activeInput, setActiveInput] = useState(null); // Format: { subCategory, type: 'add'|'remove' }
+  const [inputValue, setInputValue] = useState('');
+
+  const handleIconClick = (subCategory, type) => {
+    setActiveInput({ subCategory, type });
+    setInputValue('');
+  };
+
+  const handleInputSubmit = (e) => {
+    e.preventDefault();
+    const amount = parseFloat(inputValue);
+    if (!isNaN(amount) && amount > 0) {
+      // Here you would implement the API call to update the epargne amount
+      console.log(
+        `${activeInput.type === 'add' ? 'Adding' : 'Removing'} ${amount}€ ${activeInput.type === 'add' ? 'to' : 'from'} ${activeInput.subCategory}`
+      );
+      // TODO: Implement API call to update epargne
+    }
+    // Reset both input state and hover state
+    setActiveInput(null);
+    setInputValue('');
+    setHoveredIcons({});
+  };
+
+  const handleInputCancel = () => {
+    // Reset both input state and hover state
+    setActiveInput(null);
+    setInputValue('');
+    setHoveredIcons({});
+  };
+
+  const handleInputKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      handleInputCancel();
+    }
+  };
 
   if (displayTotalEpargne === 0) {
     return (
@@ -89,50 +125,98 @@ function EpargneTable({
                       </span>
                     </td>
                     <td className='w-1/5 px-3 md:px-6 py-2 md:py-4 whitespace-nowrap'>
-                      <div className='flex gap-2 justify-center'>
-                        {hoveredIcons[`${subCategory}-add`] ? (
-                          <IoIosAddCircle
-                            className='size-6 text-alerts-success cursor-pointer transition-all duration-200'
-                            onMouseLeave={() =>
-                              setHoveredIcons((prev) => ({
-                                ...prev,
-                                [`${subCategory}-add`]: false,
-                              }))
-                            }
-                          />
-                        ) : (
-                          <IoIosAddCircleOutline
-                            className='size-6 text-alerts-success cursor-pointer transition-all duration-200'
-                            onMouseEnter={() =>
-                              setHoveredIcons((prev) => ({
-                                ...prev,
-                                [`${subCategory}-add`]: true,
-                              }))
-                            }
-                          />
-                        )}
-                        {hoveredIcons[`${subCategory}-remove`] ? (
-                          <IoIosRemoveCircle
-                            className='size-6 text-alerts-error cursor-pointer transition-all duration-200'
-                            onMouseLeave={() =>
-                              setHoveredIcons((prev) => ({
-                                ...prev,
-                                [`${subCategory}-remove`]: false,
-                              }))
-                            }
-                          />
-                        ) : (
-                          <IoIosRemoveCircleOutline
-                            className='size-6 text-alerts-error cursor-pointer transition-all duration-200'
-                            onMouseEnter={() =>
-                              setHoveredIcons((prev) => ({
-                                ...prev,
-                                [`${subCategory}-remove`]: true,
-                              }))
-                            }
-                          />
-                        )}
-                      </div>
+                      {activeInput &&
+                      activeInput.subCategory === subCategory ? (
+                        <form
+                          onSubmit={handleInputSubmit}
+                          className='flex items-center justify-center w-full'
+                        >
+                          <div className='flex items-center gap-1 w-full max-w-20'>
+                            <input
+                              type='number'
+                              step='0.01'
+                              min='0'
+                              value={inputValue}
+                              onChange={(e) => setInputValue(e.target.value)}
+                              onKeyDown={handleInputKeyDown}
+                              onBlur={handleInputCancel}
+                              placeholder='Montant'
+                              className={`flex-1 px-2 py-1 text-xs border rounded ${
+                                activeInput.type === 'add'
+                                  ? 'border-alerts-success focus:ring-alerts-success'
+                                  : 'border-alerts-error focus:ring-alerts-error'
+                              } focus:outline-none focus:ring-1`}
+                              autoFocus
+                            />
+                            <span
+                              className={`text-xs flex-shrink-0 ${
+                                activeInput.type === 'add'
+                                  ? 'text-alerts-success'
+                                  : 'text-alerts-error'
+                              }`}
+                            >
+                              €
+                            </span>
+                          </div>
+                        </form>
+                      ) : (
+                        <div className='flex gap-2 justify-center'>
+                          {hoveredIcons[`${subCategory}-add`] ? (
+                            <IoIosAddCircle
+                              className='size-6 text-alerts-success cursor-pointer transition-all duration-200'
+                              onClick={() =>
+                                handleIconClick(subCategory, 'add')
+                              }
+                              onMouseLeave={() =>
+                                setHoveredIcons((prev) => ({
+                                  ...prev,
+                                  [`${subCategory}-add`]: false,
+                                }))
+                              }
+                            />
+                          ) : (
+                            <IoIosAddCircleOutline
+                              className='size-6 text-alerts-success cursor-pointer transition-all duration-200'
+                              onClick={() =>
+                                handleIconClick(subCategory, 'add')
+                              }
+                              onMouseEnter={() =>
+                                setHoveredIcons((prev) => ({
+                                  ...prev,
+                                  [`${subCategory}-add`]: true,
+                                }))
+                              }
+                            />
+                          )}
+                          {hoveredIcons[`${subCategory}-remove`] ? (
+                            <IoIosRemoveCircle
+                              className='size-6 text-alerts-error cursor-pointer transition-all duration-200'
+                              onClick={() =>
+                                handleIconClick(subCategory, 'remove')
+                              }
+                              onMouseLeave={() =>
+                                setHoveredIcons((prev) => ({
+                                  ...prev,
+                                  [`${subCategory}-remove`]: false,
+                                }))
+                              }
+                            />
+                          ) : (
+                            <IoIosRemoveCircleOutline
+                              className='size-6 text-alerts-error cursor-pointer transition-all duration-200'
+                              onClick={() =>
+                                handleIconClick(subCategory, 'remove')
+                              }
+                              onMouseEnter={() =>
+                                setHoveredIcons((prev) => ({
+                                  ...prev,
+                                  [`${subCategory}-remove`]: true,
+                                }))
+                              }
+                            />
+                          )}
+                        </div>
+                      )}
                     </td>
                   </tr>
                 )
