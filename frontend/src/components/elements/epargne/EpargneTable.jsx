@@ -1,5 +1,7 @@
 import { formatAmount } from '../../../utils/helpers';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { authorizedRequest } from '../../../utils/authorizedRequest';
 import {
   IoIosAddCircleOutline,
   IoIosAddCircle,
@@ -14,30 +16,75 @@ function EpargneTable({
   error,
   viewMode = 'table',
   onViewModeChange,
+  onDataUpdate, // New prop to trigger data refresh
 }) {
   const [hoveredIcons, setHoveredIcons] = useState({});
   const [activeInput, setActiveInput] = useState(null); // Format: { subCategory, type: 'add'|'remove' }
   const [inputValue, setInputValue] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const handleIconClick = (subCategory, type) => {
     setActiveInput({ subCategory, type });
     setInputValue('');
   };
 
-  const handleInputSubmit = (e) => {
+  const handleInputSubmit = async (e) => {
     e.preventDefault();
     const amount = parseFloat(inputValue);
+
     if (!isNaN(amount) && amount > 0) {
-      // Here you would implement the API call to update the epargne amount
-      console.log(
-        `${activeInput.type === 'add' ? 'Adding' : 'Removing'} ${amount}€ ${activeInput.type === 'add' ? 'to' : 'from'} ${activeInput.subCategory}`
-      );
-      // TODO: Implement API call to update epargne
+      setIsSubmitting(true);
+
+      try {
+        const endpoint =
+          activeInput.type === 'add' ? '/api/invest' : '/api/withdraw';
+
+        const response = await authorizedRequest({
+          method: 'post',
+          url: `${import.meta.env.VITE_API_BASE_URL}${endpoint}`,
+          data: {
+            categoryName: 'Épargne',
+            subCategory: activeInput.subCategory,
+            amount: amount,
+          },
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.data.success) {
+          // Success - trigger data refresh
+          if (onDataUpdate) {
+            onDataUpdate();
+          }
+
+          // Reset states
+          setActiveInput(null);
+          setInputValue('');
+          setHoveredIcons({});
+        }
+      } catch (error) {
+        console.error('Transaction error:', error);
+
+        if (error.response?.status === 401) {
+          navigate('/connexion');
+        } else {
+          // You might want to show an error message to the user
+          console.error(
+            'Error:',
+            error.response?.data?.message || 'Une erreur est survenue'
+          );
+        }
+      } finally {
+        setIsSubmitting(false);
+      }
+    } else {
+      // Invalid amount - just close the input
+      setActiveInput(null);
+      setInputValue('');
+      setHoveredIcons({});
     }
-    // Reset both input state and hover state
-    setActiveInput(null);
-    setInputValue('');
-    setHoveredIcons({});
   };
 
   const handleInputCancel = () => {
@@ -141,11 +188,16 @@ function EpargneTable({
                               onKeyDown={handleInputKeyDown}
                               onBlur={handleInputCancel}
                               placeholder='Montant'
+                              disabled={isSubmitting}
                               className={`flex-1 px-2 py-1 text-xs border rounded ${
                                 activeInput.type === 'add'
                                   ? 'border-alerts-success focus:ring-alerts-success'
                                   : 'border-alerts-error focus:ring-alerts-error'
-                              } focus:outline-none focus:ring-1`}
+                              } focus:outline-none focus:ring-1 ${
+                                isSubmitting
+                                  ? 'opacity-50 cursor-not-allowed'
+                                  : ''
+                              }`}
                               autoFocus
                             />
                             <span

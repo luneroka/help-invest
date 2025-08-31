@@ -66,6 +66,7 @@ function Epargne() {
               error={error}
               viewMode={viewMode}
               onViewModeChange={setViewMode}
+              onDataUpdate={fetchEpargneData}
             />
           ) : (
             <EpargneGraph
