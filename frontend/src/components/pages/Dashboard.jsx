@@ -1,50 +1,50 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { formatAmount } from '../../utils/helpers'
-import Layout from '../layout/Layout'
-import MainHeader from '../headers/MainHeader'
-import DashTable from '../elements/DashTable'
-import DashGraph from '../elements/DashGraph'
-import { authorizedRequest } from '../../utils/authorizedRequest'
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { formatAmount } from '../../utils/helpers';
+import Layout from '../layout/Layout';
+import MainHeader from '../headers/MainHeader';
+import DashTable from '../elements/DashTable';
+import DashGraph from '../elements/DashGraph';
+import { authorizedRequest } from '../../utils/authorizedRequest';
 
 function Dashboard() {
-  const [portfolioData, setPortfolioData] = useState({})
-  const [totalEstate, setTotalEstate] = useState(0)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  let navigate = useNavigate()
+  const [portfolioData, setPortfolioData] = useState({});
+  const [totalEstate, setTotalEstate] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  let navigate = useNavigate();
 
   useEffect(() => {
-    fetchPortfolioData()
-  }, [])
+    fetchPortfolioData();
+  }, []);
 
   const fetchPortfolioData = async () => {
     try {
       const response = await authorizedRequest({
         method: 'get',
-        url: `${import.meta.env.VITE_API_BASE_URL}/api/dashboard`
-      })
+        url: `${import.meta.env.VITE_API_BASE_URL}/api/dashboard`,
+      });
 
       if (response.data.success) {
-        setPortfolioData(response.data.portfolio_summary || {})
-        setTotalEstate(response.data.total_estate || 0)
+        setPortfolioData(response.data.portfolio_summary || {});
+        setTotalEstate(response.data.total_estate || 0);
       }
     } catch (error) {
       if (error.response?.status === 401) {
-        navigate('/connexion')
+        navigate('/connexion');
       } else {
-        setError('Impossible de charger les données du portefeuille')
-        setPortfolioData({})
-        setTotalEstate(0)
+        setError('Impossible de charger les données du portefeuille');
+        setPortfolioData({});
+        setTotalEstate(0);
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const portfolioSummary =
-    Object.keys(portfolioData).length > 0 ? portfolioData : {}
-  const displayTotalEstate = totalEstate > 0 ? formatAmount(totalEstate) : 0
+    Object.keys(portfolioData).length > 0 ? portfolioData : {};
+  const displayTotalEstate = totalEstate > 0 ? formatAmount(totalEstate) : 0;
 
   return (
     <Layout header={<MainHeader />}>
@@ -78,7 +78,7 @@ function Dashboard() {
         </div>
       )}
     </Layout>
-  )
+  );
 }
 
-export default Dashboard
+export default Dashboard;

@@ -1,5 +1,4 @@
-import React from 'react'
-import { formatAmount } from '../../utils/helpers'
+import { formatAmount } from '../../utils/helpers';
 
 function DashTable({ portfolioSummary, displayTotalEstate, loading, error }) {
   if (displayTotalEstate === 0) {
@@ -11,7 +10,7 @@ function DashTable({ portfolioSummary, displayTotalEstate, loading, error }) {
           </span>
         </div>
       </div>
-    )
+    );
   }
 
   if (loading) {
@@ -23,25 +22,25 @@ function DashTable({ portfolioSummary, displayTotalEstate, loading, error }) {
           </span>
         </div>
       </div>
-    )
+    );
   }
 
   // Define the desired category order
-  const categoryOrder = ['Épargne', 'Immobilier', 'Actions', 'Autres']
+  const categoryOrder = ['Épargne', 'Immobilier', 'Actions', 'Autres'];
 
   // Sort portfolio entries by the defined order
   const sortedPortfolioEntries = Object.entries(portfolioSummary).sort(
     ([categoryA], [categoryB]) => {
-      const indexA = categoryOrder.indexOf(categoryA)
-      const indexB = categoryOrder.indexOf(categoryB)
+      const indexA = categoryOrder.indexOf(categoryA);
+      const indexB = categoryOrder.indexOf(categoryB);
 
       // If category not found in order, put it at the end
-      const orderA = indexA === -1 ? categoryOrder.length : indexA
-      const orderB = indexB === -1 ? categoryOrder.length : indexB
+      const orderA = indexA === -1 ? categoryOrder.length : indexA;
+      const orderB = indexB === -1 ? categoryOrder.length : indexB;
 
-      return orderA - orderB
+      return orderA - orderB;
     }
-  )
+  );
 
   return (
     <div className='bg-white shadow-lg overflow-hidden'>
@@ -72,7 +71,7 @@ function DashTable({ portfolioSummary, displayTotalEstate, loading, error }) {
         <table className='min-w-full table-fixed'>
           <tbody className='bg-white divide-y divide-gray-200'>
             {sortedPortfolioEntries.map(([category, data], categoryIndex) => {
-              const subEntries = Object.entries(data.sub_categories)
+              const subEntries = Object.entries(data.sub_categories);
               return subEntries.map(([subCategory, amount], index) => (
                 <tr
                   key={`${category}-${subCategory}`}
@@ -106,7 +105,7 @@ function DashTable({ portfolioSummary, displayTotalEstate, loading, error }) {
                     </span>
                   </td>
                 </tr>
-              ))
+              ));
             })}
           </tbody>
         </table>
@@ -123,7 +122,7 @@ function DashTable({ portfolioSummary, displayTotalEstate, loading, error }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default DashTable
+export default DashTable;
