@@ -12,6 +12,7 @@ function Epargne() {
   const [totalEpargne, setTotalEpargne] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [viewMode, setViewMode] = useState('table');
   let navigate = useNavigate();
 
   useEffect(() => {
@@ -56,24 +57,26 @@ function Epargne() {
           </span>
         </div>
       ) : (
-        <div className='flex flex-col xl:flex-row gap-8 xl:gap-16 justify-between'>
-          <div className='w-full xl:w-1/2'>
-            <div className='h-full mb-8 xl:mb-16'>
-              <EpargneGraph
-                epargneSummary={epargneSummary}
-                loading={loading}
-                error={error}
-              />
-            </div>
-          </div>
-          <div className='w-full xl:w-1/2'>
+        <div className='w-full'>
+          {viewMode === 'table' ? (
             <EpargneTable
               epargneSummary={epargneSummary}
               displayTotalEpargne={displayTotalEpargne}
               loading={loading}
               error={error}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
             />
-          </div>
+          ) : (
+            <EpargneGraph
+              epargneSummary={epargneSummary}
+              displayTotalEpargne={displayTotalEpargne}
+              loading={loading}
+              error={error}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+            />
+          )}
         </div>
       )}
     </Layout>
