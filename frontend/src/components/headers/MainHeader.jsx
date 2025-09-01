@@ -1,29 +1,29 @@
-import { useNavigate } from 'react-router-dom'
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { getAuth, signOut } from 'firebase/auth'
+import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { getAuth, signOut } from 'firebase/auth';
 
 function MainHeader() {
-  const navigate = useNavigate()
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
-      const auth = getAuth()
-      await signOut(auth)
-      navigate('/connexion')
+      const auth = getAuth();
+      await signOut(auth);
+      navigate('/connexion');
     } catch (error) {
-      console.error('Logout error', error)
+      console.error('Logout error', error);
     }
-  }
+  };
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   const closeMenu = () => {
-    setIsMenuOpen(false)
-  }
+    setIsMenuOpen(false);
+  };
 
   return (
     <>
@@ -41,6 +41,10 @@ function MainHeader() {
           <div className='hidden md:flex gap-2 text-theme-accent'>
             <Link to='/dashboard'>
               <p className='nav-link nav-link:hover'>Dashboard</p>
+            </Link>
+            <p>|</p>
+            <Link to='/epargne'>
+              <p className='nav-link nav-link:hover'>Épargne</p>
             </Link>
             <p>|</p>
             <Link to='/opérations'>
@@ -91,7 +95,10 @@ function MainHeader() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <nav role="navigation" className='md:hidden bg-theme-main border-t border-theme-accent/20'>
+        <nav
+          role='navigation'
+          className='md:hidden bg-theme-main border-t border-theme-accent/20'
+        >
           <div className='flex flex-col px-4 py-2'>
             <Link to='/dashboard' onClick={closeMenu}>
               <p className='nav-link nav-link:hover py-1'>Dashboard</p>
@@ -108,8 +115,8 @@ function MainHeader() {
             </Link>
             <button
               onClick={() => {
-                handleLogout()
-                closeMenu()
+                handleLogout();
+                closeMenu();
               }}
               className='nav-link nav-link:hover cursor-pointer text-left py-1'
             >
@@ -119,7 +126,7 @@ function MainHeader() {
         </nav>
       )}
     </>
-  )
+  );
 }
 
-export default MainHeader
+export default MainHeader;

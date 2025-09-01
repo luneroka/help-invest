@@ -1,42 +1,42 @@
-import React from 'react'
-import { Pie } from 'react-chartjs-2'
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
-import ChartDataLabels from 'chartjs-plugin-datalabels'
-import { formatAmount } from '../../utils/helpers'
+import React from 'react';
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { formatAmount } from '../../../utils/helpers';
 
 // Register Chart.js components
-ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels)
+ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
 function DashGraph({ portfolioSummary, loading, error }) {
   // Calculate total and percentages
   const totalPortfolio = Object.values(portfolioSummary).reduce(
     (sum, category) => sum + category.total_balance,
     0
-  )
+  );
 
   // Define the desired category order
-  const categoryOrder = ['Épargne', 'Immobilier', 'Actions', 'Autres']
+  const categoryOrder = ['Épargne', 'Immobilier', 'Actions', 'Autres'];
 
   // Sort the chart data by the defined order
   const chartData = Object.entries(portfolioSummary)
     .sort(([categoryA], [categoryB]) => {
-      const indexA = categoryOrder.indexOf(categoryA)
-      const indexB = categoryOrder.indexOf(categoryB)
+      const indexA = categoryOrder.indexOf(categoryA);
+      const indexB = categoryOrder.indexOf(categoryB);
 
       // If category not found in order, put it at the end
-      const orderA = indexA === -1 ? categoryOrder.length : indexA
-      const orderB = indexB === -1 ? categoryOrder.length : indexB
+      const orderA = indexA === -1 ? categoryOrder.length : indexA;
+      const orderB = indexB === -1 ? categoryOrder.length : indexB;
 
-      return orderA - orderB
+      return orderA - orderB;
     })
     .map(([name, data]) => ({
       name,
       value: data.total_balance,
-      percentage: data.total_balance / totalPortfolio
-    }))
+      percentage: data.total_balance / totalPortfolio,
+    }));
 
   // Colors for each category (maintain same order as categoryOrder)
-  const colors = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444']
+  const colors = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444'];
 
   // Chart.js data configuration
   const data = {
@@ -48,10 +48,10 @@ function DashGraph({ portfolioSummary, loading, error }) {
         borderColor: '#ffffff',
         borderWidth: 2,
         hoverBackgroundColor: colors.map((color) => color + 'CC'),
-        hoverBorderWidth: 3
-      }
-    ]
-  }
+        hoverBorderWidth: 3,
+      },
+    ],
+  };
 
   // Chart.js options
   const options = {
@@ -59,30 +59,30 @@ function DashGraph({ portfolioSummary, loading, error }) {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false // We'll create our own legend
+        display: false, // We'll create our own legend
       },
       tooltip: {
         callbacks: {
           label: function (context) {
-            const value = context.parsed
-            return ` ${formatAmount(value)}`
-          }
-        }
+            const value = context.parsed;
+            return ` ${formatAmount(value)}`;
+          },
+        },
       },
       datalabels: {
         display: true,
         color: 'white',
         font: {
           weight: 'bold',
-          size: 18
+          size: 18,
         },
         formatter: (value) => {
-          const percentage = ((value / totalPortfolio) * 100).toFixed(0)
-          return `${percentage}%`
-        }
-      }
-    }
-  }
+          const percentage = ((value / totalPortfolio) * 100).toFixed(0);
+          return `${percentage}%`;
+        },
+      },
+    },
+  };
 
   if (loading) {
     return (
@@ -93,7 +93,7 @@ function DashGraph({ portfolioSummary, loading, error }) {
           </span>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -128,7 +128,7 @@ function DashGraph({ portfolioSummary, loading, error }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default DashGraph
+export default DashGraph;
