@@ -4,8 +4,8 @@ import { authorizedRequest } from '../../utils/authorizedRequest';
 import { formatAmount } from '../../utils/helpers';
 import Layout from '../layout/Layout';
 import MainHeader from '../headers/MainHeader';
-import EpargneGraph from '../elements/epargne/EpargneGraph';
-import EpargneTable from '../elements/epargne/EpargneTable';
+import CategoryTable from '../elements/categories/CategoryTable';
+import CategoryGraph from '../elements/categories/CategoryGraph';
 
 function Epargne() {
   const [epargneData, setEpargneData] = useState({});
@@ -59,9 +59,10 @@ function Epargne() {
       ) : (
         <div className='w-full'>
           {viewMode === 'table' ? (
-            <EpargneTable
-              epargneSummary={epargneSummary}
-              displayTotalEpargne={displayTotalEpargne}
+            <CategoryTable
+              categoryName={'Épargne'}
+              categorySummary={epargneSummary}
+              displayTotalCategory={displayTotalEpargne}
               loading={loading}
               error={error}
               viewMode={viewMode}
@@ -69,9 +70,9 @@ function Epargne() {
               onDataUpdate={fetchEpargneData}
             />
           ) : (
-            <EpargneGraph
-              epargneSummary={epargneSummary}
-              displayTotalEpargne={displayTotalEpargne}
+            <CategoryGraph
+              categorySummary={epargneSummary}
+              displayTotalCategory={displayTotalEpargne}
               loading={loading}
               error={error}
               viewMode={viewMode}
