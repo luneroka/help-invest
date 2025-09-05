@@ -4,6 +4,7 @@ from .models import Users, Categories, Portfolios, Transactions
 from .helpers import (
     firebase_token_required,
     serialize_category,
+    get_category_data
 )
 from datetime import datetime
 
@@ -620,6 +621,7 @@ def delete_entry(firebase_uid, user_email):
         }), 500
 
 
+
 @app.route("/api/epargne", methods=["GET"])
 @firebase_token_required
 def epargne(firebase_uid, user_email):
@@ -631,31 +633,7 @@ def epargne(firebase_uid, user_email):
                 "message": "Utilisateur non trouvé. Veuillez vous reconnecter."
             }), 404
 
-        # Query user balances for "Épargne" category only
-        epargne_data = (
-            db.session.query(
-                Portfolios.balance,
-                Categories.sub_category
-            )
-            .join(Categories, Portfolios.category_id == Categories.id)
-            .filter(
-                Portfolios.user_id == user.id,
-                Categories.category_name == "Épargne",
-                Portfolios.balance > 0
-            )
-            .all()
-        )
-
-        # Initialize epargne summary
-        total_epargne = 0
-        epargne_summary = {}
-
-        for balance, sub_category_name in epargne_data:
-            total_epargne += balance
-
-            if sub_category_name not in epargne_summary:
-                epargne_summary[sub_category_name] = 0
-            epargne_summary[sub_category_name] += balance
+        epargne_summary, total_epargne = get_category_data(user.id, "Épargne")
 
         return jsonify({
             "success": True,
@@ -677,7 +655,6 @@ def epargne(firebase_uid, user_email):
             "message": f"Erreur serveur: {str(e)}"
         }), 500
 
-
 @app.route("/api/immo", methods=["GET"])
 @firebase_token_required
 def immo(firebase_uid, user_email):
@@ -689,35 +666,11 @@ def immo(firebase_uid, user_email):
                 "message": "Utilisateur non trouvé. Veuillez vous reconnecter."
             }), 404
 
-        # Query user balances for "Immobilier" category only
-        immo_data = (
-            db.session.query(
-                Portfolios.balance,
-                Categories.sub_category
-            )
-            .join(Categories, Portfolios.category_id == Categories.id)
-            .filter(
-                Portfolios.user_id == user.id,
-                Categories.category_name == "Immobilier",
-                Portfolios.balance > 0
-            )
-            .all()
-        )
-
-        # Initialize immo summary
-        total_immo = 0
-        immo_summary = {}
-
-        for balance, sub_category_name in immo_data:
-            total_immo += balance
-
-            if sub_category_name not in immo_summary:
-                immo_summary[sub_category_name] = 0
-            immo_summary[sub_category_name] += balance
+        immo_summary, total_immo = get_category_data(user.id, "Immobilier")
 
         return jsonify({
             "success": True,
-            "message": "Données d'épargne récupérées avec succès",
+            "message": "Données immobilières récupérées avec succès",
             "immo_summary": immo_summary,
             "total_immo": total_immo,
             "user": {
@@ -735,7 +688,6 @@ def immo(firebase_uid, user_email):
             "message": f"Erreur serveur: {str(e)}"
         }), 500
 
-
 @app.route("/api/autres", methods=["GET"])
 @firebase_token_required
 def autres(firebase_uid, user_email):
@@ -747,35 +699,11 @@ def autres(firebase_uid, user_email):
                 "message": "Utilisateur non trouvé. Veuillez vous reconnecter."
             }), 404
 
-        # Query user balances for "Autres" category only
-        autres_data = (
-            db.session.query(
-                Portfolios.balance,
-                Categories.sub_category
-            )
-            .join(Categories, Portfolios.category_id == Categories.id)
-            .filter(
-                Portfolios.user_id == user.id,
-                Categories.category_name == "Autres",
-                Portfolios.balance > 0
-            )
-            .all()
-        )
-
-        # Initialize autres summary
-        total_autres = 0
-        autres_summary = {}
-
-        for balance, sub_category_name in autres_data:
-            total_autres += balance
-
-            if sub_category_name not in autres_summary:
-                autres_summary[sub_category_name] = 0
-            autres_summary[sub_category_name] += balance
+        autres_summary, total_autres = get_category_data(user.id, "Autres")
 
         return jsonify({
             "success": True,
-            "message": "Données d'épargne récupérées avec succès",
+            "message": "Données autres récupérées avec succès",
             "autres_summary": autres_summary,
             "total_autres": total_autres,
             "user": {

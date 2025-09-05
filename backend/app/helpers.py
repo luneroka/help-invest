@@ -85,7 +85,38 @@ def percentage(value):
     """Format value as percentage"""
     return f"{value * 100:,.0f}%"
 
+def get_category_data(user_id, category_name):
+    """Helper function to get portfolio data for a specific category"""
+    from .config import db
+    from .models import Categories, Portfolios
+    
+    category_data = (
+        db.session.query(
+            Portfolios.balance,
+            Categories.sub_category
+        )
+        .join(Categories, Portfolios.category_id == Categories.id)
+        .filter(
+            Portfolios.user_id == user_id,
+            Categories.category_name == category_name,
+            Portfolios.balance > 0
+        )
+        .all()
+    )
 
+    total_amount = 0
+    category_summary = {}
+
+    for balance, sub_category_name in category_data:
+        total_amount += balance
+
+        if sub_category_name not in category_summary:
+            category_summary[sub_category_name] = 0
+        category_summary[sub_category_name] += balance
+
+    return category_summary, total_amount
+
+    
 # Legacy functions - kept for backward compatibility but no longer used
 def validate_password_strength(password):
     """DEPRECATED: Password validation now handled by Firebase"""
