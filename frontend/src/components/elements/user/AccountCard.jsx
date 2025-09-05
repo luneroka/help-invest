@@ -1,63 +1,63 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import {
   getAuth,
   updatePassword,
   reauthenticateWithCredential,
-  EmailAuthProvider
-} from 'firebase/auth'
-import { authorizedRequest } from '../../utils/authorizedRequest'
+  EmailAuthProvider,
+} from 'firebase/auth';
+import { authorizedRequest } from '../../../utils/authorizedRequest';
 
 function AccountCard() {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     currentPassword: '',
     newPassword: '',
-    confirmation: ''
-  })
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-  const [deletePassword, setDeletePassword] = useState('')
-  const [deleteLoading, setDeleteLoading] = useState(false)
-  const navigate = useNavigate()
+    confirmation: '',
+  });
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Local state for password visibility and values
-  const [passwordVisibility, setPasswordVisibility] = useState(false)
+  const [passwordVisibility, setPasswordVisibility] = useState(false);
   const [confirmationPasswordVisibility, setConfirmationPasswordVisibility] =
-    useState(false)
+    useState(false);
 
   // Handle input changes
   const handleInputChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }))
+      [name]: value,
+    }));
 
     // Clear error on input change
-    if (error) setError('')
-  }
+    if (error) setError('');
+  };
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
-    const auth = getAuth()
-    const user = auth.currentUser
+    const auth = getAuth();
+    const user = auth.currentUser;
 
     if (!user) {
-      setError('Utilisateur non connecté.')
-      setLoading(false)
-      return
+      setError('Utilisateur non connecté.');
+      setLoading(false);
+      return;
     }
 
     if (formData.newPassword !== formData.confirmation) {
-      setError('Les mots de passe ne correspondent pas.')
-      setLoading(false)
-      return
+      setError('Les mots de passe ne correspondent pas.');
+      setLoading(false);
+      return;
     }
 
     try {
@@ -65,75 +65,75 @@ function AccountCard() {
       const credential = EmailAuthProvider.credential(
         user.email,
         formData.currentPassword
-      )
-      await reauthenticateWithCredential(user, credential)
+      );
+      await reauthenticateWithCredential(user, credential);
 
       // Update password in Firebase
-      await updatePassword(user, formData.newPassword)
+      await updatePassword(user, formData.newPassword);
 
       // Optionally, sync with backend if needed (not required for Firebase password change)
       // await authorizedRequest({ ... })
 
-      navigate('/connexion')
+      navigate('/connexion');
     } catch (err) {
-      console.error('Password change error:', err)
+      console.error('Password change error:', err);
       if (
         err.code === 'auth/wrong-password' ||
         err.code === 'auth/invalid-credential'
       ) {
-        setError('Mot de passe actuel incorrect.')
+        setError('Mot de passe actuel incorrect.');
       } else if (err.code === 'auth/weak-password') {
-        setError('Le nouveau mot de passe est trop faible.')
+        setError('Le nouveau mot de passe est trop faible.');
       } else if (err.code === 'auth/too-many-requests') {
-        setError('Trop de tentatives. Veuillez réessayer plus tard.')
+        setError('Trop de tentatives. Veuillez réessayer plus tard.');
       } else {
-        setError('Une erreur est survenue. Veuillez réessayer.')
+        setError('Une erreur est survenue. Veuillez réessayer.');
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   // Toggle password view
   const togglePasswordVisibility = () => {
-    setPasswordVisibility((prev) => !prev)
-  }
+    setPasswordVisibility((prev) => !prev);
+  };
 
   const toggleConfirmationPasswordVisibility = () => {
-    setConfirmationPasswordVisibility((prev) => !prev)
-  }
+    setConfirmationPasswordVisibility((prev) => !prev);
+  };
 
   const handleDeleteAccount = async () => {
     if (!deletePassword) {
-      setError('Veuillez entrer votre mot de passe')
-      return
+      setError('Veuillez entrer votre mot de passe');
+      return;
     }
 
-    setDeleteLoading(true)
+    setDeleteLoading(true);
     try {
       const response = await authorizedRequest({
         method: 'post',
         url: `${import.meta.env.VITE_API_BASE_URL}/api/delete-account`,
         data: { password: deletePassword },
-        headers: { 'Content-Type': 'application/json' }
-      })
+        headers: { 'Content-Type': 'application/json' },
+      });
 
       if (response.data.success) {
-        navigate('/')
+        navigate('/');
       }
     } catch (error) {
-      console.error('Account delete error:', error)
+      console.error('Account delete error:', error);
       if (error.response?.data?.message) {
-        setError(error.response.data.message)
+        setError(error.response.data.message);
       } else {
-        setError('Erreur lors de la suppression')
+        setError('Erreur lors de la suppression');
       }
     } finally {
-      setDeleteLoading(false)
-      setShowDeleteConfirm(false)
-      setDeletePassword('')
+      setDeleteLoading(false);
+      setShowDeleteConfirm(false);
+      setDeletePassword('');
     }
-  }
+  };
 
   return (
     <div className='flex flex-col items-center h-full'>
@@ -260,8 +260,8 @@ function AccountCard() {
 
                 <button
                   onClick={() => {
-                    setShowDeleteConfirm(false)
-                    setDeletePassword('')
+                    setShowDeleteConfirm(false);
+                    setDeletePassword('');
                   }}
                   className='px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 cursor-pointer'
                 >
@@ -273,7 +273,7 @@ function AccountCard() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default AccountCard
+export default AccountCard;

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { formatAmount } from '../../utils/helpers';
-import Layout from '../layout/Layout';
-import MainHeader from '../headers/MainHeader';
-import DashTable from '../elements/dashboard/DashTable';
-import DashGraph from '../elements/dashboard/DashGraph';
-import { authorizedRequest } from '../../utils/authorizedRequest';
+import { formatAmount } from '../../../utils/helpers';
+import Layout from '../../layout/Layout';
+import MainHeader from '../../headers/MainHeader';
+import DashTable from '../../elements/dashboard/DashTable';
+import DashGraph from '../../elements/dashboard/DashGraph';
+import { authorizedRequest } from '../../../utils/authorizedRequest';
 
 function Dashboard() {
   const [portfolioData, setPortfolioData] = useState({});

@@ -1,81 +1,81 @@
-import React, { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { authorizedRequest } from '../../utils/authorizedRequest'
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { authorizedRequest } from '../../../utils/authorizedRequest';
 
 function RiskCard() {
-  const profiles = ['prudent', 'équilibré', 'dynamique']
+  const profiles = ['prudent', 'équilibré', 'dynamique'];
 
-  const [riskProfile, setRiskProfile] = useState('')
-  const [currentRiskProfile, setCurrentRiskProfile] = useState('')
-  const [riskLoading, setRiskLoading] = useState(false)
-  const [riskError, setRiskError] = useState('')
-  const navigate = useNavigate()
+  const [riskProfile, setRiskProfile] = useState('');
+  const [currentRiskProfile, setCurrentRiskProfile] = useState('');
+  const [riskLoading, setRiskLoading] = useState(false);
+  const [riskError, setRiskError] = useState('');
+  const navigate = useNavigate();
 
   // Fetch current risk profile on component mount
   useEffect(() => {
-    fetchRiskProfile()
-  }, [])
+    fetchRiskProfile();
+  }, []);
 
   const fetchRiskProfile = async () => {
     try {
       const response = await authorizedRequest({
         method: 'get',
-        url: `${import.meta.env.VITE_API_BASE_URL}/api/risk-profile`
-      })
+        url: `${import.meta.env.VITE_API_BASE_URL}/api/risk-profile`,
+      });
 
       if (response.data.success) {
-        setCurrentRiskProfile(response.data.user.risk_profile)
-        setRiskProfile(response.data.user.risk_profile)
+        setCurrentRiskProfile(response.data.user.risk_profile);
+        setRiskProfile(response.data.user.risk_profile);
       }
     } catch (err) {
-      console.error('Error fetching risk profile:', err)
+      console.error('Error fetching risk profile:', err);
       if (err.response?.status === 401) {
-        navigate('/connexion')
+        navigate('/connexion');
       }
     }
-  }
+  };
 
   // Handle risk profile change
   const handleRiskProfileChange = (e) => {
-    setRiskProfile(e.target.value)
-    if (riskError) setRiskError('')
-  }
+    setRiskProfile(e.target.value);
+    if (riskError) setRiskError('');
+  };
 
   // Handle risk profile update
   const handleRiskProfileSubmit = async (e) => {
-    e.preventDefault()
-    setRiskLoading(true)
-    setRiskError('')
+    e.preventDefault();
+    setRiskLoading(true);
+    setRiskError('');
 
     try {
       const response = await authorizedRequest({
         method: 'post',
         url: `${import.meta.env.VITE_API_BASE_URL}/api/risk-profile`,
         data: {
-          riskProfile: riskProfile
+          riskProfile: riskProfile,
         },
         headers: {
-          'Content-Type': 'application/json'
-        }
-      })
+          'Content-Type': 'application/json',
+        },
+      });
 
       if (response.data.success) {
-        setCurrentRiskProfile(response.data.user.risk_profile)
+        setCurrentRiskProfile(response.data.user.risk_profile);
         // You could add a success message here
       }
     } catch (err) {
-      console.error('Risk profile update error:', err)
+      console.error('Risk profile update error:', err);
       if (err.response?.status === 401) {
-        navigate('/connexion')
+        navigate('/connexion');
       } else if (err.response?.data?.message) {
-        setRiskError(err.response.data.message)
+        setRiskError(err.response.data.message);
       } else {
-        setRiskError('Une erreur est survenue. Veuillez réessayer.')
+        setRiskError('Une erreur est survenue. Veuillez réessayer.');
       }
     } finally {
-      setRiskLoading(false)
+      setRiskLoading(false);
     }
-  }
+  };
 
   return (
     <div className='flex flex-col items-center h-full'>
@@ -140,7 +140,7 @@ function RiskCard() {
         </p> */}
       </div>
     </div>
-  )
+  );
 }
 
-export default RiskCard
+export default RiskCard;

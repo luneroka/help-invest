@@ -1,8 +1,7 @@
-import React from 'react'
-import Layout from '../layout/Layout'
-import MainHeader from '../headers/MainHeader'
-import RiskCard from '../elements/RiskCard'
-import AccountCard from '../elements/AccountCard'
+import Layout from '../../layout/Layout';
+import MainHeader from '../../headers/MainHeader';
+import RiskCard from '../../elements/user/RiskCard';
+import AccountCard from '../../elements/user/AccountCard';
 
 function Profile() {
   return (
@@ -14,7 +13,7 @@ function Profile() {
         </div>
       </div>
     </Layout>
-  )
+  );
 }
 
-export default Profile
+export default Profile;

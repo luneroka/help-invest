@@ -1,59 +1,59 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { FaEye, FaEyeSlash } from 'react-icons/fa'
-import Layout from '../layout/Layout'
-import AuthHeader from '../headers/AuthHeader'
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
-import { authorizedRequest } from '../../utils/authorizedRequest'
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import Layout from '../../layout/Layout';
+import AuthHeader from '../../headers/AuthHeader';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { authorizedRequest } from '../../../utils/authorizedRequest';
 
 function Login() {
-  const [isVisible, setIsVisible] = useState(false)
+  const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
-  })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  let navigate = useNavigate()
+    password: '',
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  let navigate = useNavigate();
 
   // Handle input changes
   const handleInputChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }))
+      [name]: value,
+    }));
 
     // Clear error on input change
-    if (error) setError('')
-  }
+    if (error) setError('');
+  };
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
-    const auth = getAuth()
+    const auth = getAuth();
     try {
-      await signInWithEmailAndPassword(auth, formData.email, formData.password)
+      await signInWithEmailAndPassword(auth, formData.email, formData.password);
       // Sync user with backend after Firebase login
-      const user = auth.currentUser
+      const user = auth.currentUser;
       if (user) {
         await authorizedRequest({
           method: 'post',
           url: `${import.meta.env.VITE_API_BASE_URL}/api/sync-user`,
           data: {
-            displayName: user.displayName || ''
+            displayName: user.displayName || '',
           },
           headers: {
-            'Content-Type': 'application/json'
-          }
-        })
+            'Content-Type': 'application/json',
+          },
+        });
       }
-      navigate('/dashboard')
+      navigate('/dashboard');
     } catch (err) {
-      console.error('Login error:', err)
+      console.error('Login error:', err);
       // Firebase error messages
       if (
         err.code === 'auth/user-not-found' ||
@@ -61,20 +61,20 @@ function Login() {
         err.code === 'auth/invalid-credential' ||
         err.code === 'auth/invalid-email'
       ) {
-        setError('Email ou mot de passe incorrect.')
+        setError('Email ou mot de passe incorrect.');
       } else {
-        setError('Une erreur est survenue. Veuillez réessayer.')
+        setError('Une erreur est survenue. Veuillez réessayer.');
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   // Toggle password view
   const handleTogglePasswordView = (e) => {
-    e.preventDefault()
-    setIsVisible((prev) => !prev)
-  }
+    e.preventDefault();
+    setIsVisible((prev) => !prev);
+  };
 
   return (
     <Layout header={<AuthHeader />}>
@@ -166,7 +166,7 @@ function Login() {
         </div>
       </div>
     </Layout>
-  )
+  );
 }
 
-export default Login
+export default Login;

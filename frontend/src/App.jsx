@@ -1,16 +1,16 @@
 import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './components/pages/Home';
-import Dashboard from './components/pages/Dashboard';
-import Login from './components/pages/Login';
-import Register from './components/pages/Register';
+import Login from './components/pages/auth/Login';
+import Register from './components/pages/auth/Register';
+import Profile from './components/pages/user/Profile';
+import Dashboard from './components/pages/user/Dashboard';
+import History from './components/pages/user/History';
 import Transactions from './components/pages/Transactions';
-import History from './components/pages/History';
-import Profile from './components/pages/Profile';
+import Epargne from './components/pages/categories/Epargne';
+import Immo from './components/pages/categories/Immo';
 import { AuthProvider } from './contexts/AuthContext';
 import PrivateRoute from './routes/PrivateRoute';
-import Epargne from './components/pages/Epargne';
-import Immo from './components/pages/Immo';
 
 function App() {
   return (

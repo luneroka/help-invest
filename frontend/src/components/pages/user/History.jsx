@@ -1,57 +1,57 @@
-import { useState, useEffect } from 'react'
-import Layout from '../layout/Layout'
-import MainHeader from '../headers/MainHeader'
-import { formatAmount } from '../../utils/helpers'
-import { RiDeleteBin6Line } from 'react-icons/ri'
-import { authorizedRequest } from '../../utils/authorizedRequest'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react';
+import Layout from '../../layout/Layout';
+import MainHeader from '../../headers/MainHeader';
+import { formatAmount } from '../../../utils/helpers';
+import { RiDeleteBin6Line } from 'react-icons/ri';
+import { authorizedRequest } from '../../../utils/authorizedRequest';
+import { useNavigate } from 'react-router-dom';
 
 function History() {
-  const [transactions, setTransactions] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [message, setMessage] = useState(null)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [pagination, setPagination] = useState({})
-  const navigate = useNavigate()
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchTransactions()
-  }, [])
+    fetchTransactions();
+  }, []);
 
   const fetchTransactions = async (page = 1) => {
     try {
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
 
       const response = await authorizedRequest({
         method: 'get',
-        url: `${import.meta.env.VITE_API_BASE_URL}/api/history?page=${page}&per_page=10`
-      })
+        url: `${import.meta.env.VITE_API_BASE_URL}/api/history?page=${page}&per_page=10`,
+      });
 
       if (response.data.success) {
-        setTransactions(response.data.transaction_history)
-        setPagination(response.data.pagination)
-        setCurrentPage(page)
+        setTransactions(response.data.transaction_history);
+        setPagination(response.data.pagination);
+        setCurrentPage(page);
       }
     } catch (error) {
-      console.error('Error fetching transactions:', error)
+      console.error('Error fetching transactions:', error);
 
       if (error.response?.status === 401) {
-        navigate('/connexion')
+        navigate('/connexion');
       } else {
-        setError('Erreur lors du chargement des opérations')
+        setError('Erreur lors du chargement des opérations');
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleDeleteTransaction = async (transactionId) => {
     if (
       !window.confirm('Êtes-vous sûr de vouloir supprimer cette transaction?')
     ) {
-      return
+      return;
     }
 
     try {
@@ -60,42 +60,43 @@ function History() {
         url: `${import.meta.env.VITE_API_BASE_URL}/api/delete-entry`,
         data: { entry_id: transactionId },
         headers: {
-          'Content-Type': 'application/json'
-        }
-      })
+          'Content-Type': 'application/json',
+        },
+      });
 
       if (response.data.success) {
         setMessage({
           type: 'success',
-          text: response.data.message
-        })
+          text: response.data.message,
+        });
 
         // Refresh the transactions list
-        fetchTransactions(currentPage)
+        fetchTransactions(currentPage);
 
         // Clear message after 3 seconds
         setTimeout(() => {
-          setMessage(null)
-        }, 3000)
+          setMessage(null);
+        }, 3000);
       }
     } catch (error) {
-      console.error('Delete error:', error)
+      console.error('Delete error:', error);
 
       if (error.response?.status === 401) {
-        navigate('/connexion')
+        navigate('/connexion');
       } else {
         setMessage({
           type: 'error',
-          text: error.response?.data?.message || 'Erreur lors de la suppression'
-        })
+          text:
+            error.response?.data?.message || 'Erreur lors de la suppression',
+        });
 
         // Clear message after 3 seconds
         setTimeout(() => {
-          setMessage(null)
-        }, 3000)
+          setMessage(null);
+        }, 3000);
       }
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -106,7 +107,7 @@ function History() {
           <p className='mt-4 text-gray-600'>Chargement des opérations...</p>
         </div>
       </Layout>
-    )
+    );
   }
 
   if (error) {
@@ -119,7 +120,7 @@ function History() {
           </div>
         </div>
       </Layout>
-    )
+    );
   }
 
   return (
@@ -202,7 +203,7 @@ function History() {
                             {
                               day: '2-digit',
                               month: '2-digit',
-                              year: 'numeric'
+                              year: 'numeric',
                             }
                           )}
                         </span>
@@ -266,7 +267,7 @@ function History() {
         </div>
       )}
     </Layout>
-  )
+  );
 }
 
-export default History
+export default History;

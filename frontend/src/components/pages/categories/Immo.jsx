@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authorizedRequest } from '../../utils/authorizedRequest';
-import { formatAmount } from '../../utils/helpers';
-import Layout from '../layout/Layout';
-import MainHeader from '../headers/MainHeader';
-import CategoryTable from '../elements/categories/CategoryTable';
-import CategoryGraph from '../elements/categories/CategoryGraph';
+import { authorizedRequest } from '../../../utils/authorizedRequest';
+import { formatAmount } from '../../../utils/helpers';
+import Layout from '../../layout/Layout';
+import MainHeader from '../../headers/MainHeader';
+import CategoryTable from '../../elements/categories/CategoryTable';
+import CategoryGraph from '../../elements/categories/CategoryGraph';
 
 function Immo() {
   const [immoData, setImmoData] = useState({});
