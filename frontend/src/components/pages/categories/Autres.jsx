@@ -7,50 +7,50 @@ import MainHeader from '../../headers/MainHeader';
 import CategoryTable from '../../elements/categories/CategoryTable';
 import CategoryGraph from '../../elements/categories/CategoryGraph';
 
-function Immo() {
-  const [immoData, setImmoData] = useState({});
-  const [totalImmo, setTotalImmo] = useState(0);
+function Autres() {
+  const [autresData, setAutresData] = useState({});
+  const [totalAutres, setTotalAutres] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [viewMode, setViewMode] = useState('table');
   let navigate = useNavigate();
 
   useEffect(() => {
-    fetchImmoData();
+    fetchAutresData();
   }, []);
 
-  const fetchImmoData = async () => {
+  const fetchAutresData = async () => {
     try {
       const response = await authorizedRequest({
         method: 'get',
-        url: `${import.meta.env.VITE_API_BASE_URL}/api/immo`,
+        url: `${import.meta.env.VITE_API_BASE_URL}/api/autres`,
       });
 
       if (response.data.success) {
-        setImmoData(response.data.immo_summary || {});
-        setTotalImmo(response.data.total_immo || 0);
+        setAutresData(response.data.autres_summary || {});
+        setTotalAutres(response.data.total_autres || 0);
       }
     } catch (error) {
       if (error.response?.status === 401) {
         navigate('/connexion');
       } else {
-        setError("Impossible de charger les données d'immo");
-        setImmoData({});
-        setTotalImmo(0);
+        setError('Impossible de charger les données de la catégorie Autres');
+        setAutresData({});
+        setTotalAutres(0);
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const immoSummary = Object.keys(immoData).length > 0 ? immoData : {};
-  const displayTotalImmo = totalImmo > 0 ? formatAmount(totalImmo) : 0;
+  const autresSummary = Object.keys(autresData).length > 0 ? autresData : {};
+  const displayTotalAutres = totalAutres > 0 ? formatAmount(totalAutres) : 0;
 
   return (
     <Layout header={<MainHeader />}>
-      <h2>Immobilier</h2>
+      <h2>Autres</h2>
 
-      {displayTotalImmo === 0 ? (
+      {displayTotalAutres === 0 ? (
         <div className='text-left'>
           <span className='text-gray-500'>
             Aucune donnée de portefeuille disponible.
@@ -60,20 +60,20 @@ function Immo() {
         <div className='w-full'>
           {viewMode === 'table' ? (
             <CategoryTable
-              categoryName={'Immobilier'}
-              categorySummary={immoSummary}
-              displayTotalCategory={displayTotalImmo}
+              categoryName={'Autres'}
+              categorySummary={autresSummary}
+              displayTotalCategory={displayTotalAutres}
               loading={loading}
               error={error}
               viewMode={viewMode}
               onViewModeChange={setViewMode}
-              onDataUpdate={fetchImmoData}
+              onDataUpdate={fetchAutresData}
             />
           ) : (
             <CategoryGraph
-              categoryName={'Immobilier'}
-              categorySummary={immoSummary}
-              displayTotalCategory={displayTotalImmo}
+              categoryName={'Autres'}
+              categorySummary={autresSummary}
+              displayTotalCategory={displayTotalAutres}
               loading={loading}
               error={error}
               viewMode={viewMode}
@@ -86,4 +86,4 @@ function Immo() {
   );
 }
 
-export default Immo;
+export default Autres;

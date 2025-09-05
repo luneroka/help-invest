@@ -9,6 +9,7 @@ import History from './components/pages/user/History';
 import Transactions from './components/pages/Transactions';
 import Epargne from './components/pages/categories/Epargne';
 import Immo from './components/pages/categories/Immo';
+import Autres from './components/pages/categories/Autres';
 import { AuthProvider } from './contexts/AuthContext';
 import PrivateRoute from './routes/PrivateRoute';
 
@@ -49,6 +50,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Immo />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path='/autres'
+            element={
+              <PrivateRoute>
+                <Autres />
               </PrivateRoute>
             }
           />
