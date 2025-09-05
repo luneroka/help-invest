@@ -56,7 +56,7 @@ def index():
         "description": "Authentication is handled by Firebase on the frontend. All protected routes require Authorization header with Firebase ID token.",
         "endpoints": {
             "user": ["/api/sync-user", "/api/risk-profile"],
-            "portfolio": ["/api/dashboard", "/api/epargne", "/api/invest", "/api/withdraw", "/api/history"],
+            "portfolio": ["/api/dashboard", "/api/epargne", "/api/immo", "/api/invest", "/api/withdraw", "/api/history"],
             "account": ["/api/delete-entry", "/api/delete-account"]
         }
     })
@@ -662,6 +662,64 @@ def epargne(firebase_uid, user_email):
             "message": "Données d'épargne récupérées avec succès",
             "epargne_summary": epargne_summary,
             "total_epargne": total_epargne,
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "username": user.username,
+                "risk_profile": user.risk_profile
+            }
+        }), 200
+
+    except Exception as e:
+        print(f"Exception occurred: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": f"Erreur serveur: {str(e)}"
+        }), 500
+
+
+@app.route("/api/immo", methods=["GET"])
+@firebase_token_required
+def immo(firebase_uid, user_email):
+    try:
+        user = Users.query.filter_by(firebase_uid=firebase_uid).first()
+        if not user:
+            return jsonify({
+                "success": False,
+                "message": "Utilisateur non trouvé. Veuillez vous reconnecter."
+            }), 404
+
+        # Query user balances for "Immobilier" category only
+        immo_data = (
+            db.session.query(
+                Portfolios.balance,
+                Categories.sub_category
+            )
+            .join(Categories, Portfolios.category_id == Categories.id)
+            .filter(
+                Portfolios.user_id == user.id,
+                Categories.category_name == "Immobilier",
+                Portfolios.balance > 0
+            )
+            .all()
+        )
+
+        # Initialize immo summary
+        total_immo = 0
+        immo_summary = {}
+
+        for balance, sub_category_name in immo_data:
+            total_immo += balance
+
+            if sub_category_name not in immo_summary:
+                immo_summary[sub_category_name] = 0
+            immo_summary[sub_category_name] += balance
+
+        return jsonify({
+            "success": True,
+            "message": "Données d'épargne récupérées avec succès",
+            "immo_summary": immo_summary,
+            "total_immo": total_immo,
             "user": {
                 "id": user.id,
                 "email": user.email,
