@@ -257,7 +257,7 @@
   .nav-link {
     color: var(--color-theme-accent);
     font-family: var(--font-family-primary);
-    font-size: var(--font-size-body);
+    font-size: var(--font-size-small);
     font-weight: 500;
     transition: color 0.15s ease;
   }
