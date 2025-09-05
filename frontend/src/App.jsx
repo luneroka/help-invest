@@ -10,6 +10,7 @@ import Profile from './components/pages/Profile';
 import { AuthProvider } from './contexts/AuthContext';
 import PrivateRoute from './routes/PrivateRoute';
 import Epargne from './components/pages/Epargne';
+import Immo from './components/pages/Immo';
 
 function App() {
   return (
@@ -40,6 +41,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Epargne />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path='/immo'
+            element={
+              <PrivateRoute>
+                <Immo />
               </PrivateRoute>
             }
           />
