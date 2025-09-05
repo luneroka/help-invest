@@ -736,6 +736,64 @@ def immo(firebase_uid, user_email):
         }), 500
 
 
+@app.route("/api/autres", methods=["GET"])
+@firebase_token_required
+def autres(firebase_uid, user_email):
+    try:
+        user = Users.query.filter_by(firebase_uid=firebase_uid).first()
+        if not user:
+            return jsonify({
+                "success": False,
+                "message": "Utilisateur non trouvé. Veuillez vous reconnecter."
+            }), 404
+
+        # Query user balances for "Autres" category only
+        autres_data = (
+            db.session.query(
+                Portfolios.balance,
+                Categories.sub_category
+            )
+            .join(Categories, Portfolios.category_id == Categories.id)
+            .filter(
+                Portfolios.user_id == user.id,
+                Categories.category_name == "Autres",
+                Portfolios.balance > 0
+            )
+            .all()
+        )
+
+        # Initialize autres summary
+        total_autres = 0
+        autres_summary = {}
+
+        for balance, sub_category_name in autres_data:
+            total_autres += balance
+
+            if sub_category_name not in autres_summary:
+                autres_summary[sub_category_name] = 0
+            autres_summary[sub_category_name] += balance
+
+        return jsonify({
+            "success": True,
+            "message": "Données d'épargne récupérées avec succès",
+            "autres_summary": autres_summary,
+            "total_autres": total_autres,
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "username": user.username,
+                "risk_profile": user.risk_profile
+            }
+        }), 200
+
+    except Exception as e:
+        print(f"Exception occurred: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": f"Erreur serveur: {str(e)}"
+        }), 500
+
+
 @app.route("/api/delete-account", methods=["POST"])
 @firebase_token_required
 def delete_account(firebase_uid, user_email):
