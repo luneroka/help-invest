@@ -37,21 +37,21 @@ function MainHeader() {
               <img
                 src='../../public/help!nvest_logo.png'
                 alt='HelpInvest'
-                className='h-8'
+                className='h-6'
               />
             </Link>
           </div>
           <Link to='/dashboard'>
-            <RiBankFill className='size-7 md:size-6 nav-link' />
+            <RiBankFill className='size-6 md:size-5 nav-link' />
           </Link>
           <Link to='/opérations'>
-            <RiAddBoxFill className='size-7 md:size-6 nav-link' />
+            <RiAddBoxFill className='size-6 md:size-5 nav-link' />
           </Link>
         </div>
 
         {/* Desktop Navigation */}
         <div className='hidden md:flex gap-2 text-theme-accent'>
-          <Link to='/epargne'>
+          <Link to='/épargne'>
             <p className='nav-link'>Épargne</p>
           </Link>
           <p className='text-theme-accent'>|</p>
@@ -112,7 +112,7 @@ function MainHeader() {
           className='md:hidden bg-theme-main border-t border-theme-accent/20'
         >
           <div className='flex flex-col px-4 py-2'>
-            <Link to='/epargne' onClick={closeMenu}>
+            <Link to='/épargne' onClick={closeMenu}>
               <p className='nav-link py-1'>Épargne</p>
             </Link>
             <Link to='/immo' onClick={closeMenu}>

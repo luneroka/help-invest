@@ -1,5 +1,5 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 function IndexHeader() {
   return (
@@ -8,23 +8,19 @@ function IndexHeader() {
         <img
           src='../../public/help!nvest_logo.png'
           alt='HelpInvest'
-          className='h-8'
+          className='h-6'
         />
       </Link>
       <div className='flex gap-4'>
         <Link to='/inscription'>
-          <h3 className='text-theme-accent hover:text-white transition-colors'>
-            S'inscrire
-          </h3>
+          <h3 className='nav-link'>S'inscrire</h3>
         </Link>
         <Link to='/connexion'>
-          <h3 className='text-theme-accent hover:text-white transition-colors'>
-            Se connecter
-          </h3>
+          <h3 className='nav-link'>Se connecter</h3>
         </Link>
       </div>
     </div>
-  )
+  );
 }
 
-export default IndexHeader
+export default IndexHeader;
