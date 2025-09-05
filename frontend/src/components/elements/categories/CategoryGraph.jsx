@@ -7,15 +7,16 @@ import { formatAmount } from '../../../utils/helpers';
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
-function EpargneGraph({
-  epargneSummary,
-  displayTotalEpargne,
+function CategoryGraph({
+  categoryName,
+  categorySummary,
+  displayTotalCategory,
   loading,
   error,
   viewMode = 'graph',
   onViewModeChange,
 }) {
-  if (displayTotalEpargne === 0) {
+  if (displayTotalCategory === 0) {
     return (
       <div className='bg-white shadow-lg overflow-hidden'>
         <div className='p-6 text-center'>
@@ -40,16 +41,16 @@ function EpargneGraph({
   }
 
   // Calculate total value from the formatted display total
-  const totalEpargne = Object.values(epargneSummary).reduce(
+  const totalCategory = Object.values(categorySummary).reduce(
     (sum, amount) => sum + amount,
     0
   );
 
-  // Prepare chart data from epargneSummary
-  const chartData = Object.entries(epargneSummary).map(([name, value]) => ({
+  // Prepare chart data from categorySummary
+  const chartData = Object.entries(categorySummary).map(([name, value]) => ({
     name,
     value,
-    percentage: value / totalEpargne,
+    percentage: value / totalCategory,
   }));
 
   // Sort by value (descending) for better visual hierarchy
@@ -110,7 +111,7 @@ function EpargneGraph({
           size: 14,
         },
         formatter: (value) => {
-          const percentage = ((value / totalEpargne) * 100).toFixed(0);
+          const percentage = ((value / totalCategory) * 100).toFixed(0);
           return percentage > 5 ? `${percentage}%` : ''; // Only show percentage if > 5%
         },
       },
@@ -156,10 +157,10 @@ function EpargneGraph({
           <div className='flex items-center justify-between'>
             <div className='flex items-center gap-4'>
               <span className='text-xs md:text-sm text-gray-600'>
-                {Object.keys(epargneSummary).length} comptes
+                {Object.keys(categorySummary).length} comptes
               </span>
               <span className='text-xs md:text-sm font-semibold text-gray-800'>
-                Total Épargne : {displayTotalEpargne}
+                Total {categoryName} : {displayTotalCategory}
               </span>
             </div>
             <div className='flex items-center bg-white rounded-md border border-gray-300 overflow-hidden'>
@@ -192,4 +193,4 @@ function EpargneGraph({
   );
 }
 
-export default EpargneGraph;
+export default CategoryGraph;

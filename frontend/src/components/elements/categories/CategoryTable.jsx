@@ -9,9 +9,10 @@ import {
   IoIosRemoveCircle,
 } from 'react-icons/io';
 
-function EpargneTable({
-  epargneSummary,
-  displayTotalEpargne,
+function CategoryTable({
+  categoryName,
+  categorySummary,
+  displayTotalCategory,
   loading,
   error,
   viewMode = 'table',
@@ -44,7 +45,7 @@ function EpargneTable({
           method: 'post',
           url: `${import.meta.env.VITE_API_BASE_URL}${endpoint}`,
           data: {
-            categoryName: 'Épargne',
+            categoryName: categoryName,
             subCategory: activeInput.subCategory,
             amount: amount,
           },
@@ -100,7 +101,7 @@ function EpargneTable({
     }
   };
 
-  if (displayTotalEpargne === 0) {
+  if (displayTotalCategory === 0) {
     return (
       <div className='bg-white shadow-lg overflow-hidden'>
         <div className='p-6 text-center'>
@@ -152,8 +153,8 @@ function EpargneTable({
       <div className='overflow-y-auto max-h-[400px] md:max-h-[550px]'>
         <table className='min-w-full table-fixed'>
           <tbody className='bg-white divide-y divide-gray-200'>
-            {epargneSummary &&
-              Object.entries(epargneSummary).map(
+            {categorySummary &&
+              Object.entries(categorySummary).map(
                 ([subCategory, amount], index) => (
                   <tr
                     key={subCategory}
@@ -281,10 +282,11 @@ function EpargneTable({
         <div className='flex items-center justify-between'>
           <div className='flex items-center gap-4'>
             <span className='text-xs md:text-sm text-gray-600'>
-              {epargneSummary ? Object.keys(epargneSummary).length : 0} comptes
+              {categorySummary ? Object.keys(categorySummary).length : 0}{' '}
+              comptes
             </span>
             <span className='text-xs md:text-sm font-semibold text-gray-800'>
-              Total Épargne : {displayTotalEpargne}
+              Total {categoryName} : {displayTotalCategory}
             </span>
           </div>
           <div className='flex items-center bg-white rounded-md border border-gray-300 overflow-hidden'>
@@ -316,4 +318,4 @@ function EpargneTable({
   );
 }
 
-export default EpargneTable;
+export default CategoryTable;

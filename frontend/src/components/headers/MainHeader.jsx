@@ -47,6 +47,10 @@ function MainHeader() {
               <p className='nav-link nav-link:hover'>Épargne</p>
             </Link>
             <p>|</p>
+            <Link to='/immo'>
+              <p className='nav-link nav-link:hover'>Immobilier</p>
+            </Link>
+            <p>|</p>
             <Link to='/opérations'>
               <p className='nav-link nav-link:hover'>Opérations</p>
             </Link>
