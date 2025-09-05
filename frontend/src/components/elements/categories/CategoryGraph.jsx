@@ -8,6 +8,7 @@ import { formatAmount } from '../../../utils/helpers';
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
 function CategoryGraph({
+  categoryName,
   categorySummary,
   displayTotalCategory,
   loading,
@@ -159,7 +160,7 @@ function CategoryGraph({
                 {Object.keys(categorySummary).length} comptes
               </span>
               <span className='text-xs md:text-sm font-semibold text-gray-800'>
-                Total Épargne : {displayTotalCategory}
+                Total {categoryName} : {displayTotalCategory}
               </span>
             </div>
             <div className='flex items-center bg-white rounded-md border border-gray-300 overflow-hidden'>

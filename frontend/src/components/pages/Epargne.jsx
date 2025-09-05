@@ -71,6 +71,7 @@ function Epargne() {
             />
           ) : (
             <CategoryGraph
+              categoryName={'Épargne'}
               categorySummary={epargneSummary}
               displayTotalCategory={displayTotalEpargne}
               loading={loading}
