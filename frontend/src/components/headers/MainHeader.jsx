@@ -1,7 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getAuth, signOut } from 'firebase/auth';
+import { RiBankFill, RiAddBoxFill } from 'react-icons/ri';
+import { FaHistory, FaUser } from 'react-icons/fa';
+import { IoLogOut } from 'react-icons/io5';
 
 function MainHeader() {
   const navigate = useNavigate();
@@ -28,56 +31,61 @@ function MainHeader() {
   return (
     <>
       <div className='flex items-center justify-between bg-theme-main h-16 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24'>
-        <div className='flex gap-4 items-center'>
-          <Link to='/'>
-            <img
-              src='../../public/help!nvest_logo.png'
-              alt='HelpInvest'
-              className='h-8'
-            />
-          </Link>
-
-          {/* Desktop Navigation */}
-          <div className='hidden md:flex gap-2 text-theme-accent'>
-            <Link to='/dashboard'>
-              <p className='nav-link nav-link:hover'>Dashboard</p>
-            </Link>
-            <p>|</p>
-            <Link to='/epargne'>
-              <p className='nav-link nav-link:hover'>Épargne</p>
-            </Link>
-            <p>|</p>
-            <Link to='/immo'>
-              <p className='nav-link nav-link:hover'>Immobilier</p>
-            </Link>
-            <p>|</p>
-            <Link to='/opérations'>
-              <p className='nav-link nav-link:hover'>Opérations</p>
-            </Link>
-            <p>|</p>
-            <Link to='/historique'>
-              <p className='nav-link nav-link:hover'>Historique</p>
+        <div className='flex gap-4 items-center '>
+          <div className='hidden lg:flex'>
+            <Link to='/'>
+              <img
+                src='../../public/help!nvest_logo.png'
+                alt='HelpInvest'
+                className='h-8'
+              />
             </Link>
           </div>
+          <Link to='/dashboard'>
+            <RiBankFill className='size-7 md:size-6 nav-link' />
+          </Link>
+          <Link to='/opérations'>
+            <RiAddBoxFill className='size-7 md:size-6 nav-link' />
+          </Link>
+        </div>
+
+        {/* Desktop Navigation */}
+        <div className='hidden md:flex gap-2 text-theme-accent'>
+          <Link to='/epargne'>
+            <p className='nav-link'>Épargne</p>
+          </Link>
+          <p className='text-theme-accent'>|</p>
+          <Link to='/immo'>
+            <p className='nav-link'>Immo</p>
+          </Link>
+          <p className='text-theme-accent'>|</p>
+          <Link to='/actions'>
+            <p className='nav-link'>Actions</p>
+          </Link>
+          <p className='text-theme-accent'>|</p>
+          <Link to='/autres'>
+            <p className='nav-link'>Autres</p>
+          </Link>
         </div>
 
         {/* Desktop Right Menu */}
         <div className='hidden md:flex gap-4'>
-          <Link to='/profil'>
-            <p className='nav-link nav-link:hover'>Profil</p>
+          <Link to='/historique'>
+            <FaHistory className='size-5 nav-link' />
           </Link>
-          <button
+          <Link to='/profil'>
+            <FaUser className='size-5 nav-link' />
+          </Link>
+          <IoLogOut
             onClick={handleLogout}
-            className='nav-link nav-link:hover cursor-pointer'
-          >
-            Déconnexion
-          </button>
+            className='size-5 nav-link cursor-pointer'
+          />
         </div>
 
         {/* Mobile Hamburger Button */}
         <button
           onClick={toggleMenu}
-          className='md:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1'
+          className='md:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1 cursor-pointer'
         >
           <span
             className={`block w-6 h-0.5 bg-theme-accent transition-transform duration-300 ${
@@ -104,25 +112,31 @@ function MainHeader() {
           className='md:hidden bg-theme-main border-t border-theme-accent/20'
         >
           <div className='flex flex-col px-4 py-2'>
-            <Link to='/dashboard' onClick={closeMenu}>
-              <p className='nav-link nav-link:hover py-1'>Dashboard</p>
+            <Link to='/epargne' onClick={closeMenu}>
+              <p className='nav-link py-1'>Épargne</p>
             </Link>
-            <Link to='/opérations' onClick={closeMenu}>
-              <p className='nav-link nav-link:hover py-1'>Opérations</p>
+            <Link to='/immo' onClick={closeMenu}>
+              <p className='nav-link py-1'>Immobilier</p>
             </Link>
-            <Link to='/historique' onClick={closeMenu}>
-              <p className='nav-link nav-link:hover py-1'>Historique</p>
+            <Link to='/actions' onClick={closeMenu}>
+              <p className='nav-link py-1'>Actions</p>
+            </Link>
+            <Link to='/autres' onClick={closeMenu}>
+              <p className='nav-link py-1'>Autres</p>
             </Link>
             <div className='border-t border-theme-accent/20 my-2'></div>
+            <Link to='/historique' onClick={closeMenu}>
+              <p className='nav-link py-1'>Historique</p>
+            </Link>
             <Link to='/profil' onClick={closeMenu}>
-              <p className='nav-link nav-link:hover py-1'>Profil</p>
+              <p className='nav-link py-1'>Profil</p>
             </Link>
             <button
               onClick={() => {
                 handleLogout();
                 closeMenu();
               }}
-              className='nav-link nav-link:hover cursor-pointer text-left py-1'
+              className='nav-link cursor-pointer text-left py-1'
             >
               Déconnexion
             </button>
