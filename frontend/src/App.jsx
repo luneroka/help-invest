@@ -12,6 +12,7 @@ import Immo from './components/pages/categories/Immo';
 import Autres from './components/pages/categories/Autres';
 import { AuthProvider } from './contexts/AuthContext';
 import PrivateRoute from './routes/PrivateRoute';
+import Actions from './components/pages/categories/Actions';
 
 function App() {
   return (
@@ -38,7 +39,7 @@ function App() {
             }
           />
           <Route
-            path='/epargne'
+            path='/épargne'
             element={
               <PrivateRoute>
                 <Epargne />
@@ -50,6 +51,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Immo />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path='/actions'
+            element={
+              <PrivateRoute>
+                <Actions />
               </PrivateRoute>
             }
           />
