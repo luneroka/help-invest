@@ -248,7 +248,7 @@ function History() {
           <button
             disabled={!pagination.has_prev}
             onClick={() => fetchTransactions(currentPage - 1)}
-            className='w-full sm:w-auto px-4 py-2 text-sm md:text-base bg-blue-500 text-white rounded disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors'
+            className='w-full sm:w-auto px-4 py-2 text-sm md:text-base bg-theme-primary text-white rounded disabled:bg-gray-500 disabled:cursor-not-allowed hover:bg-theme-accent transition-colors cursor-pointer'
           >
             Précédent
           </button>
@@ -260,7 +260,7 @@ function History() {
           <button
             disabled={!pagination.has_next}
             onClick={() => fetchTransactions(currentPage + 1)}
-            className='w-full sm:w-auto px-4 py-2 text-sm md:text-base bg-blue-500 text-white rounded disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors'
+            className='w-full sm:w-auto px-4 py-2 text-sm md:text-base bg-theme-primary text-white rounded disabled:bg-gray-500 disabled:cursor-not-allowed hover:bg-theme-accent transition-colors cursor-pointer'
           >
             Suivant
           </button>
