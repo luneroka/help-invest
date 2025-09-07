@@ -141,11 +141,16 @@ function AccountCard() {
       <div className='card'>
         <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
           {/* Error display */}
-          {error && <div className='text-red-500 text-sm mb-4'>{error}</div>}
+          {error && (
+            <div className='text-alerts-error text-sm mb-4'>{error}</div>
+          )}
 
           {/* Email Input */}
           <div className='flex flex-col gap-2'></div>
-          <label htmlFor='current-password' className='block text-small'>
+          <label
+            htmlFor='current-password'
+            className='block text-small text-black-75'
+          >
             Changer le mot de passe
           </label>
 
@@ -156,7 +161,7 @@ function AccountCard() {
               name='currentPassword'
               id='currentPassword'
               placeholder='Mot de passe actuel'
-              className='input-field w-full'
+              className='input-field w-full placeholder:text-black-50 text-black-85'
               autoComplete='current-password'
               value={formData.currentPassword}
               onChange={handleInputChange}
@@ -171,7 +176,7 @@ function AccountCard() {
               name='newPassword'
               id='newPassword'
               placeholder='Nouveau mot de passe'
-              className='input-field w-full'
+              className='input-field w-full placeholder:text-black-50 text-black-85'
               autoComplete='new-password'
               value={formData.newPassword}
               onChange={handleInputChange}
@@ -180,7 +185,7 @@ function AccountCard() {
             <button
               type='button'
               onClick={() => togglePasswordVisibility()}
-              className='cursor-pointer absolute right-3 inset-y-0 my-auto text-caption'
+              className='cursor-pointer absolute right-3 inset-y-0 my-auto text-caption text-black-50'
             >
               {passwordVisibility ? <FaEyeSlash /> : <FaEye />}
             </button>
@@ -193,7 +198,7 @@ function AccountCard() {
               name='confirmation'
               id='confirmation'
               placeholder='Confirmer le mot de passe'
-              className='input-field w-full'
+              className='input-field w-full placeholder:text-black-50 text-black-85'
               autoComplete='new-password'
               value={formData.confirmation}
               onChange={handleInputChange}
@@ -202,7 +207,7 @@ function AccountCard() {
             <button
               type='button'
               onClick={() => toggleConfirmationPasswordVisibility()}
-              className='cursor-pointer absolute right-3 inset-y-0 my-auto text-caption'
+              className='cursor-pointer absolute right-3 inset-y-0 my-auto text-caption text-black-50'
             >
               {confirmationPasswordVisibility ? <FaEyeSlash /> : <FaEye />}
             </button>
@@ -213,9 +218,9 @@ function AccountCard() {
           </button>
         </form>
 
-        <div className='flex flex-col gap-4 border-t border-red-200 pt-6'>
-          <p className='font-bold'>Supprimer mon compte</p>
-          <p className='text-caption'>
+        <div className='flex flex-col gap-4 border-t border-alerts-error-light pt-6'>
+          <p className='font-bold text-black-85'>Supprimer mon compte</p>
+          <p className='text-caption text-black-75'>
             Une fois votre demande de suppression soumise, vous perdrez l'accès
             à votre compte HelpInvest et toutes vos données seront supprimées.
           </p>
@@ -228,21 +233,21 @@ function AccountCard() {
               Supprimer le compte
             </button>
           ) : (
-            <div className='bg-red-50 p-4 rounded-lg'>
-              <p className='text-red-800 mb-4'>
+            <div className='bg-alerts-error-light p-4 rounded-lg'>
+              <p className='text-alerts-error-dark mb-4'>
                 <strong>Attention :</strong> Cette action est irréversible.
                 Toutes vos données seront définitivement supprimées.
               </p>
 
               <div className='mb-4'>
-                <label className='block text-sm font-medium text-red-700 mb-2'>
+                <label className='block text-sm font-medium text-alerts-error-dark mb-2'>
                   Confirmez avec votre mot de passe :
                 </label>
                 <input
                   type='password'
                   value={deletePassword}
                   onChange={(e) => setDeletePassword(e.target.value)}
-                  className='input-field w-full'
+                  className='input-field w-full placeholder:text-black-50 text-black-85'
                   placeholder='Votre mot de passe'
                 />
               </div>
@@ -263,7 +268,7 @@ function AccountCard() {
                     setShowDeleteConfirm(false);
                     setDeletePassword('');
                   }}
-                  className='px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 cursor-pointer'
+                  className='px-4 py-2 bg-black-10 text-black-75 rounded hover:bg-black-25 cursor-pointer'
                 >
                   Annuler
                 </button>

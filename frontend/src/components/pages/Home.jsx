@@ -1,31 +1,31 @@
-import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import Layout from '../layout/Layout'
-import IndexHeader from '../../components/headers/IndexHeader'
-import MainHeader from '../headers/MainHeader'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import Layout from '../layout/Layout';
+import IndexHeader from '../../components/headers/IndexHeader';
+import MainHeader from '../headers/MainHeader';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 function Home() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const auth = getAuth()
+    const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsLoggedIn(!!user)
-      setLoading(false)
-    })
-    return () => unsubscribe()
-  }, [])
+      setIsLoggedIn(!!user);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
 
   if (loading) {
     return (
       <Layout header={<IndexHeader />}>
         <div className='flex justify-center items-center min-h-64'>
-          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600'></div>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-theme-primary'></div>
         </div>
       </Layout>
-    )
+    );
   }
 
   return (
@@ -33,14 +33,14 @@ function Home() {
       <div className='flex flex-col gap-8 lg:flex-row lg:items-start'>
         <div className='flex flex-col gap-4 w-full max-w-[850px]'>
           <div className='flex flex-col gap-2'>
-            <h1>Bienvenue sur HelpInvest !</h1>
-            <p className='italic'>
+            <h1 className='text-black-85'>Bienvenue sur HelpInvest !</h1>
+            <p className='italic text-black-75'>
               Votre assistant virtuel pour suivre et optimiser votre
               portefeuille.
             </p>
           </div>
 
-          <div className='text-pretty'>
+          <div className='text-pretty text-black-85'>
             <strong>Avertissement : </strong>Cet outil est un guide d'aide à la
             décision. Il ne remplace pas un conseiller financier. Les marchés
             sont volatils et les performances passées ne garantissent pas les
@@ -48,13 +48,13 @@ function Home() {
           </div>
 
           <div className='flex flex-col gap-2'>
-            <h3>Pourquoi HelpInvest ?</h3>
-            <p className='text-pretty'>
+            <h3 className='text-black-85'>Pourquoi HelpInvest ?</h3>
+            <p className='text-pretty text-black-75'>
               Que vous soyez débutant ou expérimenté, l'application vous offre
               une vue claire de vos investissements, regroupés au même endroit.
               En mettant régulièrement à jour vos données, vous pourrez :
             </p>
-            <ul className='list-disc list-inside pl-2 md:pl-4'>
+            <ul className='list-disc list-inside pl-2 md:pl-4 text-black-75'>
               <li>Visualiser la répartition de votre portefeuille,</li>
               <li>Évaluer sa cohérence avec votre profil de risque,</li>
               <li>Recevoir des recommandations personnalisées.</li>
@@ -62,8 +62,8 @@ function Home() {
           </div>
 
           <div className='flex flex-col gap-2'>
-            <h3>Comment ça fonctionne ?</h3>
-            <ol className='list-decimal list-inside pl-2 md:pl-4'>
+            <h3 className='text-black-85'>Comment ça fonctionne ?</h3>
+            <ol className='list-decimal list-inside pl-2 md:pl-4 text-black-75'>
               <li>
                 <Link
                   to='/inscription'
@@ -96,8 +96,10 @@ function Home() {
           </div>
 
           <div className='flex flex-col gap-2'>
-            <h3>Une structure inspirée de la pyramide de Maslow</h3>
-            <ul className='list-disc list-inside pl-2 md:pl-4'>
+            <h3 className='text-black-85'>
+              Une structure inspirée de la pyramide de Maslow
+            </h3>
+            <ul className='list-disc list-inside pl-2 md:pl-4 text-black-75'>
               <li>
                 <strong>Épargne : </strong>Sécurisez votre liquidité.
               </li>
@@ -115,7 +117,7 @@ function Home() {
             </ul>
           </div>
 
-          <p>
+          <p className='text-black-75'>
             Inscrivez-vous dès maintenant pour prendre le contrôle de votre
             avenir financier !
           </p>
@@ -128,7 +130,7 @@ function Home() {
             className='w-full origin-top'
           />
           <div className='items-end'>
-            <p className='text-caption px-2 py-1 text-end'>
+            <p className='text-caption px-2 py-1 text-end text-black-50'>
               Illustration : Guillaume Simonin - La pyramide du patrimoine.
               <br />
               Le guide visuel d'éducation financière, Maxima 2024.
@@ -139,7 +141,7 @@ function Home() {
         </div>
       </div>
     </Layout>
-  )
+  );
 }
 
-export default Home
+export default Home;

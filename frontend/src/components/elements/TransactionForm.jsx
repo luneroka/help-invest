@@ -250,7 +250,7 @@ export default function TransactionForm({
         <div className='flex flex-col gap-2'>
           <label
             htmlFor={`category-${actionType}`}
-            className='block text-small'
+            className='block text-small text-black-75'
           >
             Catégorie
           </label>
@@ -259,22 +259,22 @@ export default function TransactionForm({
             id={`category-${actionType}`}
             value={formData.categoryName}
             onChange={handleChange}
-            className='input-field input-field:focus w-full'
+            className='input-field input-field:focus w-full text-black-85'
             disabled={isLoading || loadingCategories}
           >
-            <option value='' disabled>
+            <option value='' disabled className='text-black-50'>
               {loadingCategories
                 ? 'Chargement...'
                 : 'Sélectionner une catégorie'}
             </option>
             {uniqueCategories.map((category) => (
-              <option key={category} value={category}>
+              <option key={category} value={category} className='text-black-85'>
                 {category}
               </option>
             ))}
           </select>
           {errors.categoryName && (
-            <span className='text-small text-red-500'>
+            <span className='text-small text-alerts-error'>
               {errors.categoryName}
             </span>
           )}
@@ -284,7 +284,7 @@ export default function TransactionForm({
         <div className='flex flex-col gap-2'>
           <label
             htmlFor={`subcategory-${actionType}`}
-            className='block text-small'
+            className='block text-small text-black-75'
           >
             Compte
           </label>
@@ -293,14 +293,18 @@ export default function TransactionForm({
             id={`subcategory-${actionType}`}
             value={formData.subCategory}
             onChange={handleChange}
-            className='input-field input-field:focus w-full'
+            className='input-field input-field:focus w-full text-black-85'
             disabled={isLoading || !formData.categoryName}
           >
-            <option value='' disabled>
+            <option value='' disabled className='text-black-50'>
               Sélectionner un compte
             </option>
             {subCategories.map((cat) => (
-              <option key={cat.sub_category} value={cat.sub_category}>
+              <option
+                key={cat.sub_category}
+                value={cat.sub_category}
+                className='text-black-85'
+              >
                 {cat.sub_category}
                 {actionType === 'withdraw' &&
                   cat.balance &&
@@ -309,7 +313,7 @@ export default function TransactionForm({
             ))}
           </select>
           {errors.subCategory && (
-            <span className='text-small text-red-500'>
+            <span className='text-small text-alerts-error'>
               {errors.subCategory}
             </span>
           )}
@@ -317,7 +321,10 @@ export default function TransactionForm({
 
         {/* Amount Input */}
         <div className='flex flex-col gap-2'>
-          <label htmlFor={`amount-${actionType}`} className='block text-small'>
+          <label
+            htmlFor={`amount-${actionType}`}
+            className='block text-small text-black-75'
+          >
             Montant (€)
           </label>
           <input
@@ -327,11 +334,13 @@ export default function TransactionForm({
             value={formData.displayAmount}
             onChange={handleAmountChange}
             placeholder='0'
-            className='input-field input-field:focus w-full'
+            className='input-field input-field:focus w-full placeholder:text-black-50 text-black-85'
             disabled={isLoading}
           />
           {errors.amount && (
-            <span className='text-small text-red-500'>{errors.amount}</span>
+            <span className='text-small text-alerts-error'>
+              {errors.amount}
+            </span>
           )}
         </div>
 

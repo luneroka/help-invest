@@ -85,11 +85,13 @@ function Login() {
           {/* Form */}
           <form onSubmit={handleSubmit} className='flex flex-col gap-8'>
             {/* Error display */}
-            {error && <div className='text-red-500 text-sm mb-4'>{error}</div>}
+            {error && (
+              <div className='text-alerts-error text-sm mb-4'>{error}</div>
+            )}
 
             {/* Email Input */}
             <div className='flex flex-col gap-2'>
-              <label htmlFor='email' className='block text-small'>
+              <label htmlFor='email' className='block text-black-75 text-small'>
                 Adresse email
               </label>
               <input
@@ -97,7 +99,7 @@ function Login() {
                 name='email'
                 id='email'
                 placeholder='Adresse email'
-                className='input-field input-field:focus w-full'
+                className='input-field input-field:focus w-full placeholder:text-black-50 text-black-85'
                 autoComplete='email'
                 value={formData.email}
                 onChange={handleInputChange}
@@ -107,7 +109,10 @@ function Login() {
 
             {/* Password Input */}
             <div className='flex flex-col gap-2'>
-              <label htmlFor='password' className='block text-small'>
+              <label
+                htmlFor='password'
+                className='block text-black-75 text-small'
+              >
                 Mot de passe
               </label>
               <div className='relative w-[100%]'>
@@ -116,7 +121,7 @@ function Login() {
                   name='password'
                   id='password'
                   placeholder='Mot de passe'
-                  className='input-field w-full'
+                  className='input-field w-full placeholder:text-black-50 text-black-85'
                   autoComplete='current-password'
                   value={formData.password}
                   onChange={handleInputChange}
@@ -127,7 +132,7 @@ function Login() {
                   <button
                     type='button'
                     onClick={handleTogglePasswordView}
-                    className='cursor-pointer absolute right-3 inset-y-0 my-auto text-caption'
+                    className='cursor-pointer absolute right-3 inset-y-0 my-auto text-black-50'
                   >
                     <FaEyeSlash />
                   </button>
@@ -135,7 +140,7 @@ function Login() {
                   <button
                     type='button'
                     onClick={handleTogglePasswordView}
-                    className='cursor-pointer absolute right-3 inset-y-0 my-auto text-caption'
+                    className='cursor-pointer absolute right-3 inset-y-0 my-auto text-black-50'
                   >
                     <FaEye />
                   </button>
@@ -153,10 +158,10 @@ function Login() {
             </button>
           </form>
 
-          <hr className='border-gray-300' />
+          <hr className='border-black-25' />
 
           {/* Redirect To Register */}
-          <p className='text-small'>
+          <p className='text-black-75 text-small'>
             Pas encore de compte ?{' '}
             <span className='link-default underline link-default:hover'>
               <Link to='/inscription'>Inscrivez-vous ici</Link>

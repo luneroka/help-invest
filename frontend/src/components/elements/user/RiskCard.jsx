@@ -82,8 +82,10 @@ function RiskCard() {
       <h2 className='text-center'>Profil de Risque</h2>
       <div className='card h-full'>
         <div className='flex flex-col gap-4'>
-          <p className='text-center'>Votre profil de risque actuel :</p>
-          <p className='text-data text-center'>
+          <p className='text-center text-black-75'>
+            Votre profil de risque actuel :
+          </p>
+          <p className='text-data text-center text-black-85'>
             {currentRiskProfile
               ? currentRiskProfile.toUpperCase()
               : 'CHARGEMENT...'}
@@ -96,26 +98,30 @@ function RiskCard() {
         >
           {/* Risk profile error display */}
           {riskError && (
-            <div className='text-red-500 text-sm mb-4'>{riskError}</div>
+            <div className='text-alerts-error text-sm mb-4'>{riskError}</div>
           )}
 
           <div className='flex flex-col gap-4'>
-            <label htmlFor='risk-profile' className='text-center'>
+            <label htmlFor='risk-profile' className='text-center text-black-75'>
               Modifiez votre profil de risque :
             </label>
             <select
               name='riskProfile'
               id='risk-profile'
-              className='input-field input-field:focus w-full text-center'
+              className='input-field input-field:focus w-full text-center text-black-85'
               value={riskProfile}
               onChange={handleRiskProfileChange}
               required
             >
-              <option value='' disabled>
+              <option value='' disabled className='text-black-50'>
                 Sélectionner une option
               </option>
               {profiles.map((profile) => (
-                <option key={`${profile}-key`} value={profile}>
+                <option
+                  key={`${profile}-key`}
+                  value={profile}
+                  className='text-black-85'
+                >
                   {profile.toUpperCase()}
                 </option>
               ))}

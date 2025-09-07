@@ -18,9 +18,9 @@ function CategoryGraph({
 }) {
   if (displayTotalCategory === 0) {
     return (
-      <div className='bg-white shadow-lg overflow-hidden'>
+      <div className='bg-white-100 shadow-lg overflow-hidden'>
         <div className='p-6 text-center'>
-          <span className='text-gray-500'>
+          <span className='text-black-50'>
             Aucune donnée de portefeuille disponible.
           </span>
         </div>
@@ -30,9 +30,9 @@ function CategoryGraph({
 
   if (loading) {
     return (
-      <div className='bg-white shadow-lg overflow-hidden'>
+      <div className='bg-white-100 shadow-lg overflow-hidden'>
         <div className='p-6 text-center'>
-          <span className='text-gray-500'>
+          <span className='text-black-50'>
             Chargement des données du portefeuille...
           </span>
         </div>
@@ -77,7 +77,7 @@ function CategoryGraph({
       {
         data: chartData.map((item) => item.value),
         backgroundColor: colors.slice(0, chartData.length),
-        borderColor: '#ffffff',
+        borderColor: 'transparent',
         borderWidth: 2,
         hoverBackgroundColor: colors
           .slice(0, chartData.length)
@@ -119,10 +119,10 @@ function CategoryGraph({
   };
 
   return (
-    <div className='bg-white shadow-lg overflow-hidden h-full relative'>
+    <div className='bg-white-100 shadow-lg overflow-hidden h-full relative'>
       {error && (
-        <div className='px-4 md:px-6 py-3 bg-yellow-50 border-l-4 border-yellow-400'>
-          <p className='text-sm text-yellow-700'>{error}</p>
+        <div className='px-4 md:px-6 py-3 bg-alerts-warning-light border-l-4 border-alerts-warning'>
+          <p className='text-sm text-alerts-warning-dark'>{error}</p>
         </div>
       )}
       <div className='flex flex-col h-full'>
@@ -144,7 +144,7 @@ function CategoryGraph({
                   className='w-3 h-3 rounded-full flex-shrink-0'
                   style={{ backgroundColor: colors[index] }}
                 />
-                <span className='text-xs md:text-sm text-gray-600'>
+                <span className='text-xs md:text-sm text-black-75'>
                   {item.name}
                 </span>
               </div>
@@ -153,34 +153,34 @@ function CategoryGraph({
         </div>
 
         {/* Footer with view switch */}
-        <div className='px-3 md:px-6 py-3 md:py-4 bg-gray-50 border-t border-gray-200'>
+        <div className='px-3 md:px-6 py-3 md:py-4 bg-white-100 border-t border-black-10'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center gap-4'>
-              <span className='text-xs md:text-sm text-gray-600'>
+              <span className='text-xs md:text-sm text-black-50'>
                 {Object.keys(categorySummary).length} comptes
               </span>
-              <span className='text-xs md:text-sm font-semibold text-gray-800'>
+              <span className='text-xs md:text-sm font-semibold text-black-85'>
                 Total {categoryName} : {displayTotalCategory}
               </span>
             </div>
-            <div className='flex items-center bg-white rounded-md border border-gray-300 overflow-hidden'>
+            <div className='flex items-center bg-white-100 rounded-md border border-black-25 overflow-hidden'>
               <button
                 onClick={() => onViewModeChange && onViewModeChange('table')}
                 className={`px-3 py-1 text-xs md:text-sm font-medium transition-colors duration-200 cursor-pointer ${
                   viewMode === 'table'
                     ? 'bg-theme-primary text-white'
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                    : 'text-black-75 hover:text-black-100 hover:bg-black-5'
                 }`}
               >
                 Table
               </button>
-              <div className='w-px h-4 bg-gray-300'></div>
+              <div className='w-px h-4 bg-black-25'></div>
               <button
                 onClick={() => onViewModeChange && onViewModeChange('graph')}
                 className={`px-3 py-1 text-xs md:text-sm font-medium transition-colors duration-200 cursor-pointer ${
                   viewMode === 'graph'
                     ? 'bg-theme-primary text-white'
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                    : 'text-black-75 hover:text-black-100 hover:bg-black-5'
                 }`}
               >
                 Graph

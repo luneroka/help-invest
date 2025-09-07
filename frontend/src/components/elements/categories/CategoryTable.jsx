@@ -103,9 +103,9 @@ function CategoryTable({
 
   if (displayTotalCategory === 0) {
     return (
-      <div className='bg-white shadow-lg overflow-hidden'>
+      <div className='bg-white-100 shadow-lg overflow-hidden'>
         <div className='p-6 text-center'>
-          <span className='text-gray-500'>
+          <span className='text-black-50'>
             Aucune donnée de portefeuille disponible.
           </span>
         </div>
@@ -115,9 +115,9 @@ function CategoryTable({
 
   if (loading) {
     return (
-      <div className='bg-white shadow-lg overflow-hidden'>
+      <div className='bg-white-100 shadow-lg overflow-hidden'>
         <div className='p-6 text-center'>
-          <span className='text-gray-500'>
+          <span className='text-black-50'>
             Chargement des données du portefeuille...
           </span>
         </div>
@@ -126,14 +126,14 @@ function CategoryTable({
   }
 
   return (
-    <div className='bg-white shadow-lg overflow-hidden'>
+    <div className='shadow-lg overflow-hidden'>
       {error && (
         <div className='px-4 md:px-6 py-3 bg-yellow-50 border-l-4 border-yellow-400'>
           <p className='text-sm text-yellow-700'>{error}</p>
         </div>
       )}
       <div className='overflow-x-auto'>
-        <table className='min-w-full divide-y divide-gray-200 table-fixed'>
+        <table className='min-w-full divide-y divide-black-10 table-fixed'>
           <thead className='bg-theme-primary text-white sticky top-0 z-10'>
             <tr>
               <th className='w-2/5 px-3 md:px-6 py-2 md:py-3 text-left text-xs font-medium uppercase tracking-wider'>
@@ -152,27 +152,27 @@ function CategoryTable({
 
       <div className='overflow-y-auto max-h-[400px] md:max-h-[550px]'>
         <table className='min-w-full table-fixed'>
-          <tbody className='bg-white divide-y divide-gray-200'>
+          <tbody className='divide-y divide-black-10'>
             {categorySummary &&
               Object.entries(categorySummary).map(
                 ([subCategory, amount], index) => (
                   <tr
                     key={subCategory}
-                    className={`hover:bg-gray-50 transition-colors duration-150 ${
-                      index % 2 === 0 ? 'bg-white' : 'bg-gray-25'
+                    className={`hover:bg-black-5 transition-colors duration-150 ${
+                      index % 2 === 0 ? '' : ''
                     }`}
                   >
-                    <td className='w-2/5 px-3 md:px-6 py-2 md:py-4 whitespace-nowrap'>
-                      <span className='text-xs md:text-sm text-gray-900 font-medium truncate block'>
+                    <td className='w-2/5 px-3 md:px-6 py-2 md:py-4 whitespace-nowrap hover:text-black-100'>
+                      <span className='text-xs md:text-sm font-medium truncate block text-black-85'>
                         {subCategory}
                       </span>
                     </td>
-                    <td className='w-2/5 px-3 md:px-6 py-2 md:py-4 whitespace-nowrap text-right'>
-                      <span className='text-xs md:text-sm font-medium text-gray-900'>
+                    <td className='w-2/5 px-3 md:px-6 py-2 md:py-4 whitespace-nowrap text-right hover:text-black-100'>
+                      <span className='text-xs md:text-sm font-medium text-black-85'>
                         {formatAmount(amount)}
                       </span>
                     </td>
-                    <td className='w-1/5 px-3 md:px-6 py-2 md:py-4 whitespace-nowrap'>
+                    <td className='w-1/5 px-3 md:px-6 py-2 md:py-4 whitespace-nowrap hover:text-black-100'>
                       {activeInput &&
                       activeInput.subCategory === subCategory ? (
                         <form
@@ -190,7 +190,7 @@ function CategoryTable({
                               onBlur={handleInputCancel}
                               placeholder='Montant'
                               disabled={isSubmitting}
-                              className={`flex-1 px-2 py-1 text-xs border rounded ${
+                              className={`flex-1 px-2 py-1 text-xs border rounded bg-white-100 text-black-85 ${
                                 activeInput.type === 'add'
                                   ? 'border-alerts-success focus:ring-alerts-success'
                                   : 'border-alerts-error focus:ring-alerts-error'
@@ -278,35 +278,35 @@ function CategoryTable({
         </table>
       </div>
 
-      <div className='px-3 md:px-6 py-3 md:py-4 bg-gray-50 border-t border-gray-200'>
+      <div className='px-3 md:px-6 py-3 md:py-4 bg-theme-bg-main main border-t border-black-10'>
         <div className='flex items-center justify-between'>
           <div className='flex items-center gap-4'>
-            <span className='text-xs md:text-sm text-gray-600'>
+            <span className='text-xs md:text-sm text-black-50'>
               {categorySummary ? Object.keys(categorySummary).length : 0}{' '}
               comptes
             </span>
-            <span className='text-xs md:text-sm font-semibold text-gray-800'>
+            <span className='text-xs md:text-sm font-semibold text-black-85'>
               Total {categoryName} : {displayTotalCategory}
             </span>
           </div>
-          <div className='flex items-center bg-white rounded-md border border-gray-300 overflow-hidden'>
+          <div className='flex items-center bg-white-100 rounded-md border border-black-25 overflow-hidden'>
             <button
               onClick={() => onViewModeChange && onViewModeChange('table')}
               className={`px-3 py-1 text-xs md:text-sm font-medium transition-colors duration-200 cursor-pointer ${
                 viewMode === 'table'
                   ? 'bg-theme-primary text-white'
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                  : 'text-black-75 hover:text-black-100 hover:bg-black-5'
               }`}
             >
               Table
             </button>
-            <div className='w-px h-4 bg-gray-300'></div>
+            <div className='w-px h-4 bg-black-25'></div>
             <button
               onClick={() => onViewModeChange && onViewModeChange('graph')}
               className={`px-3 py-1 text-xs md:text-sm font-medium transition-colors duration-200 cursor-pointer ${
                 viewMode === 'graph'
                   ? 'bg-theme-primary text-white'
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                  : 'text-black-75 hover:text-black-100 hover:bg-black-5'
               }`}
             >
               Graph

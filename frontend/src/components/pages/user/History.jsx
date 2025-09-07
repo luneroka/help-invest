@@ -103,8 +103,8 @@ function History() {
       <Layout header={<MainHeader />}>
         <h2>Historique des opérations</h2>
         <div className='flex flex-col items-center justify-center min-h-64'>
-          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600'></div>
-          <p className='mt-4 text-gray-600'>Chargement des opérations...</p>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-theme-primary'></div>
+          <p className='mt-4 text-black-50'>Chargement des opérations...</p>
         </div>
       </Layout>
     );
@@ -114,7 +114,7 @@ function History() {
     return (
       <Layout header={<MainHeader />}>
         <div className='flex flex-col items-center justify-center min-h-64'>
-          <div className='text-red-600 text-center'>
+          <div className='text-alerts-error text-center'>
             <p className='text-lg font-semibold'>Erreur</p>
             <p>{error}</p>
           </div>
@@ -132,8 +132,8 @@ function History() {
         <div
           className={`mb-4 p-3 md:p-4 rounded-lg ${
             message.type === 'success'
-              ? 'bg-green-50 border border-green-200 text-green-800'
-              : 'bg-red-50 border border-red-200 text-red-800'
+              ? 'bg-alerts-success-light border border-alerts-success text-alerts-success-dark'
+              : 'bg-alerts-error-light border border-alerts-error text-alerts-error-dark'
           }`}
         >
           <p className='text-sm md:text-base'>{message.text}</p>
@@ -143,10 +143,10 @@ function History() {
       <div className=''>
         {transactions.length === 0 ? (
           <div className='text-center py-8 md:py-12'>
-            <p className='text-gray-600 text-base md:text-lg'>
+            <p className='text-black-50 text-base md:text-lg'>
               Aucune opération trouvée
             </p>
-            <p className='text-gray-500 mt-2 text-sm md:text-base'>
+            <p className='text-black-25 mt-2 text-sm md:text-base'>
               Vos futures opérations apparaîtront ici
             </p>
           </div>
@@ -155,20 +155,20 @@ function History() {
             <div className='overflow-x-auto'>
               <table className='w-full min-w-[600px]'>
                 <thead>
-                  <tr className='border-b border-gray-200'>
-                    <th className='text-left py-2 md:py-3 px-2 md:px-4 font-semibold text-xs md:text-sm'>
+                  <tr className='border-b border-black-10'>
+                    <th className='text-left py-2 md:py-3 px-2 md:px-4 font-semibold text-xs md:text-sm text-black-75'>
                       Catégorie
                     </th>
-                    <th className='text-left py-2 md:py-3 px-2 md:px-4 font-semibold text-xs md:text-sm'>
+                    <th className='text-left py-2 md:py-3 px-2 md:px-4 font-semibold text-xs md:text-sm text-black-75'>
                       Compte
                     </th>
-                    <th className='text-left py-2 md:py-3 px-2 md:px-4 font-semibold text-xs md:text-sm'>
+                    <th className='text-left py-2 md:py-3 px-2 md:px-4 font-semibold text-xs md:text-sm text-black-75'>
                       Montant
                     </th>
-                    <th className='text-left py-2 md:py-3 px-2 md:px-4 font-semibold text-xs md:text-sm'>
+                    <th className='text-left py-2 md:py-3 px-2 md:px-4 font-semibold text-xs md:text-sm text-black-75'>
                       Date
                     </th>
-                    <th className='text-center py-2 md:py-3 px-2 md:px-4 font-semibold text-xs md:text-sm'>
+                    <th className='text-center py-2 md:py-3 px-2 md:px-4 font-semibold text-xs md:text-sm text-black-75'>
                       Action
                     </th>
                   </tr>
@@ -177,14 +177,14 @@ function History() {
                   {transactions.map((transaction) => (
                     <tr
                       key={transaction.id}
-                      className='border-b border-gray-100 hover:bg-gray-50'
+                      className='border-b border-black-5 hover:bg-black-5'
                     >
-                      <td className='py-2 md:py-3 px-2 md:px-4 text-xs md:text-sm'>
+                      <td className='py-2 md:py-3 px-2 md:px-4 text-xs md:text-sm text-black-85'>
                         <span className='block truncate max-w-[120px] md:max-w-none'>
                           {transaction.category_name}
                         </span>
                       </td>
-                      <td className='py-2 md:py-3 px-2 md:px-4 text-xs md:text-sm'>
+                      <td className='py-2 md:py-3 px-2 md:px-4 text-xs md:text-sm text-black-85'>
                         <span className='block truncate max-w-[120px] md:max-w-none'>
                           {transaction.sub_category_name}
                         </span>
@@ -196,7 +196,7 @@ function History() {
                           {formatAmount(transaction.amount)}
                         </span>
                       </td>
-                      <td className='py-2 md:py-3 px-2 md:px-4 text-xs md:text-sm'>
+                      <td className='py-2 md:py-3 px-2 md:px-4 text-xs md:text-sm text-black-85'>
                         <span className='block truncate'>
                           {new Date(transaction.timestamp).toLocaleDateString(
                             'fr-FR',
@@ -210,7 +210,7 @@ function History() {
                       </td>
                       <td className='py-2 md:py-3 px-2 md:px-4 text-center'>
                         <button
-                          className='text-alerts-error hover:text-red-800 transition-colors cursor-pointer p-1 md:p-2'
+                          className='text-alerts-error hover:text-alerts-error-dark transition-colors cursor-pointer p-1 md:p-2'
                           onClick={() =>
                             handleDeleteTransaction(transaction.id)
                           }
@@ -228,7 +228,7 @@ function History() {
             {/* Transaction Count */}
             {transactions.length > 0 && (
               <div className='mt-3 md:mt-4 text-center'>
-                <p className='text-xs md:text-sm text-gray-600'>
+                <p className='text-xs md:text-sm text-black-50'>
                   {pagination.total || transactions.length} opération
                   {(pagination.total || transactions.length) > 1
                     ? 's'
@@ -248,19 +248,19 @@ function History() {
           <button
             disabled={!pagination.has_prev}
             onClick={() => fetchTransactions(currentPage - 1)}
-            className='w-full sm:w-auto px-4 py-2 text-sm md:text-base bg-theme-primary text-white rounded disabled:bg-gray-500 disabled:cursor-not-allowed hover:bg-theme-accent transition-colors cursor-pointer'
+            className='w-full sm:w-auto px-4 py-2 text-sm md:text-base bg-theme-primary text-white-100 rounded disabled:bg-black-25 disabled:cursor-not-allowed hover:bg-theme-accent transition-colors cursor-pointer'
           >
             Précédent
           </button>
 
-          <span className='text-xs md:text-sm text-gray-600 order-first sm:order-none'>
+          <span className='text-xs md:text-sm text-black-50 order-first sm:order-none'>
             Page {pagination.page || 1} sur {pagination.pages || 1}
           </span>
 
           <button
             disabled={!pagination.has_next}
             onClick={() => fetchTransactions(currentPage + 1)}
-            className='w-full sm:w-auto px-4 py-2 text-sm md:text-base bg-theme-primary text-white rounded disabled:bg-gray-500 disabled:cursor-not-allowed hover:bg-theme-accent transition-colors cursor-pointer'
+            className='w-full sm:w-auto px-4 py-2 text-sm md:text-base bg-theme-primary text-white-100 rounded disabled:bg-black-25 disabled:cursor-not-allowed hover:bg-theme-accent transition-colors cursor-pointer'
           >
             Suivant
           </button>

@@ -45,7 +45,7 @@ function DashGraph({ portfolioSummary, loading, error }) {
       {
         data: chartData.map((item) => item.value),
         backgroundColor: colors,
-        borderColor: '#ffffff',
+        borderColor: 'transparent',
         borderWidth: 2,
         hoverBackgroundColor: colors.map((color) => color + 'CC'),
         hoverBorderWidth: 3,
@@ -74,11 +74,11 @@ function DashGraph({ portfolioSummary, loading, error }) {
         color: 'white',
         font: {
           weight: 'bold',
-          size: 18,
+          size: 14,
         },
         formatter: (value) => {
           const percentage = ((value / totalPortfolio) * 100).toFixed(0);
-          return `${percentage}%`;
+          return percentage > 5 ? `${percentage}%` : ''; // Only show percentage if > 5%
         },
       },
     },
@@ -86,9 +86,9 @@ function DashGraph({ portfolioSummary, loading, error }) {
 
   if (loading) {
     return (
-      <div className='bg-white shadow-lg overflow-hidden'>
+      <div className='bg-white-100 shadow-lg overflow-hidden'>
         <div className='p-6 text-center'>
-          <span className='text-gray-500'>
+          <span className='text-black-50'>
             Chargement des données du portefeuille...
           </span>
         </div>
@@ -97,7 +97,7 @@ function DashGraph({ portfolioSummary, loading, error }) {
   }
 
   return (
-    <div className='bg-white shadow-lg overflow-hidden h-full relative'>
+    <div className='bg-white-100 shadow-lg overflow-hidden h-full relative'>
       {error && (
         <div className='px-4 md:px-6 py-3 bg-yellow-50 border-l-4 border-yellow-400'>
           <p className='text-sm text-yellow-700'>{error}</p>
@@ -107,7 +107,7 @@ function DashGraph({ portfolioSummary, loading, error }) {
         {/* Pie Chart */}
         <div
           className='flex-shrink-0 w-full h-100'
-          style={{ minHeight: '300px', maxHeight: '550px' }}
+          style={{ minHeight: '300px', maxHeight: '400px' }}
         >
           <Pie data={data} options={options} />
         </div>
@@ -120,7 +120,7 @@ function DashGraph({ portfolioSummary, loading, error }) {
                 className='w-3 h-3 rounded-full flex-shrink-0'
                 style={{ backgroundColor: colors[index] }}
               />
-              <span className='text-sm md:text-body text-gray-600'>
+              <span className='text-sm md:text-body text-black-75'>
                 {item.name}
               </span>
             </div>

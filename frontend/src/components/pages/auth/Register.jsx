@@ -103,11 +103,13 @@ function Register() {
           {/* Form */}
           <form onSubmit={handleSubmit} className='flex flex-col gap-8'>
             {/* Error display */}
-            {error && <div className='text-red-500 text-sm mb-4'>{error}</div>}
+            {error && (
+              <div className='text-alerts-error text-sm mb-4'>{error}</div>
+            )}
 
             {/* Email Input */}
             <div className='flex flex-col gap-2'>
-              <label htmlFor='email' className='block text-small'>
+              <label htmlFor='email' className='block text-black-75 text-small'>
                 Adresse email
               </label>
               <input
@@ -115,7 +117,7 @@ function Register() {
                 name='email'
                 id='email'
                 placeholder='Adresse email'
-                className='input-field input-field:focus w-full'
+                className='input-field input-field:focus w-full placeholder:text-black-50 text-black-85'
                 autoComplete='email'
                 value={formData.email}
                 onChange={handleInputChange}
@@ -125,7 +127,10 @@ function Register() {
 
             {/* Passwords */}
             <div className='flex flex-col gap-4 sm:gap-2'>
-              <label htmlFor='password' className='block text-small'>
+              <label
+                htmlFor='password'
+                className='block text-black-75 text-small'
+              >
                 Mot de passe
               </label>
 
@@ -136,7 +141,7 @@ function Register() {
                   name='password'
                   id='password'
                   placeholder='Mot de passe'
-                  className='input-field w-full'
+                  className='input-field w-full placeholder:text-black-50 text-black-85'
                   autoComplete='new-password'
                   value={formData.password}
                   onChange={handleInputChange}
@@ -145,7 +150,7 @@ function Register() {
                 <button
                   type='button'
                   onClick={() => togglePasswordVisibility()}
-                  className='cursor-pointer absolute right-3 inset-y-0 my-auto text-caption'
+                  className='cursor-pointer absolute right-3 inset-y-0 my-auto text-black-50'
                 >
                   {passwordVisibility ? <FaEyeSlash /> : <FaEye />}
                 </button>
@@ -158,7 +163,7 @@ function Register() {
                   name='confirmation'
                   id='confirmation'
                   placeholder='Confirmer le mot de passe'
-                  className='input-field w-full'
+                  className='input-field w-full placeholder:text-black-50 text-black-85'
                   autoComplete='new-password'
                   value={formData.confirmation}
                   onChange={handleInputChange}
@@ -167,7 +172,7 @@ function Register() {
                 <button
                   type='button'
                   onClick={() => toggleConfirmationPasswordVisibility()}
-                  className='cursor-pointer absolute right-3 inset-y-0 my-auto text-caption'
+                  className='cursor-pointer absolute right-3 inset-y-0 my-auto text-black-50'
                 >
                   {confirmationPasswordVisibility ? <FaEyeSlash /> : <FaEye />}
                 </button>
@@ -199,10 +204,10 @@ function Register() {
             </button>
           </form>
 
-          <hr className='border-gray-300' />
+          <hr className='border-black-25' />
 
           {/* Redirect To Login */}
-          <p className='text-small'>
+          <p className='text-black-75 text-small'>
             Déjà inscrit ?{' '}
             <span className='link-default underline link-default:hover'>
               <Link to='/connexion'>Connectez-vous</Link>
