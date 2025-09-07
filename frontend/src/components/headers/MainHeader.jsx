@@ -5,6 +5,8 @@ import { getAuth, signOut } from 'firebase/auth';
 import { RiBankFill, RiAddBoxFill } from 'react-icons/ri';
 import { FaHistory, FaUser } from 'react-icons/fa';
 import { IoLogOut } from 'react-icons/io5';
+import ThemeSwitcher from '../../components/ThemeSwitcher';
+import HelpInvestLogo from '../HelpInvestLogo';
 
 function MainHeader() {
   const navigate = useNavigate();
@@ -34,11 +36,7 @@ function MainHeader() {
         <div className='flex gap-4 items-center '>
           <div className='hidden lg:flex'>
             <Link to='/'>
-              <img
-                src='../../public/help!nvest_logo.png'
-                alt='HelpInvest'
-                className='h-6'
-              />
+              <HelpInvestLogo />
             </Link>
           </div>
           <Link to='/dashboard'>
@@ -66,6 +64,11 @@ function MainHeader() {
           <Link to='/autres'>
             <p className='nav-link'>Autres</p>
           </Link>
+        </div>
+
+        {/* Theme switcher */}
+        <div className='text-theme-accent text-small border border-theme-accent rounded focus:outline-none p-1'>
+          <ThemeSwitcher />
         </div>
 
         {/* Desktop Right Menu */}
