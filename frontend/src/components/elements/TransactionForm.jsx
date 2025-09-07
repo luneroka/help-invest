@@ -1,178 +1,178 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { formatNumber } from '../../utils/helpers'
-import { authorizedRequest } from '../../utils/authorizedRequest'
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { formatNumber } from '../../utils/helpers';
+import { authorizedRequest } from '../../utils/authorizedRequest';
 
 export default function TransactionForm({
   title,
   actionType,
   onSubmit,
-  isLoading
+  isLoading,
 }) {
   const [formData, setFormData] = useState({
     amount: '',
     displayAmount: '',
     categoryName: '',
-    subCategory: ''
-  })
+    subCategory: '',
+  });
 
-  const [errors, setErrors] = useState({})
-  const [categories, setCategories] = useState([])
-  const [subCategories, setSubCategories] = useState([])
+  const [errors, setErrors] = useState({});
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
   // eslint-disable-next-line no-unused-vars
-  const [availableBalances, setAvailableBalances] = useState({})
-  const [loadingCategories, setLoadingCategories] = useState(false)
-  const navigate = useNavigate()
+  const [availableBalances, setAvailableBalances] = useState({});
+  const [loadingCategories, setLoadingCategories] = useState(false);
+  const navigate = useNavigate();
 
   // Fetch categories and portfolio data on component mount
   useEffect(() => {
-    fetchCategories()
+    fetchCategories();
     if (actionType === 'withdraw') {
-      fetchPortfolioBalances()
+      fetchPortfolioBalances();
     }
-  }, [actionType])
+  }, [actionType]);
 
   const fetchCategories = async () => {
-    setLoadingCategories(true)
+    setLoadingCategories(true);
     try {
       const endpoint =
         actionType === 'withdraw'
           ? `${import.meta.env.VITE_API_BASE_URL}/api/withdraw`
-          : `${import.meta.env.VITE_API_BASE_URL}/api/invest`
+          : `${import.meta.env.VITE_API_BASE_URL}/api/invest`;
 
       const response = await authorizedRequest({
         method: 'get',
-        url: endpoint
-      })
+        url: endpoint,
+      });
 
       if (response.data.success) {
         if (actionType === 'withdraw') {
           // For withdrawals, use withdraw_categories data
-          setCategories(response.data.withdraw_categories || [])
+          setCategories(response.data.withdraw_categories || []);
         } else {
           // For deposits, use all_categories data
-          setCategories(response.data.all_categories || [])
+          setCategories(response.data.all_categories || []);
         }
       }
     } catch (error) {
-      console.error('Error fetching categories:', error)
+      console.error('Error fetching categories:', error);
       if (error.response?.status === 401) {
-        navigate('/connexion')
+        navigate('/connexion');
       }
-      setCategories([])
+      setCategories([]);
     } finally {
-      setLoadingCategories(false)
+      setLoadingCategories(false);
     }
-  }
+  };
 
   const fetchPortfolioBalances = async () => {
     try {
       const response = await authorizedRequest({
         method: 'get',
-        url: `${import.meta.env.VITE_API_BASE_URL}/api/dashboard`
-      })
+        url: `${import.meta.env.VITE_API_BASE_URL}/api/dashboard`,
+      });
 
       if (response.data.success) {
-        const portfolioSummary = response.data.portfolio_summary || {}
-        const balances = {}
+        const portfolioSummary = response.data.portfolio_summary || {};
+        const balances = {};
 
         // Convert portfolio summary to balance lookup
         Object.entries(portfolioSummary).forEach(([category, data]) => {
           Object.entries(data.sub_categories).forEach(
             ([subCategory, amount]) => {
-              balances[`${category}-${subCategory}`] = amount
+              balances[`${category}-${subCategory}`] = amount;
             }
-          )
-        })
+          );
+        });
 
-        setAvailableBalances(balances)
+        setAvailableBalances(balances);
       }
     } catch (error) {
-      console.error('Error fetching portfolio balances:', error)
+      console.error('Error fetching portfolio balances:', error);
       if (error.response?.status === 401) {
-        navigate('/connexion')
+        navigate('/connexion');
       }
     }
-  }
+  };
 
   const handleAmountChange = (e) => {
-    const inputValue = e.target.value
+    const inputValue = e.target.value;
     // Remove all non-digit characters
-    const numericValue = inputValue.replace(/\D/g, '')
+    const numericValue = inputValue.replace(/\D/g, '');
 
     // Update both raw and formatted values
     setFormData((prev) => ({
       ...prev,
       amount: numericValue,
-      displayAmount: numericValue ? formatNumber(parseInt(numericValue)) : ''
-    }))
+      displayAmount: numericValue ? formatNumber(parseInt(numericValue)) : '',
+    }));
 
     // Clear error when user starts typing
     if (errors.amount) {
       setErrors((prev) => ({
         ...prev,
-        amount: ''
-      }))
+        amount: '',
+      }));
     }
-  }
+  };
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
 
     // Handle amount separately
     if (name === 'amount') {
-      handleAmountChange(e)
-      return
+      handleAmountChange(e);
+      return;
     }
 
     setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }))
+      [name]: value,
+    }));
 
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
-        [name]: ''
-      }))
+        [name]: '',
+      }));
     }
 
     // Update subcategories when category changes
     if (name === 'categoryName') {
       const filteredSubCategories = categories.filter((cat) => {
         if (actionType === 'withdraw') {
-          return cat.category === value
+          return cat.category === value;
         } else {
-          return cat.name === value || cat.category_name === value
+          return cat.name === value || cat.category_name === value;
         }
-      })
-      setSubCategories(filteredSubCategories)
+      });
+      setSubCategories(filteredSubCategories);
       setFormData((prev) => ({
         ...prev,
-        subCategory: '' // Reset subcategory when category changes
-      }))
+        subCategory: '', // Reset subcategory when category changes
+      }));
     }
-  }
+  };
 
   const validateForm = () => {
-    const newErrors = {}
+    const newErrors = {};
 
     if (!formData.amount || formData.amount <= 0) {
-      newErrors.amount = 'Veuillez entrer un montant valide'
+      newErrors.amount = 'Veuillez entrer un montant valide';
     }
 
     // Check if amount is a whole number
     if (formData.amount && !Number.isInteger(parseFloat(formData.amount))) {
-      newErrors.amount = 'Veuillez entrer un montant entier (sans décimales)'
+      newErrors.amount = 'Veuillez entrer un montant entier (sans décimales)';
     }
 
     if (!formData.categoryName) {
-      newErrors.categoryName = 'Veuillez sélectionner une catégorie'
+      newErrors.categoryName = 'Veuillez sélectionner une catégorie';
     }
 
     if (!formData.subCategory) {
-      newErrors.subCategory = 'Veuillez sélectionner un compte'
+      newErrors.subCategory = 'Veuillez sélectionner un compte';
     }
 
     // Additional validation for withdrawals - use the balance from the categories data
@@ -187,26 +187,26 @@ export default function TransactionForm({
         (cat) =>
           cat.category === formData.categoryName &&
           cat.sub_category === formData.subCategory
-      )
+      );
 
       if (selectedCategory) {
-        const availableBalance = selectedCategory.balance || 0
+        const availableBalance = selectedCategory.balance || 0;
         if (parseFloat(formData.amount) > availableBalance) {
-          newErrors.amount = `Solde insuffisant (disponible: ${formatNumber(availableBalance)}€)`
+          newErrors.amount = `Solde insuffisant (disponible: ${formatNumber(availableBalance)}€)`;
         }
       }
     }
 
-    return newErrors
-  }
+    return newErrors;
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    const validationErrors = validateForm()
+    const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors)
-      return
+      setErrors(validationErrors);
+      return;
     }
 
     // Pass form data with correct field names for API
@@ -214,36 +214,24 @@ export default function TransactionForm({
       actionType,
       category: formData.categoryName, // Map to 'category' for API
       subCategory: formData.subCategory, // Keep as 'subCategory' for API
-      amount: parseInt(formData.amount)
-    })
-  }
+      amount: parseInt(formData.amount),
+    });
+  };
 
-  const isWithdraw = actionType === 'withdraw'
+  const isWithdraw = actionType === 'withdraw';
 
   // Get unique categories from the API response
   const uniqueCategories = [
     ...new Set(
       categories.map((cat) => {
         if (actionType === 'withdraw') {
-          return cat.category
+          return cat.category;
         } else {
-          return cat.name || cat.category_name
+          return cat.name || cat.category_name;
         }
       })
-    )
-  ]
-
-  const currentBalance =
-    isWithdraw && formData.categoryName && formData.subCategory
-      ? (() => {
-          const selectedCategory = categories.find(
-            (cat) =>
-              cat.category === formData.categoryName &&
-              cat.sub_category === formData.subCategory
-          )
-          return selectedCategory ? selectedCategory.balance : null
-        })()
-      : null
+    ),
+  ];
 
   return (
     <div className='card'>
@@ -327,20 +315,6 @@ export default function TransactionForm({
           )}
         </div>
 
-        {/* Current Balance Display (for withdrawals) */}
-        {isWithdraw &&
-          currentBalance !== null &&
-          currentBalance !== undefined && (
-            <div className='p-3 bg-gray-100'>
-              <span className='text-small text-gray-600'>
-                Solde disponible :{' '}
-                <span className='font-medium text-data'>
-                  {formatNumber(currentBalance)}€
-                </span>
-              </span>
-            </div>
-          )}
-
         {/* Amount Input */}
         <div className='flex flex-col gap-2'>
           <label htmlFor={`amount-${actionType}`} className='block text-small'>
@@ -371,5 +345,5 @@ export default function TransactionForm({
         </button>
       </form>
     </div>
-  )
+  );
 }
