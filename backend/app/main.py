@@ -57,7 +57,7 @@ def index():
         "description": "Authentication is handled by Firebase on the frontend. All protected routes require Authorization header with Firebase ID token.",
         "endpoints": {
             "user": ["/api/sync-user", "/api/risk-profile"],
-            "portfolio": ["/api/dashboard", "/api/epargne", "/api/immo", "/api/actions", "/api/autres" "/api/invest", "/api/withdraw", "/api/history"],
+            "portfolio": ["/api/dashboard", "/api/epargne", "/api/immo", "/api/actions", "/api/autres", "/api/invest", "/api/withdraw", "/api/history"],
             "account": ["/api/delete-entry", "/api/delete-account"]
         }
     })
@@ -167,13 +167,9 @@ def dashboard(firebase_uid, user_email):
                 "message": "Utilisateur non trouvé. Veuillez vous reconnecter."
             }), 404
 
-        # Query user balances
+        # Query user balances using ORM objects to properly decrypt
         portfolio_data = (
-            db.session.query(
-                Portfolios.balance,
-                Categories.category_name,
-                Categories.sub_category
-            )
+            db.session.query(Portfolios, Categories)
             .join(Categories, Portfolios.category_id == Categories.id)
             .filter(Portfolios.user_id == user.id)
             .all()
@@ -183,7 +179,11 @@ def dashboard(firebase_uid, user_email):
         total_estate = 0
         portfolio_summary = {}
 
-        for balance, category_name, sub_category_name in portfolio_data:
+        for portfolio, category in portfolio_data:
+            balance = portfolio.balance  # This will decrypt automatically
+            category_name = category.category_name
+            sub_category_name = category.sub_category
+            
             if balance == 0:
                 continue
 
@@ -438,28 +438,29 @@ def withdraw(firebase_uid, user_email):
     
     # GET request
     try:
+        # GET request - use ORM objects to properly decrypt balances
         withdraw_categories = (
-            db.session.query(
-                Categories.category_name,
-                Categories.sub_category,
-                Portfolios.balance
-            )
+            db.session.query(Categories, Portfolios)
             .join(Portfolios, Categories.id == Portfolios.category_id)
-            .filter(Portfolios.user_id == user.id, Portfolios.balance > 0)
+            .filter(Portfolios.user_id == user.id)
             .all()
         )
 
-        distinct_categories = sorted(
-            set([cat.category_name for cat in withdraw_categories])
-        )
-        withdraw_categories_data = [
-            {
-                "category": entry.category_name,
-                "sub_category": entry.sub_category,
-                "balance": entry.balance,
-            }
-            for entry in withdraw_categories
-        ]
+        # Filter out zero balances and prepare data
+        withdraw_categories_data = []
+        distinct_categories = set()
+        
+        for category, portfolio in withdraw_categories:
+            balance = portfolio.balance  # This will decrypt automatically
+            if balance > 0:
+                withdraw_categories_data.append({
+                    "category": category.category_name,
+                    "sub_category": category.sub_category,
+                    "balance": balance,
+                })
+                distinct_categories.add(category.category_name)
+
+        distinct_categories = sorted(list(distinct_categories))
 
         return jsonify({
             "success": True,

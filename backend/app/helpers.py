@@ -90,16 +90,13 @@ def get_category_data(user_id, category_name):
     from .config import db
     from .models import Categories, Portfolios
     
+    # Use ORM objects to properly decrypt balances
     category_data = (
-        db.session.query(
-            Portfolios.balance,
-            Categories.sub_category
-        )
+        db.session.query(Portfolios, Categories)
         .join(Categories, Portfolios.category_id == Categories.id)
         .filter(
             Portfolios.user_id == user_id,
-            Categories.category_name == category_name,
-            Portfolios.balance > 0
+            Categories.category_name == category_name
         )
         .all()
     )
@@ -107,12 +104,16 @@ def get_category_data(user_id, category_name):
     total_amount = 0
     category_summary = {}
 
-    for balance, sub_category_name in category_data:
-        total_amount += balance
+    for portfolio, category in category_data:
+        balance = portfolio.balance  # This will decrypt automatically
+        sub_category_name = category.sub_category
+        
+        if balance > 0:  # Only include non-zero balances
+            total_amount += balance
 
-        if sub_category_name not in category_summary:
-            category_summary[sub_category_name] = 0
-        category_summary[sub_category_name] += balance
+            if sub_category_name not in category_summary:
+                category_summary[sub_category_name] = 0
+            category_summary[sub_category_name] += balance
 
     return category_summary, total_amount
 

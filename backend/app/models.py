@@ -1,5 +1,6 @@
 from .config import db
 from datetime import datetime
+from .encryption_utils import monetary_crypto
 
 
 class Users(db.Model):
@@ -46,7 +47,18 @@ class Portfolios(db.Model):
     category_id = db.Column(
         db.Integer, db.ForeignKey("categories.id"), primary_key=True
     )
-    balance = db.Column(db.Integer, nullable=False, default=0)
+    balance_encrypted = db.Column(db.Text, nullable=False, default="")
+    
+    # Property to handle encryption/decryption transparently
+    @property
+    def balance(self):
+        if not self.balance_encrypted:
+            return 0.0
+        return monetary_crypto.decrypt_amount(self.balance_encrypted)
+    
+    @balance.setter
+    def balance(self, value: float):
+        self.balance_encrypted = monetary_crypto.encrypt_amount(value)
 
 
 class Transactions(db.Model):
@@ -55,5 +67,14 @@ class Transactions(db.Model):
     category_id = db.Column(
         db.Integer, db.ForeignKey("categories.id"), nullable=False
         )
-    amount = db.Column(db.Integer, nullable=False)
+    amount_encrypted = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
+
+    # Property to handle encryption/decryption transparently
+    @property
+    def amount(self):
+        return monetary_crypto.decrypt_amount(self.amount_encrypted)
+    
+    @amount.setter
+    def amount(self, value: float):
+        self.amount_encrypted = monetary_crypto.encrypt_amount(value)
