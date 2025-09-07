@@ -32,7 +32,7 @@ function ThemeSwitcher() {
         id='theme-select'
         value={theme}
         onChange={handleThemeChange}
-        className='focus:outline-none w-full'
+        className='focus:outline-none w-full cursor-pointer'
       >
         <option value='default'>Classic</option>
         <option value='dark'>Dark</option>

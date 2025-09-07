@@ -59,6 +59,14 @@ function Dashboard() {
       ) : (
         <div className='flex flex-col xl:flex-row gap-8 xl:gap-16 justify-between'>
           <div className='w-full xl:w-1/2'>
+            <DashTable
+              portfolioSummary={portfolioSummary}
+              displayTotalEstate={displayTotalEstate}
+              loading={loading}
+              error={error}
+            />
+          </div>
+          <div className='w-full xl:w-1/2'>
             <div className='h-full mb-8 xl:mb-16'>
               <DashGraph
                 portfolioSummary={portfolioSummary}
@@ -66,14 +74,6 @@ function Dashboard() {
                 error={error}
               />
             </div>
-          </div>
-          <div className='w-full xl:w-1/2'>
-            <DashTable
-              portfolioSummary={portfolioSummary}
-              displayTotalEstate={displayTotalEstate}
-              loading={loading}
-              error={error}
-            />
           </div>
         </div>
       )}
