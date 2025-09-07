@@ -4,6 +4,86 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>help-invest frontend</title>
+    <script>
+      // Define themes exactly as in assets/constants/themes.js
+      const themes = {
+        default: {
+          '--color-theme-main': '#2c5f41',
+          '--color-theme-primary': '#4a90a4',
+          '--color-theme-secondary': '#7fb069',
+          '--color-theme-accent': '#f4a261',
+          '--color-theme-bg-main': 'rgba(255, 255, 255, 1)',
+          '--color-theme-bg-sections': '#f8f9fa',
+          '--color-text-main': 'var(--color-black-85)',
+          '--color-text-headings': '#2c5f41',
+          '--color-text-small-headings': 'var(--color-black-85)',
+          '--color-text-captions': 'var(--color-black-50)',
+          '--color-text-data': 'var(--color-black-75)',
+          '--color-text-btn': '#ffffff',
+          '--color-links-default': '#4a90a4',
+          '--color-links-hover': '#2c5f41',
+        },
+        dark: {
+          '--color-theme-main': '#1a2e35',
+          '--color-theme-primary': '#5aa3b8',
+          '--color-theme-secondary': '#6db88a',
+          '--color-theme-accent': '#e8a547',
+          '--color-theme-bg-main': 'rgba(38, 31, 34, 1)',
+          '--color-theme-bg-sections': '#1e2328',
+          '--color-text-main': 'var(--color-black-85)',
+          '--color-text-headings': '#a8c5d1',
+          '--color-text-small-headings': 'var(--color-black-85)',
+          '--color-text-captions': 'var(--color-black-50)',
+          '--color-text-data': 'var(--color-black-75)',
+          '--color-text-btn': '#ffffff',
+          '--color-links-default': '#5aa3b8',
+          '--color-links-hover': '#6db88a',
+        },
+
+        ocean: {
+          '--color-theme-main': '#1e3a5f',
+          '--color-theme-primary': '#3d7ea6',
+          '--color-theme-secondary': '#52b2bf',
+          '--color-theme-accent': '#ffb366',
+          '--color-theme-bg-main': 'rgba(255, 255, 255, 1)',
+          '--color-theme-bg-sections': '#eef6fc',
+          '--color-text-main': 'var(--color-black-85)',
+          '--color-text-headings': '#1e3a5f',
+          '--color-text-small-headings': 'var(--color-black-85)',
+          '--color-text-captions': 'var(--color-black-50)',
+          '--color-text-data': 'var(--color-black-75)',
+          '--color-text-btn': '#ffffff',
+          '--color-links-default': '#3d7ea6',
+          '--color-links-hover': '#1e3a5f',
+        },
+
+        pastel: {
+          '--color-theme-main': '#d4a5a5',
+          '--color-theme-primary': '#f4c2a1',
+          '--color-theme-secondary': '#f8d7c3',
+          '--color-theme-accent': '#fff2cc',
+          '--color-theme-bg-main': 'rgba(255, 255, 255, 1)',
+          '--color-theme-bg-sections': '#fefbf8',
+          '--color-text-main': 'var(--color-black-85)',
+          '--color-text-headings': '#d4a5a5',
+          '--color-text-small-headings': 'var(--color-black-85)',
+          '--color-text-captions': 'var(--color-black-50)',
+          '--color-text-data': 'var(--color-black-75)',
+          '--color-text-btn': '#ffffff',
+          '--color-links-default': '#f4c2a1',
+          '--color-links-hover': '#d4a5a5',
+        },
+      };
+
+      // Retrieve stored theme or default to "default"
+      const storedTheme = localStorage.getItem('appTheme') || 'default';
+      const themeProperties = themes[storedTheme];
+      if (themeProperties) {
+        Object.entries(themeProperties).forEach(([varName, value]) => {
+          document.documentElement.style.setProperty(varName, value);
+        });
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
