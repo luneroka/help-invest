@@ -57,7 +57,7 @@ def index():
         "description": "Authentication is handled by Firebase on the frontend. All protected routes require Authorization header with Firebase ID token.",
         "endpoints": {
             "user": ["/api/sync-user", "/api/risk-profile"],
-            "portfolio": ["/api/dashboard", "/api/epargne", "/api/immo", "/api/invest", "/api/withdraw", "/api/history"],
+            "portfolio": ["/api/dashboard", "/api/epargne", "/api/immo", "/api/actions", "/api/autres" "/api/invest", "/api/withdraw", "/api/history"],
             "account": ["/api/delete-entry", "/api/delete-account"]
         }
     })
