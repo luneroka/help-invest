@@ -32,7 +32,7 @@ function MainHeader() {
 
   return (
     <>
-      <div className='flex items-center justify-between bg-theme-main h-16 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24'>
+      <div className='sticky top-0 z-50 flex items-center justify-between bg-theme-main h-16 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24'>
         <div className='flex gap-4 items-center '>
           <div className='hidden lg:flex'>
             <Link to='/'>
@@ -112,7 +112,7 @@ function MainHeader() {
       {isMenuOpen && (
         <nav
           role='navigation'
-          className='md:hidden bg-theme-main border-t border-theme-accent/20'
+          className='md:hidden bg-theme-main border-t border-theme-accent/20 sticky top-16 z-40'
         >
           <div className='flex flex-col px-4 py-2'>
             <Link to='/épargne' onClick={closeMenu}>
