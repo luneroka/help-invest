@@ -42,21 +42,29 @@
   --spacing-24: 6rem; /* 96px */
   --spacing-32: 8rem; /* 128px */
 
+  /* Text Colors */
+  --color-white-100: rgba(255, 255, 255, 1);
+  --color-white-85: rgba(255, 255, 255, 0.85);
+  --color-white-75: rgba(255, 255, 255, 0.75);
+  --color-white-50: rgba(255, 255, 255, 0.5);
+  --color-white-25: rgba(255, 255, 255, 0.25);
+  --color-white-10: rgba(255, 255, 255, 0.1);
+  --color-white-5: rgba(255, 255, 255, 0.05);
+  --color-black10: rgba(38, 31, 34, 1);
+  --color-black-85: rgba(38, 31, 34, 0.85);
+  --color-black-75: rgba(38, 31, 34, 0.75);
+  --color-black-50: rgba(38, 31, 34, 0.5);
+  --color-black-25: rgba(38, 31, 34, 0.25);
+  --color-black-10: rgba(38, 31, 34, 0.1);
+  --color-black-5: rgba(38, 31, 34, 0.05);
+
   /* Theme Colors */
   --color-theme-main: #2c5f41;
   --color-theme-primary: #4a90a4;
   --color-theme-secondary: #7fb069;
   --color-theme-accent: #f4a261;
-  --color-theme-bg-main: #ffffff;
+  --color-theme-bg-main: var(--color-white-100);
   --color-theme-bg-sections: #f8f9fa;
-
-  /* Text Colors */
-  --color-text-main: #212529;
-  --color-text-headings: #2c5f41;
-  --color-text-small-headings: #212529;
-  --color-text-captions: #6c757d;
-  --color-text-data: rgba(44, 95, 65, 0.75);
-  --color-text-btn: #ffffff;
 
   /* Link Colors */
   --color-links-default: #4a90a4;
@@ -74,10 +82,10 @@
   --color-gray-300: #dee2e6;
   --color-gray-400: #ced4da;
   --color-gray-500: #adb5bd;
-  --color-gray-600: #6c757d;
+  --color-gray-600: var(--color-black-50);
   --color-gray-700: #495057;
   --color-gray-800: #343a40;
-  --color-gray-900: #212529;
+  --color-gray-900: var(--color-black-85);
 }
 
 @layer base {
@@ -103,7 +111,7 @@
     font-size: var(--font-size-h2);
     line-height: var(--line-height-h2);
     font-weight: var(--font-weight-semibold);
-    color: var(--color-text-headings);
+    color: var(--color-theme-primary);
     margin-bottom: 32px;
   }
 
