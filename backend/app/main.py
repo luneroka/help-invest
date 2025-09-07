@@ -655,6 +655,7 @@ def epargne(firebase_uid, user_email):
             "message": f"Erreur serveur: {str(e)}"
         }), 500
 
+
 @app.route("/api/immo", methods=["GET"])
 @firebase_token_required
 def immo(firebase_uid, user_email):
@@ -687,6 +688,41 @@ def immo(firebase_uid, user_email):
             "success": False,
             "message": f"Erreur serveur: {str(e)}"
         }), 500
+
+
+@app.route("/api/actions", methods=["GET"])
+@firebase_token_required
+def actions(firebase_uid, user_email):
+    try:
+        user = Users.query.filter_by(firebase_uid=firebase_uid).first()
+        if not user:
+            return jsonify({
+                "success": False,
+                "message": "Utilisateur non trouvé. Veuillez vous reconnecter."
+            }), 404
+
+        actions_summary, total_actions = get_category_data(user.id, "Actions")
+
+        return jsonify({
+            "success": True,
+            "message": "Données actions récupérées avec succès",
+            "actions_summary": actions_summary,
+            "total_actions": total_actions,
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "username": user.username,
+                "risk_profile": user.risk_profile
+            }
+        }), 200
+
+    except Exception as e:
+        print(f"Exception occurred: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": f"Erreur serveur: {str(e)}"
+        }), 500
+
 
 @app.route("/api/autres", methods=["GET"])
 @firebase_token_required
